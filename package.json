@@ -1,0 +1,17 @@
+{
+  "main" : "./build/index.js",
+  "devDependencies": {
+    "@types/node": "^8.0.27",
+    "fuse-box": "^2.2.31"
+  },
+  "scripts": {
+    "dev": "node tools/dev.js"
+  },
+  "dependencies": {
+    "@types/glob": "^5.0.32",
+    "glob": "^7.1.2",
+    "tslib": "^1.7.1"
+  },
+  "typings" : "include/index.d.ts",
+  "types" : "include/index.d.ts"
+}

@@ -1,0 +1,5 @@
+
+@XEntity()
+export class Member{
+    
+}
