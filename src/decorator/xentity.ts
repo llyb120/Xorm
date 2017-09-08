@@ -10,7 +10,7 @@ export function XEntity(target : Function) : void;
  * 归属于哪个数据库，默认为default
  * @param from 
  */
-export function XEntity(from : string) :Function;
+export function XEntity(from? : string) :Function;
 
 export function XEntity(config? : XEntityConfig) : Function;
 

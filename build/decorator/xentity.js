@@ -21,3 +21,4 @@ function XEntity(first) {
     // }
 }
 exports.XEntity = XEntity;
+//# sourceMappingURL=xentity.js.map

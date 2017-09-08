@@ -17,3 +17,4 @@ var a = (function (_super) {
     return a;
 }(c));
 a.ccc();
+//# sourceMappingURL=test.js.map

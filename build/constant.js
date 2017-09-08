@@ -7,5 +7,7 @@ var ORMMODE;
 })(ORMMODE = exports.ORMMODE || (exports.ORMMODE = {}));
 exports.ORMCONFIG = {
     MODE: ORMMODE.DESIGN,
-    MODELS: {}
+    MODELS: {},
+    CONNECTION_MANAGER: {}
 };
+//# sourceMappingURL=constant.js.map

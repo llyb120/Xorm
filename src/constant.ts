@@ -6,10 +6,16 @@ export var ORMCONFIG : {
     MODE : ORMMODE,
     MODELS : {
         [type : string] : Function[]
+    },
+    CONNECTION_MANAGER : {
+        [type : string] : any
     }
 }
 = 
 {
     MODE : ORMMODE.DESIGN,
-    MODELS : {}
+    MODELS : {},
+    CONNECTION_MANAGER : {
+        
+    }
 }  
