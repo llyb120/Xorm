@@ -8,7 +8,7 @@ export type OrderOption<T> = {
     [key in keyof T]?: "asc" | "desc" | 'ASC' | 'DESC'
 }
 export type GroupOption<T> = {
-    [key in keyof T]? : any;
+    [key in keyof T]?: any;
 }
 
 export type WhereOptionValue = any;
@@ -44,7 +44,7 @@ export class Repository<T>{
 
     }
 
-    updateById<K extends keyof T>(primaryKey: K, model: T) {
+    updateById<K extends keyof T>(primaryKey: T[K], model: T) {
 
     }
 

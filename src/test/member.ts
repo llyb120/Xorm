@@ -1,3 +1,4 @@
+import { PrimaryColumn } from './../decorator/PrimaryColumn';
 import { XEntity } from '../decorator/XEntity';
 import { X } from '../x';
 import { PrimaryColumn } from "../decorator/PrimaryColumn";
@@ -12,10 +13,19 @@ export class Member{
 
     public member_add_time : string;
  
-    test(){
-        
-    }
     
+}
+
+@XEntity
+class Profile{
+
+    @PrimaryColumn()
+    public member_id : number;
+
+
+    @OneToOne()
+    // public 
+
 }
 
 

@@ -1,1 +1,1 @@
-export * from "../build/x";
+export * from "../src/index";
