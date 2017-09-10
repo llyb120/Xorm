@@ -1,11 +1,11 @@
 import { Repository } from './../repository';
 import { getEntityManager } from './../entity_manager';
 import { Member } from './member';
-import { XOrmStart, getConnection } from '../index';
+import {  getConnection } from '../index';
 import { IDriverBase } from '../driver/driver';
 import { X } from "../x";
 import { EntityMap } from "../decorator/XEntity";
-XOrmStart(
+X.start(
     {
         "name": "default",
         "type": "mysql",

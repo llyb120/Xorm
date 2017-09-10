@@ -1,6 +1,10 @@
 import { EntityMap } from './decorator/XEntity';
 import { ObjectType } from "./header/ObjectType";
 import { getEntityManager } from "./entity_manager";
+import { XOrmConfig } from "./header/config";
+import { IDriverBase } from "./driver/driver";
+import { MysqlConnectionManager } from "./driver/mysql/manager";
+import { ORMCONFIG } from "./constant";
 
 
 export interface IWatchedModel {
@@ -111,6 +115,39 @@ namespace X {
         }
         return ret;
 
+    }
+
+
+    export function start(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
+        if (!configs) {
+            throw new Error("Xorm 配置文件错误");
+        }
+        if(!Array.isArray(configs)){
+            configs = [configs];
+        }
+        //开始启动连接池
+        var promises: Promise<any>[] = [];
+        configs.forEach(config => {
+            let manager: IDriverBase;
+            switch (config.type) {
+                case 'mysql':
+                    manager = new MysqlConnectionManager(config);
+                    break;
+    
+                default:
+                    throw new Error("未被识别的数据库驱动：" + config.type);
+    
+            }
+            ORMCONFIG.CONFIGS[config.name] = config;
+    
+            promises.push(new Promise(async function (resolve, reject) {
+                await manager.start();
+                ORMCONFIG.CONNECTION_MANAGER[config.name] = manager;
+                resolve(manager);
+            }))
+        });
+        //返回对应的连接实例
+        return Promise.all(promises);
     }
 }
 

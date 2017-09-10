@@ -10,37 +10,37 @@ import { ORMCONFIG } from './constant';
  * 启动函数，调用该函数才会生效
  */
 
-export function XOrmStart(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
-    if (!configs) {
-        throw new Error("Xorm 配置文件错误");
-    }
-    if(!Array.isArray(configs)){
-        configs = [configs];
-    }
-    //开始启动连接池
-    var promises: Promise<any>[] = [];
-    configs.forEach(config => {
-        let manager: IDriverBase;
-        switch (config.type) {
-            case 'mysql':
-                manager = new MysqlConnectionManager(config);
-                break;
+// export function XOrmStart(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
+//     if (!configs) {
+//         throw new Error("Xorm 配置文件错误");
+//     }
+//     if(!Array.isArray(configs)){
+//         configs = [configs];
+//     }
+//     //开始启动连接池
+//     var promises: Promise<any>[] = [];
+//     configs.forEach(config => {
+//         let manager: IDriverBase;
+//         switch (config.type) {
+//             case 'mysql':
+//                 manager = new MysqlConnectionManager(config);
+//                 break;
 
-            default:
-                throw new Error("未被识别的数据库驱动：" + config.type);
+//             default:
+//                 throw new Error("未被识别的数据库驱动：" + config.type);
 
-        }
-        ORMCONFIG.CONFIGS[config.name] = config;
+//         }
+//         ORMCONFIG.CONFIGS[config.name] = config;
 
-        promises.push(new Promise(async function (resolve, reject) {
-            await manager.start();
-            ORMCONFIG.CONNECTION_MANAGER[config.name] = manager;
-            resolve(manager);
-        }))
-    });
-    //返回对应的连接实例
-    return Promise.all(promises);
-}
+//         promises.push(new Promise(async function (resolve, reject) {
+//             await manager.start();
+//             ORMCONFIG.CONNECTION_MANAGER[config.name] = manager;
+//             resolve(manager);
+//         }))
+//     });
+//     //返回对应的连接实例
+//     return Promise.all(promises);
+// }
 
 /**
  * 得到一个连接
