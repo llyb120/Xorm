@@ -3,7 +3,8 @@
   "devDependencies": {
     "@types/mysql": "^0.0.34",
     "@types/node": "^8.0.27",
-    "fuse-box": "^2.2.31"
+    "fuse-box": "^2.2.31",
+    "typescript": "^2.5.2"
   },
   "scripts": {
     "dev": "node tools/dev.js"

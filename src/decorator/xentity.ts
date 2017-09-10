@@ -1,6 +1,9 @@
 import { XEntityConfig } from '../header/config';
 import { ORMCONFIG } from '../constant';
 
+
+export var EntityMap = new Map<Object,EntityDescirption>();
+
 /**
  * 默认的
  * @param target 
@@ -17,6 +20,17 @@ export function XEntity(config? : XEntityConfig) : Function;
 export function XEntity(first? : Function | string | XEntityConfig) : any{
     var type = 'default';
     var final = function(target : Function){
+        var info : EntityDescirption ;
+        if(!EntityMap.has(target.prototype)){
+            info = InitEntityDescirption();
+            EntityMap.set(target.prototype,info);
+        }
+        else{
+            info = EntityMap.get(target.prototype) as EntityDescirption;
+        }
+        info.database = type;
+
+        //大概会用到吧
         ORMCONFIG.MODELS[type] = ORMCONFIG.MODELS[type] || [];
         ORMCONFIG.MODELS[type].push(target);
     }
@@ -33,4 +47,18 @@ export function XEntity(first? : Function | string | XEntityConfig) : any{
     // function(target : Function){
         // ORMCONFIG[type] = ORMCONFIG[type]
     // }
+}
+
+export interface EntityDescirption{
+    fields : any[],
+    primary : string,
+    database : string;
+}
+
+export function InitEntityDescirption() : EntityDescirption{
+    return {
+        fields : [],
+        primary : 'id',
+        database : 'default'   
+    } 
 }

@@ -1,6 +1,6 @@
-export class Connection{
+export class Connection {
 
-    query(sql : string){
+    query(sql: string) {
 
     }
 

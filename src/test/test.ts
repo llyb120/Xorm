@@ -1,6 +1,8 @@
+import { EntityMap } from './../decorator/XEntity';
+import { Member } from './member';
 import { XOrmStart, getConnection } from '../index';
 import { IDriverBase } from '../driver/driver';
-console.log(123)
+import { X } from "../x";
 XOrmStart(
     {
         "name": "default",
@@ -22,5 +24,12 @@ XOrmStart(
         "tablesPrefix": "ra_"
     }
 ).then(async managers => {
-    
+    var c = X(Member);
+    c.member_id = 1;
+    console.log(EntityMap)
+    console.log(X.getChanged(c))
+    X.save(c);
+}).catch((e) => {
+    console.log(e)
+    console.log("Fuck")
 })
