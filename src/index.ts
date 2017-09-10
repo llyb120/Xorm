@@ -30,6 +30,7 @@ export function XOrmStart(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBa
                 throw new Error("未被识别的数据库驱动：" + config.type);
 
         }
+        ORMCONFIG.CONFIGS[config.name] = config;
 
         promises.push(new Promise(async function (resolve, reject) {
             await manager.start();
@@ -56,9 +57,9 @@ export function hasConnection(type = 'default'): boolean {
     return ORMCONFIG.CONNECTION_MANAGER[type];
 }
 
-/**
- * 兼容typeorm
- */
-export function getEntityManager(): EntityManager {
+// /**
+//  * 兼容typeorm
+//  */
+// export function getEntityManager(): EntityManager {
 
-}
+// }

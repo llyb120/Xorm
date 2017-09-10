@@ -1,4 +1,6 @@
-export enum ORMMODE{
+import { XOrmConfig } from "./header/config";
+
+export enum ORMMODE {
     DESIGN,
     PRODUCT
 }
@@ -9,6 +11,9 @@ export var ORMCONFIG : {
     },
     CONNECTION_MANAGER : {
         [type : string] : any
+    },
+    CONFIGS : {
+        [key : string] : XOrmConfig
     }
 }
 = 
@@ -17,5 +22,6 @@ export var ORMCONFIG : {
     MODELS : {},
     CONNECTION_MANAGER : {
         
-    }
+    },
+    CONFIGS : {}
 }  

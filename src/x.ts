@@ -1,7 +1,6 @@
 import { EntityMap } from './decorator/XEntity';
-
 import { ObjectType } from "./header/ObjectType";
-import { EntityMap } from "./decorator/xentity";
+import { getEntityManager } from "./entity_manager";
 
 
 export interface IWatchedModel {
@@ -63,22 +62,40 @@ namespace X {
         else {
             var model = <T>models;
             var changed = X.getChanged(model);
+            //查找描述信息
+            var desc = EntityMap.get(model.__proto__ as Object);
+            if(!desc){
+                return model;
+            }
             //没有发生任何改变的情况
             if(!changed || !changed.length){
                 return model;
             }
             //查询主键，如果没有的情况，默认为“ID"
-            var primary = 'id';
-            var struct;
-            if(struct = EntityMap.get(model.__proto__)){
-                if(struct.primary){
-                    primary = struct.primary;
+            var constructor = model.__proto__.constructor as {
+                new() : any
+            } 
+            if(changed.includes(desc.primary) || !(desc.primary in model)){
+                let ret = getEntityManager().getRepository(constructor).insert(model);
+                return ret;
+            }
+            else{
+                if(!(desc.primary in model)){
+                    return model;
                 }
+                getEntityManager().getRepository(constructor).updateById(model[desc.primary],model)
             }
-            //如果主键改变了，视为新插入，否则视为更新
-            if(changed.includes(primary)){
+            // var primary = 'id';
+            // var struct;
+            // if(struct = EntityMap.get(model.__proto__)){
+            //     if(struct.primary){
+            //         primary = struct.primary;
+            //     }
+            // }
+            // //如果主键改变了，视为新插入，否则视为更新
+            // if(changed.includes(primary)){
 
-            }
+            // }
         }
     }
 
