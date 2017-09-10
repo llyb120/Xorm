@@ -36,7 +36,6 @@ XOrmStart(
             member_add_time: ['>', new Date().getTime() / 1000],
             and: {
                 member_id: 1,
-
             },
             or: {
                 member_name: "cubi"
