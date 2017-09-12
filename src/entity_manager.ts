@@ -23,17 +23,9 @@ import { Repository } from "./repository";
 //     }
 // }
 
-var respInstance = new Map<any,Repository<any>>()
 
 var funcs = {
-    getRepository<T>(model: {new() : T}){
-        var resp = respInstance.get(model.prototype) || (() => {
-            var resp = new Repository(model)
-            respInstance.set(model.prototype,resp);
-            return resp;
-        })();
-        return resp as Repository<T>;
-    },
+
 }
 
 export function getEntityManager(){

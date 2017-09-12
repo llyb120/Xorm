@@ -56,7 +56,6 @@ export function XEntity(first? : Function | string | XEntityConfig) : any{
             });
             EntityWatchingMap.set(proxy, watching);
             return proxy;
-            // console.log("cubi")
         }
     }
     if(first){
