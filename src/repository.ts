@@ -7,9 +7,7 @@ type Operator = ">" | "<" | "=" | "<>" | ">=" | "<=";
 export type OrderOption<T> = {
     [key in keyof T]?: "asc" | "desc" | 'ASC' | 'DESC'
 }
-export type GroupOption<T> = {
-    [key in keyof T]?: any;
-}
+export type GroupOption<T> = keyof T;
 
 export type WhereOptionValue = any;
 export type WhereOptionLike = ['like', string];
@@ -34,8 +32,7 @@ export interface FindOption<T> {
     where?: WhereOption<T>;
     group?: GroupOption<T>;
     order?: OrderOption<T>;
-    offset?: number;
-    limit?: number;
+    limit?: number[] | number;
 }
 
 export class Repository<T>{
@@ -48,11 +45,6 @@ export class Repository<T>{
 
     }
 
-    findOne(
-        findOption: FindOption<T>
-    ) {
-
-    }
 
     persist(entities: T[]): T[];
     persist(entity: T): T;
@@ -76,5 +68,29 @@ export class Repository<T>{
         }
         return getConnection(desc.database).insert(data as Partial<T>, desc);
     }
+
+
+    
+    async findOne(
+        findOption: FindOption<T>
+    ) : Promise<T>{
+        findOption.limit = 1;
+        var ret = await this.find(findOption);
+        if(ret){
+            return ret[0];
+        }
+        return new this.factory;
+    }
+
+    async find(
+        findOption : FindOption<T>
+    ) : Promise<T[]>{
+        var desc = EntityMap.get(this.factory.prototype);
+        if(!desc){
+            return [];
+        }
+        return getConnection(desc.database).find<T>(findOption,desc);
+    }
+
 
 }

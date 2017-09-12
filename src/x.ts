@@ -5,6 +5,8 @@ import { XOrmConfig } from "./header/config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
+import { FindOption } from './repository';
+import { getConnection } from './index';
 
 
 export interface IWatchedModel {
@@ -35,15 +37,11 @@ function X<Model>(model: { new(): Model }): Model {
 
 
 namespace X {
-    export function query() {
-        return null;
-    }
 
 
-    /**
-     * 保存一个实例
-     */
-    type Model<T> = { new(): T };
+    type Entity<T> = { new(): T };
+
+
     /**
      * 保存多个实例
      * @param models 
@@ -65,7 +63,7 @@ namespace X {
         }
         else {
             var model = <T>models;
-            var changed = X.getChanged(model);
+            var changed = getChanged(model);
             //查找描述信息
             var desc = EntityMap.get(model.__proto__ as Object);
             if(!desc){
@@ -103,7 +101,37 @@ namespace X {
         }
     }
 
+    /**
+     * 万能查询函数，对于不想声明的entity可以直接使用sql语句查询
+     * @param connectionName 
+     * @param sql 
+     */
+    export function query(connectionName : string,sql : string) : Promise<object[]>;
+    export function query(sql : string) : Promise<object[]>;
+    export function query(...args : string[]) : Promise<object[]> {
+        if(args.length == 2){
+            return getConnection(args[0]).query(args[1]);
+        }
+        return getConnection().query(args[0]);
+    }
 
+    /**
+     * 对find方法的封装，有提示，有提示，有提示，重点要说三遍
+     * @param entity 
+     * @param option 
+     */
+    export function find<T>(entity : Entity<T>,option : FindOption<T>) : Promise<T[]>{
+        return getEntityManager().getRepository(entity).find(option);
+    }
+    export function findOne<T>(entity : Entity<T>,option : FindOption<T>) : Promise<T>{
+        return getEntityManager().getRepository(entity).findOne(option); 
+    }
+
+
+    /**
+     * 得到一个模型中发生了改变的东西，便于以后注册钩子函数
+     * @param model 
+     */
     export function getChanged(model: Object): string[] {
         if (!model) {
             return [];
@@ -118,6 +146,10 @@ namespace X {
     }
 
 
+    /**
+     * 启动函数，只有调用了这个并且传入对应的数据库连接配置，XORM才会生效
+     * @param configs 
+     */
     export function start(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
         if (!configs) {
             throw new Error("Xorm 配置文件错误");
@@ -149,6 +181,7 @@ namespace X {
         //返回对应的连接实例
         return Promise.all(promises);
     }
+
 }
 
 export { X };

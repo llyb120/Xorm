@@ -23,7 +23,6 @@ class Profile{
     public member_id : number;
 
 
-    @OneToOne()
     // public 
 
 }

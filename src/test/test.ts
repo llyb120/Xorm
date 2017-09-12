@@ -1,7 +1,7 @@
 import { Repository } from './../repository';
 import { getEntityManager } from './../entity_manager';
 import { Member } from './member';
-import {  getConnection } from '../index';
+import { getConnection } from '../index';
 import { IDriverBase } from '../driver/driver';
 import { X } from "../x";
 import { EntityMap } from "../decorator/XEntity";
@@ -28,8 +28,12 @@ X.start(
 ).then(async managers => {
     var c = X(Member);
     c.member_name = 'cubi';
-    var a = getEntityManager().getRepository(Member);
-    a.findOne({
+    X.find(Member, {
+        where: {
+
+        }
+    })
+    var ret = await X.find(Member,{
         where: {
             member_name: ['like', 'cubi'],
             member_id: ['in', [10, 20, 30]],
@@ -44,16 +48,21 @@ X.start(
         order: {
             member_id: "asc"
         },
-        group: {
-            member_id: true
-        },
-        offset: 1,
+        group: 'member_id',
         limit: 10
     })
+    console.log(ret[0].member_id)
+    return;
+
     return;
     console.log(X.getChanged(c))
 
     var b = new Repository(Member);
+
+    X.find(Member, {
+
+    })
+
 
 
     await X.save(c);
@@ -65,4 +74,8 @@ X.start(
 })
 
 
+// class c<T>{
+//     static cubi<U = this>() : this{
 
+//     }
+// }

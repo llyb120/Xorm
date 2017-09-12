@@ -4,8 +4,93 @@ import * as mysql from "mysql";
 import { IPool } from "mysql";
 import { IDriverBase } from '../driver';
 import { EntityDescirption } from "../../decorator/XEntity";
+import { FindOption, WhereOption } from '../../repository';
 
 export class MysqlConnectionManager implements IDriverBase {
+
+    private buildWhere<T>(whereOption: WhereOption<T>, desc: EntityDescirption) {
+        var buffer: string[] = [];
+        //build and
+        if (whereOption.and) {
+            var str = this.buildWhere(whereOption.and, desc).trim();
+            if (str != '') {
+                buffer.push(' and (' + str + ')');
+            }
+            delete whereOption.and;
+        }
+        //build or
+        if (whereOption.or) {
+            var str = this.buildWhere(whereOption.or, desc);
+            if (str.trim() != '') {
+                buffer.push(' or ( ' + str + ')');
+            }
+            delete whereOption.or;
+        }
+
+        for (var name in whereOption) {
+            var val = whereOption[name];
+            var fieldName = desc.tableName + '.' + name; ``
+            if (Array.isArray(val)) {
+                if (val[0] == 'like') {
+                    buffer.push(` and ${fieldName} like '${val[1]}'`);
+                }
+                else if (val[0] == 'in') {
+                    buffer.push(` and ${fieldName} in ( ${val[1].map((item: string) => `'${item}'`).join(',')} )`);
+                }
+            }
+            else {
+                if (val == null) {
+                    buffer.push(` and ${fieldName} is null`);
+                }
+                else {
+                    buffer.push(` and ${fieldName} = '${val}'`);
+                }
+            }
+        }
+        return buffer.join(" ").replace(/^\s*(and|or)/, "");
+    }
+
+
+    public buildSql<T>(findOption: FindOption<T>, desc: EntityDescirption): string {
+        var where;
+        var group = '';
+        
+        var sql = `
+            select * from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` as ${desc.tableName}
+        `;
+        if (findOption.where) {
+            var str = this.buildWhere(findOption.where, desc);
+            if(str != ''){
+                sql += ' where ' + str;
+            }
+        }
+        if (findOption.group) {
+            sql += ' group by ' + `${desc.tableName}.${findOption.group}`;
+        }
+        if (findOption.order) {
+            var buf = [];
+            for (const name in findOption.order) {
+                buf.push(`${desc.tableName}.${name} ${findOption.order[name]}`);
+            }
+            sql += " order by " + buf.join(",");
+        }
+        if (findOption.limit) {
+            if (Array.isArray(findOption.limit)) {
+                sql += ' limit ' + findOption.limit[0] + ' , ' + findOption.limit[1];
+            }
+            else {
+                sql += ' limit ' + findOption.limit;
+            }
+        }
+        return sql;
+    }
+
+    async find<T>(findOption: FindOption<T>, desc: EntityDescirption): Promise<T[]> {
+        const sql = this.buildSql(findOption, desc);
+        var ret;
+        ret = await this.query(sql);
+        return ret || [];
+    }
 
     async insert<T>(data: T, desc: EntityDescirption): Promise<T> {
         var fields = [],
@@ -32,28 +117,10 @@ export class MysqlConnectionManager implements IDriverBase {
                     ${values.join(",")}
                 );
         `;
-        try {
-            console.log('start to insert')
-            var ret = await this.query(sql);
-            // var primaryVal = ret.insertId;
-            data[desc.primary] = ret.insertId;
-            // console.log(ret)
-        }
-        catch (e) {
-            console.error(e);
-        }
-        // console.log("cubi")
+        var ret = await this.query(sql);
+        data[desc.primary] = ret.insertId;
         return data;
-        // return;
-        // return new Promise((resolve,reject) => {
-        //     console.log(sql)
-        //     this.query(sql).then((ret) => {
-        //         console.log(ret)
-        //     }).catch(e => {
-        //         console.log(e)
-        //     });
-        // });
-        // console.log(sql);
+
     }
 
     public pool: IPool;
