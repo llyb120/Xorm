@@ -1,4 +1,3 @@
-import { PrimaryColumn } from './../decorator/PrimaryColumn';
 import { XEntity } from '../decorator/XEntity';
 import { X } from '../x';
 import { PrimaryColumn } from "../decorator/PrimaryColumn";

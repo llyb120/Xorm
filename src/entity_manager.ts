@@ -34,13 +34,7 @@ var funcs = {
         })();
         return resp as Repository<T>;
     },
-
-    getEntityManager(){
-        return funcs;
-    }
 }
-
-export default funcs;
 
 export function getEntityManager(){
     return funcs;

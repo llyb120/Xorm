@@ -1,6 +1,7 @@
 import { getConnection } from './index';
 import { EntityMap } from './decorator/XEntity';
 import { X } from './x';
+import { QueryBuilder } from './querybuilder';
 
 type Operator = ">" | "<" | "=" | "<>" | ">=" | "<=";
 
@@ -92,5 +93,9 @@ export class Repository<T>{
         return getConnection(desc.database).find<T>(findOption,desc);
     }
 
+
+    createQueryBuilder(alias : string) : QueryBuilder<T>{
+        return new QueryBuilder(this.factory,alias);
+    }
 
 }

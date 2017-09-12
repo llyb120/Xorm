@@ -65,7 +65,7 @@ namespace X {
             var model = <T>models;
             var changed = getChanged(model);
             //查找描述信息
-            var desc = EntityMap.get(model.__proto__ as Object);
+            var desc = EntityMap.get((model as any).__proto__ as Object);
             if(!desc){
                 return model;
             }
@@ -74,7 +74,7 @@ namespace X {
                 return model;
             }
             //查询主键，如果没有的情况，默认为“ID"
-            var constructor = model.__proto__.constructor as {
+            var constructor = (model as any).__proto__.constructor as {
                 new() : any
             } 
             if(changed.includes(desc.primary) || !(desc.primary in model)){
@@ -85,7 +85,7 @@ namespace X {
                 if(!(desc.primary in model)){
                     return model;
                 }
-                getEntityManager().getRepository(constructor).updateById(model[desc.primary],model)
+                getEntityManager().getRepository(constructor).updateById((model as any)[desc.primary],model)
             }
             // var primary = 'id';
             // var struct;

@@ -52,6 +52,9 @@ X.start(
         limit: 10
     })
     console.log(ret[0].member_id)
+
+
+    var a = getEntityManager().getRepository(Member).createQueryBuilder("cubi")
     return;
 
     return;

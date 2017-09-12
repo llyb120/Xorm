@@ -5,6 +5,7 @@ import { IPool } from "mysql";
 import { IDriverBase } from '../driver';
 import { EntityDescirption } from "../../decorator/XEntity";
 import { FindOption, WhereOption } from '../../repository';
+import { QueryBuilder } from '../../querybuilder';
 
 export class MysqlConnectionManager implements IDriverBase {
 
@@ -28,7 +29,7 @@ export class MysqlConnectionManager implements IDriverBase {
         }
 
         for (var name in whereOption) {
-            var val = whereOption[name];
+            var val = (whereOption as any)[name];
             var fieldName = desc.tableName + '.' + name; ``
             if (Array.isArray(val)) {
                 if (val[0] == 'like') {
@@ -89,7 +90,7 @@ export class MysqlConnectionManager implements IDriverBase {
         const sql = this.buildSql(findOption, desc);
         var ret;
         ret = await this.query(sql);
-        return ret || [];
+        return (ret as T[]) || [];
     }
 
     async insert<T>(data: T, desc: EntityDescirption): Promise<T> {
@@ -118,7 +119,7 @@ export class MysqlConnectionManager implements IDriverBase {
                 );
         `;
         var ret = await this.query(sql);
-        data[desc.primary] = ret.insertId;
+        (data as any)[desc.primary] = (ret as any).insertId;
         return data;
 
     }
@@ -159,6 +160,8 @@ export class MysqlConnectionManager implements IDriverBase {
             });
         })
     }
+
+
 }
 
 export interface MysqlConfig {

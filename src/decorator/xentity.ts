@@ -73,4 +73,4 @@ export function InitEntityDescirption() : EntityDescirption{
     } 
 }
 
-// export type Entity<T> = ObjectType<T>;
+export type Entity<T> = ObjectType<T>;

@@ -1,5 +1,4 @@
 import { Connection } from './connection';
-import { EntityManager } from './entity_manager';
 import { XOrmConfig } from './header/config';
 import { MysqlConnectionManager } from './driver/mysql/manager';
 import { IDriverBase } from './driver/driver';

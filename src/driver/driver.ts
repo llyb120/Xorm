@@ -1,6 +1,7 @@
 import { EntityDescirption } from './../decorator/XEntity';
 import { MysqlConnectionManager } from './mysql/manager';
 import { FindOption } from '../repository';
+import { QueryBuilder } from '../querybuilder';
 
 export interface IDriverBase {
     start(): Promise<any> | void;
@@ -8,6 +9,8 @@ export interface IDriverBase {
     insert(data : object, desc: EntityDescirption): Promise<any>;
 
     find<T>(findOption : FindOption<T>,desc : EntityDescirption) : Promise<T[]>;
+
 }
+
 
 
