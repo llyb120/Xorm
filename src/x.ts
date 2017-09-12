@@ -1,33 +1,13 @@
-import { EntityMap, Entity, XEntity, EntityWatchingMap, IWatchedModel, ObserveObjectChanged } from './decorator/XEntity';
+import { EntityMap, Entity, XEntity, EntityWatchingMap, IWatchedModel } from './decorator/XEntity';
 import { ObjectType } from "./header/ObjectType";
 import { XOrmConfig } from "./header/config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
 import { FindOption, Repository } from './repository';
+import { ObservingObject } from './gc';
 
 
-
-
-/**
- * 得到一个模型对象的实例，需要放入监视对象中
- * @param model 
- */
-// function X<Model>(model: { new(): Model }): Model {
-//     var ins = new model;
-//     var watching = {
-//         changed: new Set<string>()
-//     }
-//     var proxy = new Proxy(ins, {
-//         set: (obj: any, key: any, val: any) => {
-//             watching.changed.add(key);
-//             return obj[key] = val;
-//         }
-//     });
-//     watchMap.set(proxy, watching);
-//     return proxy;
-// }
-// var respInstance = new Map<any, Repository<any>>()
 
 export class XEntityManager {
 
@@ -60,7 +40,7 @@ export class XEntityManager {
         }
         else {
             var model = <T>models;
-            var changed = this.getChanged(model);
+            var changed = ObservingObject.getChanged(model);
             //查找描述信息
             var desc = EntityMap.get((model as any).__proto__.constructor.name);
             if (!desc) {
@@ -74,20 +54,16 @@ export class XEntityManager {
             var constructor = (model as any).__proto__.constructor as {
                 new(): any
             }
-            //删除对changed的引用
-            var _changed = EntityWatchingMap.get((model as any).__proto__.constructor.name)
-            if (_changed) {
-                _changed.changed = new Set<string>();
-            }
+           
             if (changed.includes(desc.primary) || !(desc.primary in model)) {
-                let ret = getEntityManager().getRepository(constructor).insert(model);
+                let ret = this.getRepository(constructor).insert(model);
                 return ret;
             }
             else {
                 if (!(desc.primary in model)) {
                     return model;
                 }
-                getEntityManager().getRepository(constructor).updateById((model as any)[desc.primary], model)
+                this.getRepository(constructor).updateById((model as any)[desc.primary], model)
             }
         }
     }
@@ -118,7 +94,7 @@ export class XEntityManager {
         if (observable) {
             var ret = [];
             for (var item of result) {
-                var observed = ObserveObjectChanged(item);
+                var observed = ObservingObject.addObserveObject(item);
                 //劫持API，这才是你的亲爹
                 observed.__proto__ = entity.prototype;
                 ret.push(observed);
@@ -138,33 +114,13 @@ export class XEntityManager {
     async findOne<T>(entity: Entity<T>, option: FindOption<T>): Promise<T> {
         var result = await this.getRepository(entity).findOne(option);
         if (result) {
-            var observed = ObserveObjectChanged(result);
+            var observed = ObservingObject.addObserveObject(result);
             //劫持API，这才是你的亲爹
             observed.__proto__ = entity.prototype;
             return observed;
         }
         return result;
     }
-
-
-    /**
-     * 得到一个模型中发生了改变的东西，便于以后注册钩子函数
-     * @param model 
-     */
-    getChanged(model: Object): string[] {
-        if (!model) {
-            return [];
-        }
-        var changed = (EntityWatchingMap.get(model) as IWatchedModel).changed;
-        var ret = [];
-        for (const val of changed.values()) {
-            if (val == '__proto__') continue;
-            ret.push(val);
-        }
-        return ret;
-    }
-
-
 
 
     /**

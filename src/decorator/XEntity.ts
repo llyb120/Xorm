@@ -1,6 +1,7 @@
 import { XEntityConfig } from '../header/config';
 import { ORMCONFIG } from '../constant';
 import { ObjectType } from "../header/ObjectType";
+import { ObservingObject } from '../gc';
 
 
 export var EntityMap = new Map<string, EntityDescirption>();
@@ -43,7 +44,7 @@ export function XEntity(first?: Function | string | XEntityConfig): any {
         var newClass =  class extends target.prototype.constructor {
             constructor() {
                 super();
-                return ObserveObjectChanged(this);
+                return ObservingObject.addObserveObject(this);
             }
         }
         //更改名字，偷天换日
@@ -93,19 +94,19 @@ export function InitEntityDescirption(): EntityDescirption {
     }
 }
 
-export function ObserveObjectChanged(obj : any){
-    var watching = {
-        changed: new Set<string>()
-    }
-    var proxy = new Proxy(obj as any, {
-        set: (obj: any, key: any, val: any) => {
-            watching.changed.add(key);
-            return obj[key] = val;
-        }
-    });
-    EntityWatchingMap.set(proxy, watching);
-    return proxy;
-}
+// export function ObserveObjectChanged(obj : any){
+//     var watching = {
+//         changed: new Set<string>()
+//     }
+//     var proxy = new Proxy(obj as any, {
+//         set: (obj: any, key: any, val: any) => {
+//             watching.changed.add(key);
+//             return obj[key] = val;
+//         }
+//     });
+//     EntityWatchingMap.set(proxy, watching);
+//     return proxy;
+// }
 
 export type Entity<T> = { new(): T };
 

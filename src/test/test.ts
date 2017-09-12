@@ -2,21 +2,14 @@
 // import { getEntityManager } from './../entity_manager';
 // import { getConnection } from '../index';
 // import { IDriverBase } from '../driver/driver';
-import { X } from '../x';
 import { EntityMap, EntityWatchingMap } from '../decorator/XEntity';
 import { Member, Profile } from './member';
 import { Repository } from '../repository';
+import { X } from '../x';
+import { ObservingObject } from '../gc';
 
 
-// console.log("cubi")
-// var a=  new Member;
-// var b = new Profile
 
-// a.member_add_time = 123;
-class c extends WeakMap{
-
-}
-var 
 
 // console.log(a)
 // var d = EntityWatchingMap.get(a);
@@ -45,7 +38,7 @@ X.start(
   
     var a = new Member;
     a.member_id = 1;
-    console.log(X.getChanged(a));
+    console.log(ObservingObject.getChanged(a));
 
     var ret = await X.find(Member,{
         where: {
