@@ -12,6 +12,9 @@ export class Member{
 
     public member_add_time : string;
  
+    onGet(){
+        this.member_name = 'guichu';
+    }
     
 }
 

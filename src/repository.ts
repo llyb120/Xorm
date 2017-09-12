@@ -1,5 +1,5 @@
 import { getConnection } from './index';
-import { EntityMap } from './decorator/XEntity';
+import { EntityMap, ObserveObjectChanged } from './decorator/XEntity';
 import { X } from './x';
 import { QueryBuilder } from './querybuilder';
 
@@ -39,7 +39,6 @@ export interface FindOption<T> {
 export class Repository<T>{
 
     constructor(public factory: { new(): T }) {
-
     }
 
     updateById<K extends keyof T>(primaryKey: T[K], model: T) {
@@ -63,7 +62,7 @@ export class Repository<T>{
      * typeorm中没有这个方法
      */
     insert(data: T) {
-        var desc = EntityMap.get(this.factory.prototype);
+        var desc = EntityMap.get(this.factory.name);
         if (!desc) {
             return data;
         }
@@ -86,11 +85,26 @@ export class Repository<T>{
     async find(
         findOption : FindOption<T>
     ) : Promise<T[]>{
-        var desc = EntityMap.get(this.factory.prototype);
+        var desc = EntityMap.get(this.factory.name);
         if(!desc){
             return [];
         }
-        return getConnection(desc.database).find<T>(findOption,desc);
+        /**
+         * 兼容typeorm的部分暂时不要这些
+         */
+        var result = await getConnection(desc.database).find<T>(findOption,desc);
+        for(let item of result){
+            //新版API
+            if (this.factory.prototype.onGet) {
+                this.factory.prototype.onGet.call(item);
+            }
+            //兼容以前的写法
+            if(this.factory.prototype.onLoad){
+                this.factory.prototype.onLoad.call(item);
+            }
+        }
+        return result;
+
     }
 
 
