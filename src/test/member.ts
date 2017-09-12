@@ -16,7 +16,7 @@ export class Member{
 }
 
 @XEntity
-class Profile{
+export class Profile{
 
     @PrimaryColumn()
     public member_id : number;
@@ -26,5 +26,3 @@ class Profile{
 
 }
 
-
-var member = X(Member);

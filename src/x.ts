@@ -1,4 +1,4 @@
-import { EntityMap } from './decorator/XEntity';
+import { EntityMap, Entity, XEntity } from './decorator/XEntity';
 import { ObjectType } from "./header/ObjectType";
 import { getEntityManager } from "./entity_manager";
 import { XOrmConfig } from "./header/config";
@@ -9,12 +9,7 @@ import { FindOption } from './repository';
 import { getConnection } from './index';
 
 
-export interface IWatchedModel {
-    changed: Set<string>
-}
 
-
-var watchMap = new WeakMap<Object, IWatchedModel>();
 
 /**
  * 得到一个模型对象的实例，需要放入监视对象中
@@ -35,24 +30,25 @@ function X<Model>(model: { new(): Model }): Model {
     return proxy;
 }
 
+export class XEntityManager{
+}
+
+export const X = new XEntityManager;
+
 
 namespace X {
-
-
-    type Entity<T> = { new(): T };
-
 
     /**
      * 保存多个实例
      * @param models 
      */
-    export function save<T>(models: T[]): T[];
+    function save<T>(models: T[]): T[];
     /**
      * 保存单个实例
      * @param model 
      */
-    export function save<T>(model: T): T;
-    export function save<T>(models: any): any{
+    function save<T>(model: T): T;
+    function save<T>(models: any): any{
         if (Array.isArray(models)) {
             models = models as T[];
             var ret = [];
@@ -106,9 +102,9 @@ namespace X {
      * @param connectionName 
      * @param sql 
      */
-    export function query(connectionName : string,sql : string) : Promise<object[]>;
-    export function query(sql : string) : Promise<object[]>;
-    export function query(...args : string[]) : Promise<object[]> {
+    function query(connectionName : string,sql : string) : Promise<object[]>;
+    function query(sql : string) : Promise<object[]>;
+    function query(...args : string[]) : Promise<object[]> {
         if(args.length == 2){
             return getConnection(args[0]).query(args[1]);
         }
@@ -120,10 +116,10 @@ namespace X {
      * @param entity 
      * @param option 
      */
-    export function find<T>(entity : Entity<T>,option : FindOption<T>) : Promise<T[]>{
+    function find<T>(entity : Entity<T>,option : FindOption<T>) : Promise<T[]>{
         return getEntityManager().getRepository(entity).find(option);
     }
-    export function findOne<T>(entity : Entity<T>,option : FindOption<T>) : Promise<T>{
+    function findOne<T>(entity : Entity<T>,option : FindOption<T>) : Promise<T>{
         return getEntityManager().getRepository(entity).findOne(option); 
     }
 
@@ -132,7 +128,7 @@ namespace X {
      * 得到一个模型中发生了改变的东西，便于以后注册钩子函数
      * @param model 
      */
-    export function getChanged(model: Object): string[] {
+    function getChanged(model: Object): string[] {
         if (!model) {
             return [];
         }
@@ -150,7 +146,7 @@ namespace X {
      * 启动函数，只有调用了这个并且传入对应的数据库连接配置，XORM才会生效
      * @param configs 
      */
-    export function start(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
+    function start(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
         if (!configs) {
             throw new Error("Xorm 配置文件错误");
         }
@@ -180,6 +176,13 @@ namespace X {
         });
         //返回对应的连接实例
         return Promise.all(promises);
+    }
+
+
+    function transition(
+        command : () => any
+    ) : Promise{
+
     }
 
 }

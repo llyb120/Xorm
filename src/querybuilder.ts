@@ -6,20 +6,20 @@ import { IDriverBase } from './driver/driver';
 export class QueryBuilder<T>{
     constructor(
         private factory: { new(): T },
-        private alias : string
+        private alias: string
     ) {
 
     }
 
-    andWhere(condition: string): QueryBuilder<T> {
+    andWhere(condition: string, replacement: object): QueryBuilder<T> {
         return this;
     }
 
-    orWhere(condition: string): QueryBuilder<T> {
+    orWhere(condition: string, replacement: object): QueryBuilder<T> {
         return this;
     }
 
-    where(condition: string): QueryBuilder<T> {
+    where(condition: string, replacement: object): QueryBuilder<T> {
         return this;
     }
 
@@ -36,6 +36,10 @@ export class QueryBuilder<T>{
     }
 
     getOne(): Promise<T> {
+
+    }
+
+    getSql(): string {
 
     }
 }
