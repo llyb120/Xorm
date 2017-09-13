@@ -6,19 +6,8 @@ ___scope___.file("test/test.js", function(exports, require, module, __filename, 
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
-// import { Repository } from './../repository';
-// import { getEntityManager } from './../entity_manager';
-// import { getConnection } from '../index';
-// import { IDriverBase } from '../driver/driver';
-var x_1 = require("../x");
 var member_1 = require("./member");
-// console.log("cubi")
-// var a=  new Member;
-// var b = new Profile
-// a.member_add_time = 123;
-// console.log(a)
-// var d = EntityWatchingMap.get(a);
-// console.log(d)
+var x_1 = require("../x");
 x_1.X.start({
     "name": "default",
     "type": "mysql",
@@ -38,31 +27,68 @@ x_1.X.start({
     // ],
     "tablesPrefix": "ra_"
 }).then(function (managers) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-    var ret;
+    var a, ret;
     return tslib_1.__generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, x_1.X.find(member_1.Member, {
-                    where: {
-                        member_name: ['like', 'cubi'],
-                        member_id: ['in', [10, 20, 30]],
-                        member_add_time: ['>', new Date().getTime() / 1000],
-                        and: {
-                            member_id: 1,
+            case 0:
+                a = new member_1.Member;
+                a.member_id = 1;
+                return [4 /*yield*/, x_1.X.find(member_1.Member, {
+                        where: {
+                            member_name: ['like', 'cubi'],
+                            member_id: ['in', [10, 20, 30]],
+                            member_add_time: ['>', new Date().getTime() / 1000],
+                            and: {
+                                member_id: 1,
+                            },
+                            or: {
+                                member_name: "cubi"
+                            }
                         },
-                        or: {
-                            member_name: "cubi"
-                        }
-                    },
-                    order: {
-                        member_id: "asc"
-                    },
-                    group: 'member_id',
-                    limit: 10
-                })];
+                        order: {
+                            member_id: "asc"
+                        },
+                        group: 'member_id',
+                        limit: 10
+                    })
+                    // var b = ret[0];
+                    // for(var i in b){
+                    //     console.log(b[i]);
+                    // }
+                    // b.member_name = 1;
+                    // console.log(Object.entries(b));
+                    // return;
+                    // b.member_name = 'fuck';
+                    // console.log(X.getChanged(b));
+                    // X.save(b);
+                    // b = undefined;
+                    // X.transition(async x => {
+                    // });
+                    // setInterval(function () {
+                    //     console.log(EntityWatchingMap)
+                    // }, 10000)
+                    // getEntityManager().getRepository(Member);
+                    // var a = getEntityManager().getRepository(Member).createQueryBuilder("cubi")
+                ];
             case 1:
                 ret = _a.sent();
-                console.log(ret[0].member_id);
-                x_1.getEntityManager().getRepository(member_1.Member);
+                // var b = ret[0];
+                // for(var i in b){
+                //     console.log(b[i]);
+                // }
+                // b.member_name = 1;
+                // console.log(Object.entries(b));
+                // return;
+                // b.member_name = 'fuck';
+                // console.log(X.getChanged(b));
+                // X.save(b);
+                // b = undefined;
+                // X.transition(async x => {
+                // });
+                // setInterval(function () {
+                //     console.log(EntityWatchingMap)
+                // }, 10000)
+                // getEntityManager().getRepository(Member);
                 // var a = getEntityManager().getRepository(Member).createQueryBuilder("cubi")
                 return [2 /*return*/];
         }
@@ -71,7 +97,143 @@ x_1.X.start({
     console.log(e);
     console.log("Fuck");
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGVzdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL3Rlc3QvdGVzdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBSUEsaUJBbUZBOzs7QUF2RkEsZ0RBQWdEO0FBQ2hELDBEQUEwRDtBQUMxRCw0Q0FBNEM7QUFDNUMsa0RBQWtEO0FBQ2xELDBCQUEyQztBQUUzQyxtQ0FBMkM7QUFJM0Msc0JBQXNCO0FBQ3RCLHNCQUFzQjtBQUN0QixzQkFBc0I7QUFFdEIsMkJBQTJCO0FBRTNCLGlCQUFpQjtBQUNqQixvQ0FBb0M7QUFDcEMsaUJBQWlCO0FBQ2pCLEtBQUMsQ0FBQyxLQUFLLENBQ0g7SUFDSSxNQUFNLEVBQUUsU0FBUztJQUNqQixNQUFNLEVBQUUsT0FBTztJQUNmLE1BQU0sRUFBRSxXQUFXO0lBQ25CLE1BQU0sRUFBRSxJQUFJO0lBQ1osVUFBVSxFQUFFLE1BQU07SUFDbEIsVUFBVSxFQUFFLEtBQUs7SUFDakIsVUFBVSxFQUFFLE9BQU87SUFDbkIsNEJBQTRCO0lBQzVCLGdCQUFnQjtJQUNoQixLQUFLO0lBQ0wsbUJBQW1CO0lBQ25CLEdBQUc7SUFDSCxLQUFLO0lBQ0wsa0JBQWtCO0lBQ2xCLEdBQUc7SUFDSCxLQUFLO0lBQ0wsY0FBYyxFQUFFLEtBQUs7Q0FDeEIsQ0FDSixDQUFDLElBQUksQ0FBQyxVQUFNLFFBQVE7Ozs7b0JBRVAscUJBQU0sS0FBQyxDQUFDLElBQUksQ0FBQyxlQUFNLEVBQUM7b0JBQzFCLEtBQUssRUFBRTt3QkFDSCxXQUFXLEVBQUUsQ0FBQyxNQUFNLEVBQUUsTUFBTSxDQUFDO3dCQUM3QixTQUFTLEVBQUUsQ0FBQyxJQUFJLEVBQUUsQ0FBQyxFQUFFLEVBQUUsRUFBRSxFQUFFLEVBQUUsQ0FBQyxDQUFDO3dCQUMvQixlQUFlLEVBQUUsQ0FBQyxHQUFHLEVBQUUsSUFBSSxJQUFJLEVBQUUsQ0FBQyxPQUFPLEVBQUUsR0FBRyxJQUFJLENBQUM7d0JBQ25ELEdBQUcsRUFBRTs0QkFDRCxTQUFTLEVBQUUsQ0FBQzt5QkFDZjt3QkFDRCxFQUFFLEVBQUU7NEJBQ0EsV0FBVyxFQUFFLE1BQU07eUJBQ3RCO3FCQUNKO29CQUNELEtBQUssRUFBRTt3QkFDSCxTQUFTLEVBQUUsS0FBSztxQkFDbkI7b0JBQ0QsS0FBSyxFQUFFLFdBQVc7b0JBQ2xCLEtBQUssRUFBRSxFQUFFO2lCQUNaLENBQUMsRUFBQTs7c0JBakJRLFNBaUJSO2dCQUNGLE9BQU8sQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQyxDQUFDLFNBQVMsQ0FBQyxDQUFBO2dCQUc3QixvQkFBZ0IsRUFBRSxDQUFDLGFBQWEsQ0FBQyxlQUFNLENBQUMsQ0FBQztnQkFFekMsOEVBQThFO2dCQUM5RSxzQkFBTzs7O0tBZ0JWLENBQUMsQ0FBQyxLQUFLLENBQUMsVUFBQyxDQUFDO0lBQ1AsT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUMsQ0FBQTtJQUNkLE9BQU8sQ0FBQyxHQUFHLENBQUMsTUFBTSxDQUFDLENBQUE7QUFDdkIsQ0FBQyxDQUFDLENBQUEifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGVzdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL3Rlc3QvdGVzdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBSUEsaUJBbUdBOzs7QUFsR0EsbUNBQTJDO0FBRTNDLDBCQUF5QjtBQUd6QixLQUFDLENBQUMsS0FBSyxDQUNIO0lBQ0ksTUFBTSxFQUFFLFNBQVM7SUFDakIsTUFBTSxFQUFFLE9BQU87SUFDZixNQUFNLEVBQUUsV0FBVztJQUNuQixNQUFNLEVBQUUsSUFBSTtJQUNaLFVBQVUsRUFBRSxNQUFNO0lBQ2xCLFVBQVUsRUFBRSxLQUFLO0lBQ2pCLFVBQVUsRUFBRSxPQUFPO0lBQ25CLDRCQUE0QjtJQUM1QixnQkFBZ0I7SUFDaEIsS0FBSztJQUNMLG1CQUFtQjtJQUNuQixHQUFHO0lBQ0gsS0FBSztJQUNMLGtCQUFrQjtJQUNsQixHQUFHO0lBQ0gsS0FBSztJQUNMLGNBQWMsRUFBRSxLQUFLO0NBQ3hCLENBQ0osQ0FBQyxJQUFJLENBQUMsVUFBTSxRQUFRO1FBRWIsQ0FBQzs7OztvQkFBRyxJQUFJLGVBQU07Z0JBQ2xCLENBQUMsQ0FBQyxTQUFTLEdBQUcsQ0FBQyxDQUFDO2dCQUdOLHFCQUFNLEtBQUMsQ0FBQyxJQUFJLENBQUMsZUFBTSxFQUFFO3dCQUMzQixLQUFLLEVBQUU7NEJBQ0gsV0FBVyxFQUFFLENBQUMsTUFBTSxFQUFFLE1BQU0sQ0FBQzs0QkFDN0IsU0FBUyxFQUFFLENBQUMsSUFBSSxFQUFFLENBQUMsRUFBRSxFQUFFLEVBQUUsRUFBRSxFQUFFLENBQUMsQ0FBQzs0QkFDL0IsZUFBZSxFQUFFLENBQUMsR0FBRyxFQUFFLElBQUksSUFBSSxFQUFFLENBQUMsT0FBTyxFQUFFLEdBQUcsSUFBSSxDQUFDOzRCQUNuRCxHQUFHLEVBQUU7Z0NBQ0QsU0FBUyxFQUFFLENBQUM7NkJBQ2Y7NEJBQ0QsRUFBRSxFQUFFO2dDQUNBLFdBQVcsRUFBRSxNQUFNOzZCQUN0Qjt5QkFDSjt3QkFDRCxLQUFLLEVBQUU7NEJBQ0gsU0FBUyxFQUFFLEtBQUs7eUJBQ25CO3dCQUNELEtBQUssRUFBRSxXQUFXO3dCQUNsQixLQUFLLEVBQUUsRUFBRTtxQkFDWixDQUFDO29CQUNGLGtCQUFrQjtvQkFDbEIsbUJBQW1CO29CQUNuQix5QkFBeUI7b0JBQ3pCLElBQUk7b0JBQ0oscUJBQXFCO29CQUNyQixrQ0FBa0M7b0JBRWxDLFVBQVU7b0JBRVYsMEJBQTBCO29CQUMxQixnQ0FBZ0M7b0JBQ2hDLGFBQWE7b0JBRWIsaUJBQWlCO29CQUVqQiw0QkFBNEI7b0JBRTVCLE1BQU07b0JBRU4sNEJBQTRCO29CQUM1QixxQ0FBcUM7b0JBQ3JDLFlBQVk7b0JBR1osNENBQTRDO29CQUU1Qyw4RUFBOEU7a0JBM0I1RTs7c0JBakJRLFNBaUJSO2dCQUNGLGtCQUFrQjtnQkFDbEIsbUJBQW1CO2dCQUNuQix5QkFBeUI7Z0JBQ3pCLElBQUk7Z0JBQ0oscUJBQXFCO2dCQUNyQixrQ0FBa0M7Z0JBRWxDLFVBQVU7Z0JBRVYsMEJBQTBCO2dCQUMxQixnQ0FBZ0M7Z0JBQ2hDLGFBQWE7Z0JBRWIsaUJBQWlCO2dCQUVqQiw0QkFBNEI7Z0JBRTVCLE1BQU07Z0JBRU4sNEJBQTRCO2dCQUM1QixxQ0FBcUM7Z0JBQ3JDLFlBQVk7Z0JBR1osNENBQTRDO2dCQUU1Qyw4RUFBOEU7Z0JBQzlFLHNCQUFPOzs7S0FnQlYsQ0FBQyxDQUFDLEtBQUssQ0FBQyxVQUFDLENBQUM7SUFDUCxPQUFPLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQyxDQUFBO0lBQ2QsT0FBTyxDQUFDLEdBQUcsQ0FBQyxNQUFNLENBQUMsQ0FBQTtBQUN2QixDQUFDLENBQUMsQ0FBQSJ9
+});
+___scope___.file("test/member.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var XEntity_1 = require("../decorator/XEntity");
+var PrimaryColumn_1 = require("../decorator/PrimaryColumn");
+var Member = (function () {
+    function Member() {
+    }
+    Member.prototype.onGet = function () {
+        this.member_name = 'guichu';
+    };
+    return Member;
+}());
+tslib_1.__decorate([
+    PrimaryColumn_1.PrimaryColumn(),
+    tslib_1.__metadata("design:type", Number)
+], Member.prototype, "member_id", void 0);
+Member = tslib_1.__decorate([
+    XEntity_1.XEntity()
+], Member);
+exports.Member = Member;
+var Profile = (function () {
+    function Profile() {
+    }
+    return Profile;
+}());
+tslib_1.__decorate([
+    PrimaryColumn_1.PrimaryColumn(),
+    tslib_1.__metadata("design:type", Number)
+], Profile.prototype, "member_id", void 0);
+Profile = tslib_1.__decorate([
+    XEntity_1.XEntity
+], Profile);
+exports.Profile = Profile;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibWVtYmVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiZmlsZTovLy9FOi9tandvcmsvWG9ybS9zcmMvdGVzdC9tZW1iZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsZ0RBQStDO0FBRS9DLDREQUEyRDtBQUczRCxJQUFhLE1BQU07SUFBbkI7SUFhQSxDQUFDO0lBSkcsc0JBQUssR0FBTDtRQUNJLElBQUksQ0FBQyxXQUFXLEdBQUcsUUFBUSxDQUFDO0lBQ2hDLENBQUM7SUFFTCxhQUFDO0FBQUQsQ0FBQyxBQWJELElBYUM7QUFWRztJQURDLDZCQUFhLEVBQUU7O3lDQUNVO0FBSGpCLE1BQU07SUFEbEIsaUJBQU8sRUFBRTtHQUNHLE1BQU0sQ0FhbEI7QUFiWSx3QkFBTTtBQWdCbkIsSUFBYSxPQUFPO0lBQXBCO0lBUUEsQ0FBQztJQUFELGNBQUM7QUFBRCxDQUFDLEFBUkQsSUFRQztBQUxHO0lBREMsNkJBQWEsRUFBRTs7MENBQ1U7QUFIakIsT0FBTztJQURuQixpQkFBTztHQUNLLE9BQU8sQ0FRbkI7QUFSWSwwQkFBTyJ9
+});
+___scope___.file("decorator/XEntity.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var constant_1 = require("../constant");
+exports.EntityMap = new Map();
+function XEntity(first) {
+    var type = 'default';
+    var final = function (target) {
+        var info;
+        if (!exports.EntityMap.has(target.name)) {
+            info = InitEntityDescirption();
+            exports.EntityMap.set(target.name, info);
+        }
+        else {
+            info = exports.EntityMap.get(target.name);
+        }
+        info.database = type;
+        info.tableName = target.name.replace(/^[A-Z]/, function (a) {
+            return a.toLowerCase();
+        }).replace(/[A-Z][a-z]/g, function (a) {
+            return '_' + a.toLowerCase();
+        });
+        //大概会用到吧
+        constant_1.ORMCONFIG.MODELS[type] = constant_1.ORMCONFIG.MODELS[type] || [];
+        constant_1.ORMCONFIG.MODELS[type].push(target);
+        // var newClass =  class extends target.prototype.constructor {
+        //     constructor() {
+        //         super();
+        //         return ObservingObject.addObserveObject(this);
+        //     }
+        // }
+        // //更改名字，偷天换日
+        // Object.defineProperty(newClass,'name',{
+        //     value : target.name
+        // });
+        // return newClass;
+        // newClass.name = target.name;
+        // console.log(newClass)
+        // return function(){
+        //    
+        // }
+    };
+    if (first) {
+        if (typeof first == 'function') {
+            return final(first);
+        }
+        else {
+            return final;
+        }
+    }
+    return final;
+}
+exports.XEntity = XEntity;
+exports.EntityWatchingMap = new WeakMap();
+function InitEntityDescirption() {
+    return {
+        fields: [],
+        primary: 'id',
+        database: 'default',
+        tableName: ''
+    };
+}
+exports.InitEntityDescirption = InitEntityDescirption;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiWEVudGl0eS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL2RlY29yYXRvci9YRW50aXR5LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQ0Esd0NBQXdDO0FBSzdCLFFBQUEsU0FBUyxHQUFHLElBQUksR0FBRyxFQUE2QixDQUFDO0FBZTVELGlCQUF3QixLQUF5QztJQUM3RCxJQUFJLElBQUksR0FBRyxTQUFTLENBQUM7SUFDckIsSUFBSSxLQUFLLEdBQUcsVUFBVSxNQUFnQjtRQUNsQyxJQUFJLElBQXVCLENBQUM7UUFDNUIsRUFBRSxDQUFDLENBQUMsQ0FBQyxpQkFBUyxDQUFDLEdBQUcsQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDO1lBQzlCLElBQUksR0FBRyxxQkFBcUIsRUFBRSxDQUFDO1lBQy9CLGlCQUFTLENBQUMsR0FBRyxDQUFDLE1BQU0sQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLENBQUM7UUFDckMsQ0FBQztRQUNELElBQUksQ0FBQyxDQUFDO1lBQ0YsSUFBSSxHQUFHLGlCQUFTLENBQUMsR0FBRyxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQXNCLENBQUM7UUFDM0QsQ0FBQztRQUNELElBQUksQ0FBQyxRQUFRLEdBQUcsSUFBSSxDQUFDO1FBQ3JCLElBQUksQ0FBQyxTQUFTLEdBQUcsTUFBTSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsUUFBUSxFQUFFLFVBQVUsQ0FBQztZQUN0RCxNQUFNLENBQUMsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQzNCLENBQUMsQ0FBQyxDQUFDLE9BQU8sQ0FBQyxhQUFhLEVBQUUsVUFBVSxDQUFDO1lBQ2pDLE1BQU0sQ0FBQyxHQUFHLEdBQUcsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQ2pDLENBQUMsQ0FBQyxDQUFDO1FBRUgsUUFBUTtRQUNSLG9CQUFTLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxHQUFHLG9CQUFTLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxJQUFJLEVBQUUsQ0FBQztRQUN0RCxvQkFBUyxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLENBQUM7UUFFcEMsK0RBQStEO1FBQy9ELHNCQUFzQjtRQUN0QixtQkFBbUI7UUFDbkIseURBQXlEO1FBQ3pELFFBQVE7UUFDUixJQUFJO1FBQ0osY0FBYztRQUNkLDBDQUEwQztRQUMxQywwQkFBMEI7UUFDMUIsTUFBTTtRQUNOLG1CQUFtQjtRQUNuQiwrQkFBK0I7UUFDL0Isd0JBQXdCO1FBRXhCLHFCQUFxQjtRQUNyQixNQUFNO1FBQ04sSUFBSTtJQUNSLENBQUMsQ0FBQTtJQUNELEVBQUUsQ0FBQyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7UUFDUixFQUFFLENBQUMsQ0FBQyxPQUFPLEtBQUssSUFBSSxVQUFVLENBQUMsQ0FBQyxDQUFDO1lBQzdCLE1BQU0sQ0FBQyxLQUFLLENBQUMsS0FBSyxDQUFDLENBQUM7UUFDeEIsQ0FBQztRQUNELElBQUksQ0FBQyxDQUFDO1lBQ0YsTUFBTSxDQUFDLEtBQUssQ0FBQztRQUNqQixDQUFDO0lBQ0wsQ0FBQztJQUNELE1BQU0sQ0FBQyxLQUFLLENBQUM7QUFDakIsQ0FBQztBQWpERCwwQkFpREM7QUFPVSxRQUFBLGlCQUFpQixHQUFHLElBQUksT0FBTyxFQUF5QixDQUFDO0FBVXBFO0lBQ0ksTUFBTSxDQUFDO1FBQ0gsTUFBTSxFQUFFLEVBQUU7UUFDVixPQUFPLEVBQUUsSUFBSTtRQUNiLFFBQVEsRUFBRSxTQUFTO1FBQ25CLFNBQVMsRUFBRSxFQUFFO0tBQ2hCLENBQUE7QUFDTCxDQUFDO0FBUEQsc0RBT0MifQ==
+});
+___scope___.file("constant.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var ORMMODE;
+(function (ORMMODE) {
+    ORMMODE[ORMMODE["DESIGN"] = 0] = "DESIGN";
+    ORMMODE[ORMMODE["PRODUCT"] = 1] = "PRODUCT";
+})(ORMMODE = exports.ORMMODE || (exports.ORMMODE = {}));
+exports.ORMCONFIG = {
+    MODE: ORMMODE.DESIGN,
+    MODELS: {},
+    CONNECTION_MANAGER: {},
+    CONFIGS: {}
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29uc3RhbnQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmaWxlOi8vL0U6L21qd29yay9Yb3JtL3NyYy9jb25zdGFudC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUVBLElBQVksT0FHWDtBQUhELFdBQVksT0FBTztJQUNmLHlDQUFNLENBQUE7SUFDTiwyQ0FBTyxDQUFBO0FBQ1gsQ0FBQyxFQUhXLE9BQU8sR0FBUCxlQUFPLEtBQVAsZUFBTyxRQUdsQjtBQUNVLFFBQUEsU0FBUyxHQWFwQjtJQUNJLElBQUksRUFBRyxPQUFPLENBQUMsTUFBTTtJQUNyQixNQUFNLEVBQUcsRUFBRTtJQUNYLGtCQUFrQixFQUFHLEVBRXBCO0lBQ0QsT0FBTyxFQUFHLEVBQUU7Q0FDZixDQUFBIn0=
+});
+___scope___.file("decorator/PrimaryColumn.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var XEntity_1 = require("./XEntity");
+function PrimaryColumn(column) {
+    return function (target, key) {
+        var info = XEntity_1.EntityMap.get(target.constructor.name) || XEntity_1.InitEntityDescirption();
+        info.primary = key;
+        XEntity_1.EntityMap.set(target.constructor.name, info);
+    };
+}
+exports.PrimaryColumn = PrimaryColumn;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUHJpbWFyeUNvbHVtbi5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL2RlY29yYXRvci9QcmltYXJ5Q29sdW1uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEscUNBQWdGO0FBRWhGLHVCQUE4QixNQUFZO0lBQ3RDLE1BQU0sQ0FBQyxVQUFVLE1BQWMsRUFBRSxHQUFXO1FBQ3hDLElBQUksSUFBSSxHQUFzQixtQkFBUyxDQUFDLEdBQUcsQ0FBQyxNQUFNLENBQUMsV0FBVyxDQUFDLElBQUksQ0FBQyxJQUFJLCtCQUFxQixFQUFFLENBQUM7UUFDaEcsSUFBSSxDQUFDLE9BQU8sR0FBRyxHQUFHLENBQUM7UUFDbkIsbUJBQVMsQ0FBQyxHQUFHLENBQUMsTUFBTSxDQUFDLFdBQVcsQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLENBQUM7SUFDakQsQ0FBQyxDQUFBO0FBQ0wsQ0FBQztBQU5ELHNDQU1DIn0=
 });
 ___scope___.file("x.js", function(exports, require, module, __filename, __dirname){
 
@@ -82,28 +244,9 @@ var XEntity_1 = require("./decorator/XEntity");
 var manager_1 = require("./driver/mysql/manager");
 var constant_1 = require("./constant");
 var repository_1 = require("./repository");
-var index_1 = require("./index");
-/**
- * 得到一个模型对象的实例，需要放入监视对象中
- * @param model
- */
-// function X<Model>(model: { new(): Model }): Model {
-//     var ins = new model;
-//     var watching = {
-//         changed: new Set<string>()
-//     }
-//     var proxy = new Proxy(ins, {
-//         set: (obj: any, key: any, val: any) => {
-//             watching.changed.add(key);
-//             return obj[key] = val;
-//         }
-//     });
-//     watchMap.set(proxy, watching);
-//     return proxy;
-// }
-var respInstance = new Map();
 var XEntityManager = (function () {
     function XEntityManager() {
+        this.repoInstance = new Map();
     }
     XEntityManager.prototype.save = function (models) {
         if (Array.isArray(models)) {
@@ -126,38 +269,31 @@ var XEntityManager = (function () {
         }
         else {
             var model = models;
-            var changed = this.getChanged(model);
             //查找描述信息
-            var desc = XEntity_1.EntityMap.get(model.__proto__);
+            var desc = XEntity_1.EntityMap.get(model.__proto__.constructor.name);
             if (!desc) {
                 return model;
             }
             //没有发生任何改变的情况
+            var changed = Object.keys(model);
+            // var changed = ObservingObject.getChanged(model);
             if (!changed || !changed.length) {
                 return model;
             }
+            // var entries = Object.entries(model);
             //查询主键，如果没有的情况，默认为“ID"
             var constructor = model.__proto__.constructor;
             if (changed.includes(desc.primary) || !(desc.primary in model)) {
-                var ret_1 = getEntityManager().getRepository(constructor).insert(model);
+                // let ret = this.getRepository(constructor).insert(model);
+                var ret_1 = this.getConnection(desc.database).insert(model, desc);
                 return ret_1;
             }
             else {
                 if (!(desc.primary in model)) {
                     return model;
                 }
-                getEntityManager().getRepository(constructor).updateById(model[desc.primary], model);
+                this.getRepository(constructor).updateById(model[desc.primary], model);
             }
-            // var primary = 'id';
-            // var struct;
-            // if(struct = EntityMap.get(model.__proto__)){
-            //     if(struct.primary){
-            //         primary = struct.primary;
-            //     }
-            // }
-            // //如果主键改变了，视为新插入，否则视为更新
-            // if(changed.includes(primary)){
-            // }
         }
         var e_1, _a;
     };
@@ -167,47 +303,79 @@ var XEntityManager = (function () {
             args[_i] = arguments[_i];
         }
         if (args.length == 2) {
-            return index_1.getConnection(args[0]).query(args[1]);
+            return this.getConnection(args[0]).query(args[1]);
         }
-        return index_1.getConnection().query(args[0]);
+        return this.getConnection().query(args[0]);
     };
     /**
      * 对find方法的封装，有提示，有提示，有提示，重点要说三遍
+     * 为了效率着想，暂时不自动检测内部属性变化
+     * 提供第三个属性来强制要求返回观测对象
      * @param entity
      * @param option
      */
-    XEntityManager.prototype.find = function (entity, option) {
-        console.log(entity);
-        return this.getRepository(entity).find(option);
-    };
-    XEntityManager.prototype.findOne = function (entity, option) {
-        return this.getRepository(entity).findOne(option);
+    XEntityManager.prototype.find = function (entity, option, observable) {
+        if (observable === void 0) { observable = false; }
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var desc, result, ret, result_1, result_1_1, item, obj, e_2, _a;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        desc = XEntity_1.EntityMap.get(entity.name);
+                        if (!desc) {
+                            return [2 /*return*/, []];
+                        }
+                        return [4 /*yield*/, this.getConnection(desc.database).find(option, desc)];
+                    case 1:
+                        result = _b.sent();
+                        ret = [];
+                        try {
+                            for (result_1 = tslib_1.__values(result), result_1_1 = result_1.next(); !result_1_1.done; result_1_1 = result_1.next()) {
+                                item = result_1_1.value;
+                                //新版API
+                                if (entity.prototype.onGet) {
+                                    entity.prototype.onGet.call(item);
+                                }
+                                //兼容以前的写法
+                                if (entity.prototype.onLoad) {
+                                    entity.prototype.onLoad.call(item);
+                                }
+                                //黑魔法,将原型指向该字段，取Object.entries的时候只会取到变化的字段
+                                item.constructor = entity;
+                                obj = Object.create(item);
+                                ret.push(obj);
+                            }
+                        }
+                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                        finally {
+                            try {
+                                if (result_1_1 && !result_1_1.done && (_a = result_1.return)) _a.call(result_1);
+                            }
+                            finally { if (e_2) throw e_2.error; }
+                        }
+                        return [2 /*return*/, ret];
+                }
+            });
+        });
     };
     /**
-     * 得到一个模型中发生了改变的东西，便于以后注册钩子函数
-     * @param model
+     * findOne默认追加observable
+     * 可以检测到该元素内部的变动
+     * @param entity
+     * @param option
      */
-    XEntityManager.prototype.getChanged = function (model) {
-        if (!model) {
-            return [];
-        }
-        var changed = XEntity_1.EntityWatchingMap.get(model).changed;
-        var ret = [];
-        try {
-            for (var _a = tslib_1.__values(changed.values()), _b = _a.next(); !_b.done; _b = _a.next()) {
-                var val = _b.value;
-                ret.push(val);
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return ret;
-        var e_2, _c;
+    XEntityManager.prototype.findOne = function (entity, option) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var result;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.find(entity, option)];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result[0]];
+                }
+            });
+        });
     };
     /**
      * 启动函数，只有调用了这个并且传入对应的数据库连接配置，XORM才会生效
@@ -220,6 +388,7 @@ var XEntityManager = (function () {
         if (!Array.isArray(configs)) {
             configs = [configs];
         }
+        //启动垃圾回收器
         //开始启动连接池
         var promises = [];
         configs.forEach(function (config) {
@@ -251,110 +420,43 @@ var XEntityManager = (function () {
         return Promise.all(promises);
     };
     XEntityManager.prototype.transition = function (command) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                return [2 /*return*/, null];
+            });
+        });
     };
     XEntityManager.prototype.getRepository = function (model) {
-        var resp = respInstance.get(model.prototype) || (function () {
-            console.error(model);
+        var _this = this;
+        // return new Repository(model);
+        //让单例见鸡儿去吧
+        var resp = this.repoInstance.get(model.name) || (function () {
             var resp = new repository_1.Repository(model);
-            respInstance.set(model.prototype, resp);
+            _this.repoInstance.set(model.name, resp);
             return resp;
         })();
         return resp;
+    };
+    /**
+ ```````````* 得到一个连接
+ */
+    XEntityManager.prototype.getConnection = function (type) {
+        if (type === void 0) { type = 'default'; }
+        return this.hasConnection(type) ? constant_1.ORMCONFIG.CONNECTION_MANAGER[type] : undefined;
+    };
+    /**
+     * 判断是否存在这个数据库连接
+     * @param type
+     */
+    XEntityManager.prototype.hasConnection = function (type) {
+        if (type === void 0) { type = 'default'; }
+        return constant_1.ORMCONFIG.CONNECTION_MANAGER[type];
     };
     return XEntityManager;
 }());
 exports.XEntityManager = XEntityManager;
 exports.X = new XEntityManager;
-function getEntityManager() {
-    return exports.X;
-}
-exports.getEntityManager = getEntityManager;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoieC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL3gudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsK0NBQW1HO0FBSW5HLGtEQUFnRTtBQUNoRSx1Q0FBdUM7QUFDdkMsMkNBQXNEO0FBQ3RELGlDQUF3QztBQUt4Qzs7O0dBR0c7QUFDSCxzREFBc0Q7QUFDdEQsMkJBQTJCO0FBQzNCLHVCQUF1QjtBQUN2QixxQ0FBcUM7QUFDckMsUUFBUTtBQUNSLG1DQUFtQztBQUNuQyxtREFBbUQ7QUFDbkQseUNBQXlDO0FBQ3pDLHFDQUFxQztBQUNyQyxZQUFZO0FBQ1osVUFBVTtBQUNWLHFDQUFxQztBQUNyQyxvQkFBb0I7QUFDcEIsSUFBSTtBQUNKLElBQUksWUFBWSxHQUFHLElBQUksR0FBRyxFQUF1QixDQUFBO0FBRWpEO0lBQUE7SUE2SkEsQ0FBQztJQWxKRyw2QkFBSSxHQUFKLFVBQVEsTUFBVztRQUNmLEVBQUUsQ0FBQyxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsTUFBTSxDQUFDLENBQUMsQ0FBQyxDQUFDO1lBQ3hCLE1BQU0sR0FBRyxNQUFhLENBQUM7WUFDdkIsSUFBSSxHQUFHLEdBQUcsRUFBRSxDQUFDOztnQkFDYixHQUFHLENBQUMsQ0FBYyxJQUFBLFdBQUEsaUJBQUEsTUFBTSxDQUFBLDhCQUFBO29CQUFuQixJQUFJLE9BQUssbUJBQUE7b0JBQ1YsR0FBRyxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLE9BQUssQ0FBQyxDQUFDLENBQUM7aUJBQzlCOzs7Ozs7Ozs7WUFDRCxNQUFNLENBQUMsR0FBRyxDQUFDO1FBQ2YsQ0FBQztRQUNELElBQUksQ0FBQyxDQUFDO1lBQ0YsSUFBSSxLQUFLLEdBQU0sTUFBTSxDQUFDO1lBQ3RCLElBQUksT0FBTyxHQUFHLElBQUksQ0FBQyxVQUFVLENBQUMsS0FBSyxDQUFDLENBQUM7WUFDckMsUUFBUTtZQUNSLElBQUksSUFBSSxH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
-});
-___scope___.file("decorator/XEntity.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var constant_1 = require("../constant");
-exports.EntityMap = new Map();
-function XEntity(first) {
-    var type = 'default';
-    var final = function (target) {
-        var info;
-        if (!exports.EntityMap.has(target.prototype)) {
-            info = InitEntityDescirption();
-            exports.EntityMap.set(target.prototype, info);
-        }
-        else {
-            info = exports.EntityMap.get(target.prototype);
-        }
-        info.database = type;
-        info.tableName = target.name.replace(/^[A-Z]/, function (a) {
-            return a.toLowerCase();
-        }).replace(/[A-Z][a-z]/g, function (a) {
-            return '_' + a.toLowerCase();
-        });
-        //大概会用到吧
-        constant_1.ORMCONFIG.MODELS[type] = constant_1.ORMCONFIG.MODELS[type] || [];
-        constant_1.ORMCONFIG.MODELS[type].push(target);
-        var fn = target.prototype.constructor;
-        return function () {
-            fn();
-            var watching = {
-                changed: new Set()
-            };
-            var proxy = new Proxy(this, {
-                set: function (obj, key, val) {
-                    watching.changed.add(key);
-                    return obj[key] = val;
-                }
-            });
-            exports.EntityWatchingMap.set(proxy, watching);
-            return proxy;
-        };
-    };
-    if (first) {
-        if (typeof first == 'function') {
-            return final(first);
-        }
-        else {
-            return final;
-        }
-    }
-    return final;
-    // function(target : Function){
-    // ORMCONFIG[type] = ORMCONFIG[type]
-    // }
-}
-exports.XEntity = XEntity;
-exports.EntityWatchingMap = new WeakMap();
-function InitEntityDescirption() {
-    return {
-        fields: [],
-        primary: 'id',
-        database: 'default',
-        tableName: ''
-    };
-}
-exports.InitEntityDescirption = InitEntityDescirption;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiWEVudGl0eS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL2RlY29yYXRvci9YRW50aXR5LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQ0Esd0NBQXdDO0FBSTdCLFFBQUEsU0FBUyxHQUFHLElBQUksR0FBRyxFQUE0QixDQUFDO0FBZTNELGlCQUF3QixLQUEwQztJQUM5RCxJQUFJLElBQUksR0FBRyxTQUFTLENBQUM7SUFDckIsSUFBSSxLQUFLLEdBQUcsVUFBUyxNQUFpQjtRQUNsQyxJQUFJLElBQXdCLENBQUU7UUFDOUIsRUFBRSxDQUFBLENBQUMsQ0FBQyxpQkFBUyxDQUFDLEdBQUcsQ0FBQyxNQUFNLENBQUMsU0FBUyxDQUFDLENBQUMsQ0FBQSxDQUFDO1lBQ2pDLElBQUksR0FBRyxxQkFBcUIsRUFBRSxDQUFDO1lBQy9CLGlCQUFTLENBQUMsR0FBRyxDQUFDLE1BQU0sQ0FBQyxTQUFTLEVBQUMsSUFBSSxDQUFDLENBQUM7UUFDekMsQ0FBQztRQUNELElBQUksQ0FBQSxDQUFDO1lBQ0QsSUFBSSxHQUFHLGlCQUFTLENBQUMsR0FBRyxDQUFDLE1BQU0sQ0FBQyxTQUFTLENBQXNCLENBQUM7UUFDaEUsQ0FBQztRQUNELElBQUksQ0FBQyxRQUFRLEdBQUcsSUFBSSxDQUFDO1FBQ3JCLElBQUksQ0FBQyxTQUFTLEdBQUcsTUFBTSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsUUFBUSxFQUFDLFVBQVMsQ0FBQztZQUNwRCxNQUFNLENBQUMsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQzNCLENBQUMsQ0FBQyxDQUFDLE9BQU8sQ0FBQyxhQUFhLEVBQUMsVUFBUyxDQUFDO1lBQy9CLE1BQU0sQ0FBQyxHQUFHLEdBQUcsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQ2pDLENBQUMsQ0FBQyxDQUFDO1FBRUgsUUFBUTtRQUNSLG9CQUFTLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxHQUFHLG9CQUFTLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxJQUFJLEVBQUUsQ0FBQztRQUN0RCxvQkFBUyxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLENBQUM7UUFFcEMsSUFBSSxFQUFFLEdBQUcsTUFBTSxDQUFDLFNBQVMsQ0FBQyxXQUFXLENBQUM7UUFDdEMsTUFBTSxDQUFDO1lBQ0gsRUFBRSxFQUFFLENBQUM7WUFDTCxJQUFJLFFBQVEsR0FBRztnQkFDWCxPQUFPLEVBQUUsSUFBSSxHQUFHLEVBQVU7YUFDN0IsQ0FBQTtZQUNELElBQUksS0FBSyxHQUFHLElBQUksS0FBSyxDQUFDLElBQVcsRUFBRTtnQkFDL0IsR0FBRyxFQUFFLFVBQUMsR0FBUSxFQUFFLEdBQVEsRUFBRSxHQUFRO29CQUM5QixRQUFRLENBQUMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxHQUFHLENBQUMsQ0FBQztvQkFDMUIsTUFBTSxDQUFDLEdBQUcsQ0FBQyxHQUFHLENBQUMsR0FBRyxHQUFHLENBQUM7Z0JBQzFCLENBQUM7YUFDSixDQUFDLENBQUM7WUFDSCx5QkFBaUIsQ0FBQyxHQUFHLENBQUMsS0FBSyxFQUFFLFFBQVEsQ0FBQyxDQUFDO1lBQ3ZDLE1BQU0sQ0FBQyxLQUFLLENBQUM7UUFDakIsQ0FBQyxDQUFBO0lBQ0wsQ0FBQyxDQUFBO0lBQ0QsRUFBRSxDQUFBLENBQUMsS0FBSyxDQUFDLENBQUEsQ0FBQztRQUNOLEVBQUUsQ0FBQSxDQUFDLE9BQU8sS0FBSyxJQUFJLFVBQVUsQ0FBQyxDQUFBLENBQUM7WUFDM0IsTUFBTSxDQUFDLEtBQUssQ0FBQyxLQUFLLENBQUMsQ0FBQztRQUN4QixDQUFDO1FBQ0QsSUFBSSxDQUFBLENBQUM7WUFDRCxNQUFNLENBQUMsS0FBSyxDQUFDO1FBQ2pCLENBQUM7SUFDTCxDQUFDO0lBQ0QsTUFBTSxDQUFDLEtBQUssQ0FBQztJQUNiLCtCQUErQjtJQUMzQixvQ0FBb0M7SUFDeEMsSUFBSTtBQUNSLENBQUM7QUFsREQsMEJBa0RDO0FBT1UsUUFBQSxpQkFBaUIsR0FBRyxJQUFJLE9BQU8sRUFBeUIsQ0FBQztBQVVwRTtJQUNJLE1BQU0sQ0FBQztRQUNILE1BQU0sRUFBRyxFQUFFO1FBQ1gsT0FBTyxFQUFHLElBQUk7UUFDZCxRQUFRLEVBQUcsU0FBUztRQUNwQixTQUFTLEVBQUcsRUFBRTtLQUNqQixDQUFBO0FBQ0wsQ0FBQztBQVBELHNEQU9DIn0=
-});
-___scope___.file("constant.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var ORMMODE;
-(function (ORMMODE) {
-    ORMMODE[ORMMODE["DESIGN"] = 0] = "DESIGN";
-    ORMMODE[ORMMODE["PRODUCT"] = 1] = "PRODUCT";
-})(ORMMODE = exports.ORMMODE || (exports.ORMMODE = {}));
-exports.ORMCONFIG = {
-    MODE: ORMMODE.DESIGN,
-    MODELS: {},
-    CONNECTION_MANAGER: {},
-    CONFIGS: {}
-};
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29uc3RhbnQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmaWxlOi8vL0U6L21qd29yay9Yb3JtL3NyYy9jb25zdGFudC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUVBLElBQVksT0FHWDtBQUhELFdBQVksT0FBTztJQUNmLHlDQUFNLENBQUE7SUFDTiwyQ0FBTyxDQUFBO0FBQ1gsQ0FBQyxFQUhXLE9BQU8sR0FBUCxlQUFPLEtBQVAsZUFBTyxRQUdsQjtBQUNVLFFBQUEsU0FBUyxHQWFwQjtJQUNJLElBQUksRUFBRyxPQUFPLENBQUMsTUFBTTtJQUNyQixNQUFNLEVBQUcsRUFBRTtJQUNYLGtCQUFrQixFQUFHLEVBRXBCO0lBQ0QsT0FBTyxFQUFHLEVBQUU7Q0FDZixDQUFBIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoieC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL3gudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsK0NBQW1HO0FBSW5HLGtEQUFnRTtBQUNoRSx1Q0FBdUM7QUFDdkMsMkNBQXNEO0FBS3REO0lBQUE7UUFFWSxpQkFBWSxHQUFHLElBQUksR0FBRyxFQUF3QixDQUFDO0lBc04zRCxDQUFDO0lBcE1HLDZCQUFJLEdBQUosVUFBUSxNQUFXO1FBQ2YsRUFBRSxDQUFDLENBQUMsS0FBSyxDQUFDLE9BQU8sQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDLENBQUM7WUFDeEIsTUFBTSxHQUFHLE1BQWEsQ0FBQztZQUN2QixJQUFJLEdBQUcsR0FBRyxFQUFFLENBQUM7O2dCQUNiLEdBQUcsQ0FBQyxDQUFjLElBQUEsV0FBQSxpQkFBQSxNQUFNLENBQUEsOEJBQUE7b0JBQW5CLElBQUksT0FBSyxtQkFBQTtvQkFDVixHQUFHLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsT0FBSyxDQUFDLENBQUMsQ0FBQztpQkFDOUI7Ozs7Ozs7OztZQUNELE1BQU0sQ0FBQyxHQUFHLENBQUM7UUFDZixDQUFDO1FBQ0QsSUFBSSxDQUFDLENBQUM7WUFDRixJQUFJLEtBQUssR0FBTSxNQUFNLENBQUM7WUFDdEIsUUFBUTtZQUNSLElBQUksSUFBSSxHQUFHLG1CQUFTLENBQUMsR0FBRyxDQUFFLEtBQWEsQ0FBQyxTQUFTLENBQUMsV0FBVyxDQUFDLElBQUksQ0FBQyxDQUFDO1lBQ3BFLEVBQUUsQ0FBQyxDQUFDLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQztnQkFDUixNQUFNLENBQUMsS0FBSyxDQUFDO1lBQ2pCLENBQUM7WUFFRCxhQUFhO1lBQ2IsSUFBSSxPQUFPLEdBQUcsTUFBTSxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsQ0FBQztZQUNqQyxtREFBbUQ7WUFDbkQsRUFBRSxDQUFDLENBQUMsQ0FB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
 });
 ___scope___.file("driver/mysql/manager.js", function(exports, require, module, __filename, __dirname){
 
@@ -454,27 +556,37 @@ var MysqlConnectionManager = (function () {
     };
     MysqlConnectionManager.prototype.insert = function (data, desc) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var fields, values, key, dbname, sql, ret;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
+            var fields, values, _a, _b, _c, key, val, dbname, sql, ret, e_1, _d;
+            return tslib_1.__generator(this, function (_e) {
+                switch (_e.label) {
                     case 0:
                         fields = [], values = [];
-                        for (key in data) {
-                            if (typeof data[key] == 'function')
-                                continue;
-                            fields.push("`" + key + "`");
-                            if (data[key] == null) {
-                                values.push('null');
+                        try {
+                            for (_a = tslib_1.__values(Object.entries(data)), _b = _a.next(); !_b.done; _b = _a.next()) {
+                                _c = tslib_1.__read(_b.value, 2), key = _c[0], val = _c[1];
+                                if (typeof val == 'function')
+                                    continue;
+                                fields.push("`" + key + "`");
+                                if (val == null) {
+                                    values.push('null');
+                                }
+                                else {
+                                    values.push("'" + val + "'");
+                                }
                             }
-                            else {
-                                values.push("'" + data[key] + "'");
+                        }
+                        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                        finally {
+                            try {
+                                if (_b && !_b.done && (_d = _a.return)) _d.call(_a);
                             }
+                            finally { if (e_1) throw e_1.error; }
                         }
                         dbname = this.config.database;
                         sql = "\n            insert into `" + dbname + "`.`" + (this.config.tablesPrefix + desc.tableName) + "`\n                (\n                    " + fields.join(",") + "\n                )\n                values\n                (\n                    " + values.join(",") + "\n                );\n        ";
                         return [4 /*yield*/, this.query(sql)];
                     case 1:
-                        ret = _a.sent();
+                        ret = _e.sent();
                         data[desc.primary] = ret.insertId;
                         return [2 /*return*/, data];
                 }
@@ -514,15 +626,12 @@ var MysqlConnectionManager = (function () {
     return MysqlConnectionManager;
 }());
 exports.MysqlConnectionManager = MysqlConnectionManager;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibWFuYWdlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL2RyaXZlci9teXNxbC9tYW5hZ2VyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUVBLDZCQUErQjtBQU8vQjtJQXVISSxnQ0FBbUIsTUFBbUI7UUFBbkIsV0FBTSxHQUFOLE1BQU0sQ0FBYTtJQUN0QyxDQUFDO0lBdEhPLDJDQUFVLEdBQWxCLFVBQXNCLFdBQTJCLEVBQUUsSUFBdUI7UUFDdEUsSUFBSSxNQUFNLEdBQWEsRUFBRSxDQUFDO1FBQzFCLFdBQVc7UUFDWCxFQUFFLENBQUMsQ0FBQyxXQUFXLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQztZQUNsQixJQUFJLEdBQUcsR0FBRyxJQUFJLENBQUMsVUFBVSxDQUFDLFdBQVcsQ0FBQyxHQUFHLEVBQUUsSUFBSSxDQUFDLENBQUMsSUFBSSxFQUFFLENBQUM7WUFDeEQsRUFBRSxDQUFDLENBQUMsR0FBRyxJQUFJLEVBQUUsQ0FBQyxDQUFDLENBQUM7Z0JBQ1osTUFBTSxDQUFDLElBQUksQ0FBQyxRQUFRLEdBQUcsR0FBRyxHQUFHLEdBQUcsQ0FBQyxDQUFDO1lBQ3RDLENBQUM7WUFDRCxPQUFPLFdBQVcsQ0FBQyxHQUFHLENBQUM7UUFDM0IsQ0FBQztRQUNELFVBQVU7UUFDVixFQUFFLENBQUMsQ0FBQyxXQUFXLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQztZQUNqQixJQUFJLEdBQUcsR0FBRyxJQUFJLENBQUMsVUFBVSxDQUFDLFdBQVcsQ0FBQyxFQUFFLEVBQUUsSUFBSSxDQUFDLENBQUM7WUFDaEQsRUFBRSxDQUFDLENBQUMsR0FBRyxDQUFDLElBQUksRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDLENBQUM7Z0JBQ25CLE1BQU0sQ0FBQyxJQUFJLENBQUMsUUFBUSxHQUFHLEdBQUcsR0FBRyxHQUFHLENBQUMsQ0FBQztZQUN0QyxDQUFDO1lBQ0QsT0FBTyxXQUFXLENBQUMsRUFBRSxDQUFDO1FBQzFCLENBQUM7UUFFRCxHQUFHLENBQUMsQ0FBQyxJQUFJLElBQUksSUFBSSxXQUFXLENBQUMsQ0FBQyxDQUFDO1lBQzNCLElBQUksR0FBRyxHQUFJLFdBQW1CLENBQUMsSUFBSSxDQUFDLENBQUM7WUFDckMsSUFBSSxTQUFTLEdBQUcsSUFBSSxDQUFDLFNBQVMsR0FBRyxHQUFHLEdBQUcsSUFBSSxDQUFDO1lBQUMsRUFBRSxDQUFBO1lBQy9DLEVBQUUsQ0FBQyxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQyxDQUFDO2dCQUNyQixFQUFFLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLElBQUksTUFBTSxDQUFDLENBQUMsQ0FBQztvQkFDbkIsTUFBTSxDQUFDLElBQUksQ0FBQyxVQUFRLFNBQVMsZUFBVSxHQUFHLENBQUMsQ0FBQyxDQUFDLE1BQUcsQ0FBQyxDQUFDO2dCQUN0RCxDQUFDO2dCQUNELElBQUksQ0FBQyxFQUFFLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLElBQUksSUFBSSxDQUFDLENBQUMsQ0FBQztvQkFDdEIsTUFBTSxDQUFDLElBQUksQ0FBQyxVQUFRLFNBQVMsY0FBUyxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsR0FBRyxDQUFDLFVBQUMsSUFBWSxJQUFLLE9BQUEsTUFBSSxJQUFJLE1BQUcsRUFBWCxDQUFXLENBQUMsQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLE9BQUksQ0FBQyxDQUFDO2dCQUNuRyxDQUFDO1lBQ0wsQ0FBQztZQUNELElBQUksQ0FBQyxDQUFDO2dCQUNGLEVBQUUsQ0FBQyxDQUFDLEdBQUcsSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDO29CQUNkLE1BQU0sQ0FBQyxJQUFJLENBQUMsVUFBUSxTQUFTLGFBQVUsQ0FBQyxDQUFDO2dCQUM3QyxDQUFDO2dCQUNELElBQUksQ0FBQyxDQUFDO29CQUNGLE1BQU0sQ0FBQyxJQUFJLENBQUMsVUFBUSxTQUFTLFlBQU8sR0FBRyxNQUFHLENBQUMsQ0FBQztnQkFDaEQsQ0FBQztZQUNMLENBQUM7UUFDTCxDQUFDO1FBQ0QsTUFBTSxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLENBQUMsT0FBTyxDQUFDLGNBQWMsRUFBRSxFQUFFLENBQUMsQ0FBQztJQUN4RCxDQUFDO0lBR00seUNBQVEsR0FBZixVQUFtQixVQUF5QixFQUFFLElBQXVCO1FBQ2pFLElBQUksS0FBSyxDQUFDO1FBQ1YsSUFBSSxLQUFLLEdBQUcsRUFBRSxDQUFDO1FBRWYsSUFBSSxHQUFHLEdBQUcsa0NBQ1ksSUFBSSxDQUFDLE1BQU0sQ0FBQyxRQUFRLFlBQVEsSUFBSSxDQUFDLE1BQU0sQ0FBQyxZQUFZLEdBQUcsSUFBSSxDQUFDLFNBQVMsY0FBUyxJQUFJLENBQUMsU0FBUyxlQUNqSCxDQUFDO1FBQ0YsRUFBRSxDQUFDLENBQUMsVUFBVSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7WUFDbkIsSUFBSSxHQUFHLEdBQUcsSUFBSSxDQUFDLFVBQVUsQ0FBQyxVQUFVLENBQUMsS0FBSyxFQUFFLElBQUksQ0FBQyxDQUFDO1lBQ2xELEVBQUUsQ0FBQSxDQUFDLEdBQUcsSUFBSSxFQUFFLENBQUMsQ0FBQSxDQUFDO2dCQUNWLEdBQUcsSUFBSSxTQUFTLEdBQUcsR0FBRyxDQUFDO1lBQzNCLENBQUM7UUFDTCxDQUFDO1FBQ0QsRUFBRSxDQUFDLENBQUMsVUFBVSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7WUFDbkIsR0FBRyxJQUFJLFlBQVksSUFBTSxJQUFJLENBQUMsU0FBUyxTQUFJLFVBQVUsQ0FBQyxLQUFPLENBQUEsQ0FBQztRQUNsRSxDQUFDO1FBQ0QsRUFBRSxDQUFDLENBQUMsVUFBVSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7WUFDbkIsSUFBSSxHQUFHLEdBQUcsRUFBRSxDQUFDO1lBQ2IsR0FBRyxDQUFDLENBQUMsSUFBTSxJQUFJLElBQUksVUFBVSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7Z0JBQ2xDLEdBQUcsQ0FBQyxJQUFJLENBQUksSUFBSSxDQUFDLFNBQVMsU0FBSSxJQUFJLFNBQUksVUFBVSxDQUFDLEtBQUssQ0FBQyxJQUFJLENBQUcsQ0FBQyxDQUFDO1lBQ3BFLENBQUM7WUFDRCxHQUFHLElBQUksWUFBWSxHQUFHLEdBQUcsQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLENBQUM7UUFDeEMsQ0FBQztRQUNELEVBQUUsQ0FBQyxDQUFDLFVBQVUsQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDO1lBQ25CLEVBQUUsQ0FBQyxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsVUFBVSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQztnQkFDbEMsR0FBRyxJQUFJLFNBQVMsR0FBRyxVQUFVLENBQUMsS0FBSyxDQUFDLENBQUMsQ0FBQyxHQUFHLEtBQUssR0FBRyxVQUFVLENBQUMsS0FBSyxDQUFDLENBQUMsQ0FBQyxDQUFDO1lBQ3pFLENBQUM7WUFDRCxJQUFJLENBQUMsQ0FBQztnQkFDRixHQUFHLElBQUksU0FBUyxHQUFHLFVBQVUsQ0FBQyxLQUFLLENBQUM7WUFDeEMsQ0FBQztRQUNMLENBQUM7UUFDRCxNQUFNLENBQUMsR0FBRyxDQUFDO0lBQ2YsQ0FBQztJQUVLLHFDQUFJLEdBQVYsVUFBYyxVQUF5QixFQUFFLElBQXVCOztnQkFDdEQsR0FBRyxFQUNMLEdBQUc7Ozs7OEJBREssSUFBSSxDQUFDLFFBQVEsQ0FBQyxVQUFVLEVBQUUsSUFBSSxDQUFDO3dCQUVyQyxxQkFBTSxJQUFJLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxFQUFBOzt3QkFBM0IsR0FBRyxHQUFHLFNBQXFCLENBQUM7d0JBQzVCLHNCQUFRLEdBQVcsSUFBSSxFQUFFLEVBQUM7Ozs7S0FDN0I7SUFFSyx1Q0FBTSxHQUFaLFVBQWdCLElBQU8sRUFBRSxJQUF1Qjs7Z0JBQ3hDLE1BQU0sRUFDTixNQUFNLEVBQ0MsR0FBRyxFQVVWLE1BQU0sRUFFTixHQUFHOzs7O2lDQWRNLEVBQUUsV0FDRixFQUFFO3dCQUNmLEdBQUcsQ0FBQyxDQUFPLEdBQUcsSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDOzRCQUNyQixFQUFFLENBQUMsQ0FBQyxPQUFPLElBQUksQ0FBQyxHQUFHLENBQUMsSUFBSSxVQUFVLENBQUM7Z0NBQUMsUUFBUSxDQUFDOzRCQUM3QyxNQUFNLENBQUMsSUFBSSxDQUFDLE1BQUssR0FBRyxNQUFJLENBQUMsQ0FBQzs0QkFDMUIsRUFBRSxDQUFDLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxJQUFJLElBQUksQ0FBQyxDQUFDLENBQUM7Z0NBQ3BCLE1BQU0sQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLENBQUM7NEJBQ3hCLENBQUM7NEJBQ0QsSUFBSSxDQUFDLENBQUM7Z0NBQ0YsTUFBTSxDQUFDLElBQUksQ0FBQyxNQUFJLElBQUksQ0FBQyxHQUFHLENBQUMsTUFBRyxDQUFDLENBQUM7NEJBQ2xDLENBQUM7d0JBQ0wsQ0FBQztpQ0FDWSxJQUFJLENBQUMsTUFBTSxDQUFDLFFBQVE7OEJBRXZCLGdDQUNVLE1BQU0sWUFBUSxJQUFJLENBQUMsTUFBTSxDQUFDLFlBQVksR0FBRyxJQUFJLENBQUMsU0FBUyxtREFFN0QsTUFBTSxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUMsNEZBSWhCLE1BQU0sQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLG1DQUU3Qjt3QkFDUyxxQkFBTSxJQUFJLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxFQUFBOzs4QkFBckIsU0FBcUI7d0JBQzlCLElBQVksQ0FBQyxJQUFJLENBQUMsT0FBTyxDQUFDLEdBQUksR0FBVyxDQUFDLFFBQVEsQ0FBQzt3QkFDcEQsc0JBQU8sSUFBSSxFQUFDOzs7O0tBRWY7SUFPRDs7T0FFRztJQUNILHNDQUFLLEdBQUw7UUFDSSxJQUFJLENBQUMsSUFBSSxHQUFHLEtBQUssQ0FBQyxVQUFVLENBQUM7WUFDekIsSUFBSSxFQUFFLElBQUksQ0FBQyxNQUFNLENBQUMsSUFBSTtZQUN0QixJQUFJLEVBQUUsSUFBSSxDQUFDLE1BQU0sQ0FBQyxRQUFRO1lBQzFCLFFBQVEsRUFBRSxJQUFJLENBQUMsTUFBTSxDQUFDLFFBQVE7WUFDOUIsUUFBUSxFQUFFLElBQUksQ0FBQyxNQUFNLENBQUMsUUFBUTtZQUM5QixJQUFJLEVBQUUsSUFBSSxDQUFDLE1BQU0sQ0FBQyxJQUFJO1NBRXpCLENBQUMsQ0FBQztJQUNQLENBQUM7SUFFRCxzQ0FBSyxHQUFMLFVBQU0sR0FBVztRQUFqQixpQkFnQkM7UUFmRyxNQUFNLENBQUMsSUFBSSxPQUFPLENBQUMsVUFBQyxPQUFPLEVBQUUsTUFBTTtZQUMvQixLQUFJLENBQUMsSUFBSSxDQUFDLGFBQWEsQ0FBQyxVQUFDLEdBQUcsRUFBRSxVQUFVO2dCQUNwQyxFQUFFLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDO29CQUNOLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQztvQkFDWixNQUFNLENBQUM7Z0JBQ1gsQ0FBQztnQkFDRCxVQUFVLENBQUMsS0FBSyxDQUFDLEdBQUcsRUFBRSxVQUFDLEdBQUcsRUFBRSxJQUFJLEVBQUUsTUFBTTtvQkFDcEMsRUFBRSxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQzt3QkFDTixNQUFNLENBQUMsR0FBRyxDQUFDLENBQUE7d0JBQ1gsTUFBTSxDQUFDO29CQUNYLENBQUM7b0JBQ0QsT0FBTyxDQUFDLElBQUksQ0FBQyxDQUFDO2dCQUNsQixDQUFDLENBQUMsQ0FBQTtZQUNOLENBQUMsQ0FBQyxDQUFDO1FBQ1AsQ0FBQyxDQUFDLENBQUE7SUFDTixDQUFDO0lBR0wsNkJBQUM7QUFBRCxDQUFDLEFBM0pELElBMkpDO0FBM0pZLHdEQUFzQiJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibWFuYWdlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL2RyaXZlci9teXNxbC9tYW5hZ2VyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUVBLDZCQUErQjtBQU8vQjtJQXVISSxnQ0FBbUIsTUFBbUI7UUFBbkIsV0FBTSxHQUFOLE1BQU0sQ0FBYTtJQUN0QyxDQUFDO0lBdEhPLDJDQUFVLEdBQWxCLFVBQXNCLFdBQTJCLEVBQUUsSUFBdUI7UUFDdEUsSUFBSSxNQUFNLEdBQWEsRUFBRSxDQUFDO1FBQzFCLFdBQVc7UUFDWCxFQUFFLENBQUMsQ0FBQyxXQUFXLENBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQztZQUNsQixJQUFJLEdBQUcsR0FBRyxJQUFJLENBQUMsVUFBVSxDQUFDLFdBQVcsQ0FBQyxHQUFHLEVBQUUsSUFBSSxDQUFDLENBQUMsSUFBSSxFQUFFLENBQUM7WUFDeEQsRUFBRSxDQUFDLENBQUMsR0FBRyxJQUFJLEVBQUUsQ0FBQyxDQUFDLENBQUM7Z0JBQ1osTUFBTSxDQUFDLElBQUksQ0FBQyxRQUFRLEdBQUcsR0FBRyxHQUFHLEdBQUcsQ0FBQyxDQUFDO1lBQ3RDLENBQUM7WUFDRCxPQUFPLFdBQVcsQ0FBQyxHQUFHLENBQUM7UUFDM0IsQ0FBQztRQUNELFVBQVU7UUFDVixFQUFFLENBQUMsQ0FBQyxXQUFXLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQztZQUNqQixJQUFJLEdBQUcsR0FBRyxJQUFJLENBQUMsVUFBVSxDQUFDLFdBQVcsQ0FBQyxFQUFFLEVBQUUsSUFBSSxDQUFDLENBQUM7WUFDaEQsRUFBRSxDQUFDLENBQUMsR0FBRyxDQUFDLElBQUksRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDLENBQUM7Z0JBQ25CLE1BQU0sQ0FBQyxJQUFJLENBQUMsUUFBUSxHQUFHLEdBQUcsR0FBRyxHQUFHLENBQUMsQ0FBQztZQUN0QyxDQUFDO1lBQ0QsT0FBTyxXQUFXLENBQUMsRUFB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
 });
 ___scope___.file("repository.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var index_1 = require("./index");
-var XEntity_1 = require("./decorator/XEntity");
 var x_1 = require("./x");
 var querybuilder_1 = require("./querybuilder");
 var Repository = (function () {
@@ -540,42 +649,43 @@ var Repository = (function () {
     /**
      * typeorm中没有这个方法
      */
-    Repository.prototype.insert = function (data) {
-        var desc = XEntity_1.EntityMap.get(this.factory.prototype);
-        if (!desc) {
-            return data;
-        }
-        return index_1.getConnection(desc.database).insert(data, desc);
-    };
+    // insert(data: T) {
+    //     var desc = EntityMap.get(this.factory.name);
+    //     if (!desc) {
+    //         return data;
+    //     }
+    //     return getConnection(desc.database).insert(data as Partial<T>, desc);
+    // }
     Repository.prototype.findOne = function (findOption) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var ret;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        findOption.limit = 1;
-                        return [4 /*yield*/, this.find(findOption)];
-                    case 1:
-                        ret = _a.sent();
-                        if (ret) {
-                            return [2 /*return*/, ret[0]];
-                        }
-                        return [2 /*return*/, new this.factory];
-                }
-            });
-        });
+        return x_1.X.findOne(this.factory, findOption);
+        // findOption.limit = 1;
+        // var ret = await this.find(findOption);
+        // if(ret){
+        //     return ret[0];
+        // }
+        // return new this.factory;
     };
     Repository.prototype.find = function (findOption) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var desc;
-            return tslib_1.__generator(this, function (_a) {
-                desc = XEntity_1.EntityMap.get(this.factory.prototype);
-                if (!desc) {
-                    return [2 /*return*/, []];
-                }
-                return [2 /*return*/, index_1.getConnection(desc.database).find(findOption, desc)];
-            });
-        });
+        return x_1.X.find(this.factory, findOption);
+        // var desc = EntityMap.get(this.factory.name);
+        // if(!desc){
+        //     return [];
+        // }
+        // /**
+        //  * 兼容typeorm的部分暂时不要这些
+        //  */
+        // var result = await getConnection(desc.database).find<T>(findOption,desc);
+        // for(let item of result){
+        //     //新版API
+        //     if (this.factory.prototype.onGet) {
+        //         this.factory.prototype.onGet.call(item);
+        //     }
+        //     //兼容以前的写法
+        //     if(this.factory.prototype.onLoad){
+        //         this.factory.prototype.onLoad.call(item);
+        //     }
+        // }
+        // return result;
     };
     Repository.prototype.createQueryBuilder = function (alias) {
         return new querybuilder_1.QueryBuilder(this.factory, alias);
@@ -583,67 +693,7 @@ var Repository = (function () {
     return Repository;
 }());
 exports.Repository = Repository;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVwb3NpdG9yeS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL3JlcG9zaXRvcnkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsaUNBQXdDO0FBQ3hDLCtDQUFnRDtBQUNoRCx5QkFBd0I7QUFDeEIsK0NBQThDO0FBbUM5QztJQUVJLG9CQUFtQixPQUFxQjtRQUFyQixZQUFPLEdBQVAsT0FBTyxDQUFjO0lBQ3hDLENBQUM7SUFFRCwrQkFBVSxHQUFWLFVBQThCLFVBQWdCLEVBQUUsS0FBUTtJQUV4RCxDQUFDO0lBS0QsNEJBQU8sR0FBUCxVQUFRLE1BQVc7UUFDZixNQUFNLENBQUMsS0FBQyxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUMsQ0FBQztJQUMxQixDQUFDO0lBSUQseUJBQUksR0FBSixVQUFLLE1BQVc7UUFDWixNQUFNLENBQUMsS0FBQyxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUMsQ0FBQTtJQUN6QixDQUFDO0lBRUQ7O09BRUc7SUFDSCwyQkFBTSxHQUFOLFVBQU8sSUFBTztRQUNWLElBQUksSUFBSSxHQUFHLG1CQUFTLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsU0FBUyxDQUFDLENBQUM7UUFDakQsRUFBRSxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDO1lBQ1IsTUFBTSxDQUFDLElBQUksQ0FBQztRQUNoQixDQUFDO1FBQ0QsTUFBTSxDQUFDLHFCQUFhLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxJQUFrQixFQUFFLElBQUksQ0FBQyxDQUFDO0lBQ3pFLENBQUM7SUFJSyw0QkFBTyxHQUFiLFVBQ0ksVUFBeUI7Ozs7Ozt3QkFFekIsVUFBVSxDQUFDLEtBQUssR0FBRyxDQUFDLENBQUM7d0JBQ1gscUJBQU0sSUFBSSxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsRUFBQTs7OEJBQTNCLFNBQTJCO3dCQUNyQyxFQUFFLENBQUEsQ0FBQyxHQUFHLENBQUMsQ0FBQSxDQUFDOzRCQUNKLE1BQU0sZ0JBQUMsR0FBRyxDQUFDLENBQUMsQ0FBQyxFQUFDO3dCQUNsQixDQUFDO3dCQUNELHNCQUFPLElBQUksSUFBSSxDQUFDLE9BQU8sRUFBQzs7OztLQUMzQjtJQUVLLHlCQUFJLEdBQVYsVUFDSSxVQUEwQjs7Z0JBRXRCLElBQUk7O3VCQUFHLG1CQUFTLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsU0FBUyxDQUFDO2dCQUNoRCxFQUFFLENBQUEsQ0FBQyxDQUFDLElBQUksQ0FBQyxDQUFBLENBQUM7b0JBQ04sTUFBTSxnQkFBQyxFQUFFLEVBQUM7Z0JBQ2QsQ0FBQztnQkFDRCxzQkFBTyxxQkFBYSxDQUFDLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQyxJQUFJLENBQUksVUFBVSxFQUFDLElBQUksQ0FBQyxFQUFDOzs7S0FDaEU7SUFHRCx1Q0FBa0IsR0FBbEIsVUFBbUIsS0FBYztRQUM3QixNQUFNLENBQUMsSUFBSSwyQkFBWSxDQUFDLElBQUksQ0FBQyxPQUFPLEVBQUMsS0FBSyxDQUFDLENBQUM7SUFDaEQsQ0FBQztJQUVMLGlCQUFDO0FBQUQsQ0FBQyxBQTdERCxJQTZEQztBQTdEWSxnQ0FBVSJ9
-});
-___scope___.file("index.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var constant_1 = require("./constant");
-/**
- * 启动函数，调用该函数才会生效
- */
-// export function XOrmStart(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
-//     if (!configs) {
-//         throw new Error("Xorm 配置文件错误");
-//     }
-//     if(!Array.isArray(configs)){
-//         configs = [configs];
-//     }
-//     //开始启动连接池
-//     var promises: Promise<any>[] = [];
-//     configs.forEach(config => {
-//         let manager: IDriverBase;
-//         switch (config.type) {
-//             case 'mysql':
-//                 manager = new MysqlConnectionManager(config);
-//                 break;
-//             default:
-//                 throw new Error("未被识别的数据库驱动：" + config.type);
-//         }
-//         ORMCONFIG.CONFIGS[config.name] = config;
-//         promises.push(new Promise(async function (resolve, reject) {
-//             await manager.start();
-//             ORMCONFIG.CONNECTION_MANAGER[config.name] = manager;
-//             resolve(manager);
-//         }))
-//     });
-//     //返回对应的连接实例
-//     return Promise.all(promises);
-// }
-/**
- * 得到一个连接
- */
-function getConnection(type) {
-    if (type === void 0) { type = 'default'; }
-    return hasConnection(type) ? constant_1.ORMCONFIG.CONNECTION_MANAGER[type] : undefined;
-}
-exports.getConnection = getConnection;
-/**
- * 判断是否存在这个数据库连接
- * @param type
- */
-function hasConnection(type) {
-    if (type === void 0) { type = 'default'; }
-    return constant_1.ORMCONFIG.CONNECTION_MANAGER[type];
-}
-exports.hasConnection = hasConnection;
-// /**
-//  * 兼容typeorm
-//  */
-// export function getEntityManager(): EntityManager {
-// } 
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmaWxlOi8vL0U6L21qd29yay9Yb3JtL3NyYy9pbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUlBLHVDQUF1QztBQUd2Qzs7R0FFRztBQUVILDBGQUEwRjtBQUMxRixzQkFBc0I7QUFDdEIsMENBQTBDO0FBQzFDLFFBQVE7QUFDUixtQ0FBbUM7QUFDbkMsK0JBQStCO0FBQy9CLFFBQVE7QUFDUixnQkFBZ0I7QUFDaEIseUNBQXlDO0FBQ3pDLGtDQUFrQztBQUNsQyxvQ0FBb0M7QUFDcEMsaUNBQWlDO0FBQ2pDLDRCQUE0QjtBQUM1QixnRUFBZ0U7QUFDaEUseUJBQXlCO0FBRXpCLHVCQUF1QjtBQUN2QixnRUFBZ0U7QUFFaEUsWUFBWTtBQUNaLG1EQUFtRDtBQUVuRCx1RUFBdUU7QUFDdkUscUNBQXFDO0FBQ3JDLG1FQUFtRTtBQUNuRSxnQ0FBZ0M7QUFDaEMsY0FBYztBQUNkLFVBQVU7QUFDVixrQkFBa0I7QUFDbEIsb0NBQW9DO0FBQ3BDLElBQUk7QUFFSjs7R0FFRztBQUNILHVCQUE4QixJQUFnQjtJQUFoQixxQkFBQSxFQUFBLGdCQUFnQjtJQUMxQyxNQUFNLENBQUMsYUFBYSxDQUFDLElBQUksQ0FBQyxHQUFHLG9CQUFTLENBQUMsa0JBQWtCLENBQUMsSUFBSSxDQUFDLEdBQUcsU0FBUyxDQUFDO0FBQ2hGLENBQUM7QUFGRCxzQ0FFQztBQUVEOzs7R0FHRztBQUNILHVCQUE4QixJQUFnQjtJQUFoQixxQkFBQSxFQUFBLGdCQUFnQjtJQUMxQyxNQUFNLENBQUMsb0JBQVMsQ0FBQyxrQkFBa0IsQ0FBQyxJQUFJLENBQUMsQ0FBQztBQUM5QyxDQUFDO0FBRkQsc0NBRUM7QUFFRCxNQUFNO0FBQ04sZUFBZTtBQUNmLE1BQU07QUFDTixzREFBc0Q7QUFFdEQsSUFBSSJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVwb3NpdG9yeS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL3JlcG9zaXRvcnkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFFQSx5QkFBd0I7QUFDeEIsK0NBQThDO0FBbUM5QztJQUVJLG9CQUFtQixPQUFxQjtRQUFyQixZQUFPLEdBQVAsT0FBTyxDQUFjO0lBQ3hDLENBQUM7SUFFRCwrQkFBVSxHQUFWLFVBQThCLFVBQWdCLEVBQUUsS0FBUTtJQUV4RCxDQUFDO0lBS0QsNEJBQU8sR0FBUCxVQUFRLE1BQVc7UUFDZixNQUFNLENBQUMsS0FBQyxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUMsQ0FBQztJQUMxQixDQUFDO0lBSUQseUJBQUksR0FBSixVQUFLLE1BQVc7UUFDWixNQUFNLENBQUMsS0FBQyxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUMsQ0FBQTtJQUN6QixDQUFDO0lBRUQ7O09BRUc7SUFDSCxvQkFBb0I7SUFDcEIsbURBQW1EO0lBQ25ELG1CQUFtQjtJQUNuQix1QkFBdUI7SUFDdkIsUUFBUTtJQUNSLDRFQUE0RTtJQUM1RSxJQUFJO0lBSUosNEJBQU8sR0FBUCxVQUNJLFVBQXlCO1FBRXpCLE1BQU0sQ0FBQyxLQUFDLENBQUMsT0FBTyxDQUFDLElBQUksQ0FBQyxPQUFPLEVBQUMsVUFBVSxDQUFDLENBQUM7UUFFMUMsd0JBQXdCO1FBQ3hCLHlDQUF5QztRQUN6QyxXQUFXO1FBQ1gscUJBQXFCO1FBQ3JCLElBQUk7UUFDSiwyQkFBMkI7SUFDL0IsQ0FBQztJQUVELHlCQUFJLEdBQUosVUFDSSxVQUEwQjtRQUUxQixNQUFNLENBQUMsS0FBQyxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsT0FBTyxFQUFDLFVBQVUsQ0FBQyxDQUFDO1FBRXZDLCtDQUErQztRQUMvQyxhQUFhO1FBQ2IsaUJBQWlCO1FBQ2pCLElBQUk7UUFDSixNQUFNO1FBQ04sd0JBQXdCO1FBQ3hCLE1BQU07UUFDTiw0RUFBNEU7UUFDNUUsMkJBQTJCO1FBQzNCLGNBQWM7UUFDZCwwQ0FBMEM7UUFDMUMsbURBQW1EO1FBQ25ELFFBQVE7UUFDUixnQkFBZ0I7UUFDaEIseUNBQXlDO1FBQ3pDLG9EQUFvRDtRQUNwRCxRQUFRO1FBQ1IsSUFBSTtRQUNKLGlCQUFpQjtJQUVyQixDQUFDO0lBR0QsdUNBQWtCLEdBQWxCLFVBQW1CLEtBQWM7UUFDN0IsTUFBTSxDQUFDLElBQUksMkJBQVksQ0FBQyxJQUFJLENBQUMsT0FBTyxFQUFDLEtBQUssQ0FBQyxDQUFDO0lBQ2hELENBQUM7SUFFTCxpQkFBQztBQUFELENBQUMsQUFoRkQsSUFnRkM7QUFoRlksZ0NBQVUifQ==
 });
 ___scope___.file("querybuilder.js", function(exports, require, module, __filename, __dirname){
 
@@ -687,56 +737,6 @@ var QueryBuilder = (function () {
 exports.QueryBuilder = QueryBuilder;
 //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicXVlcnlidWlsZGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiZmlsZTovLy9FOi9tandvcmsvWG9ybS9zcmMvcXVlcnlidWlsZGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUVBOztHQUVHO0FBQ0g7SUFDSSxzQkFDWSxPQUFxQixFQUNyQixLQUFhO1FBRGIsWUFBTyxHQUFQLE9BQU8sQ0FBYztRQUNyQixVQUFLLEdBQUwsS0FBSyxDQUFRO0lBR3pCLENBQUM7SUFFRCwrQkFBUSxHQUFSLFVBQVMsU0FBaUIsRUFBRSxXQUFtQjtRQUMzQyxNQUFNLENBQUMsSUFBSSxDQUFDO0lBQ2hCLENBQUM7SUFFRCw4QkFBTyxHQUFQLFVBQVEsU0FBaUIsRUFBRSxXQUFtQjtRQUMxQyxNQUFNLENBQUMsSUFBSSxDQUFDO0lBQ2hCLENBQUM7SUFFRCw0QkFBSyxHQUFMLFVBQU0sU0FBaUIsRUFBRSxXQUFtQjtRQUN4QyxNQUFNLENBQUMsSUFBSSxDQUFDO0lBQ2hCLENBQUM7SUFFSywrQkFBUSxHQUFkOzs7Ozs7S0FFQztJQUVELDhCQUFPLEdBQVA7SUFFQSxDQUFDO0lBRUQsc0NBQWUsR0FBZjtJQUVBLENBQUM7SUFFRCw2QkFBTSxHQUFOO0lBRUEsQ0FBQztJQUVELDZCQUFNLEdBQU47SUFFQSxDQUFDO0lBQ0wsbUJBQUM7QUFBRCxDQUFDLEFBdkNELElBdUNDO0FBdkNZLG9DQUFZIn0=
 });
-___scope___.file("test/member.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var XEntity_1 = require("../decorator/XEntity");
-var PrimaryColumn_1 = require("../decorator/PrimaryColumn");
-var Member = (function () {
-    function Member() {
-    }
-    return Member;
-}());
-tslib_1.__decorate([
-    PrimaryColumn_1.PrimaryColumn(),
-    tslib_1.__metadata("design:type", Number)
-], Member.prototype, "member_id", void 0);
-Member = tslib_1.__decorate([
-    XEntity_1.XEntity()
-], Member);
-exports.Member = Member;
-var Profile = (function () {
-    function Profile() {
-    }
-    return Profile;
-}());
-tslib_1.__decorate([
-    PrimaryColumn_1.PrimaryColumn(),
-    tslib_1.__metadata("design:type", Number)
-], Profile.prototype, "member_id", void 0);
-Profile = tslib_1.__decorate([
-    XEntity_1.XEntity
-], Profile);
-exports.Profile = Profile;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibWVtYmVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiZmlsZTovLy9FOi9tandvcmsvWG9ybS9zcmMvdGVzdC9tZW1iZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsZ0RBQStDO0FBRS9DLDREQUEyRDtBQUczRCxJQUFhLE1BQU07SUFBbkI7SUFVQSxDQUFDO0lBQUQsYUFBQztBQUFELENBQUMsQUFWRCxJQVVDO0FBUEc7SUFEQyw2QkFBYSxFQUFFOzt5Q0FDVTtBQUhqQixNQUFNO0lBRGxCLGlCQUFPLEVBQUU7R0FDRyxNQUFNLENBVWxCO0FBVlksd0JBQU07QUFhbkIsSUFBYSxPQUFPO0lBQXBCO0lBUUEsQ0FBQztJQUFELGNBQUM7QUFBRCxDQUFDLEFBUkQsSUFRQztBQUxHO0lBREMsNkJBQWEsRUFBRTs7MENBQ1U7QUFIakIsT0FBTztJQURuQixpQkFBTztHQUNLLE9BQU8sQ0FRbkI7QUFSWSwwQkFBTyJ9
-});
-___scope___.file("decorator/PrimaryColumn.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var XEntity_1 = require("./XEntity");
-function PrimaryColumn(column) {
-    return function (target, key) {
-        var info = XEntity_1.EntityMap.get(target) || XEntity_1.InitEntityDescirption();
-        info.primary = key;
-        XEntity_1.EntityMap.set(target, info);
-    };
-}
-exports.PrimaryColumn = PrimaryColumn;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUHJpbWFyeUNvbHVtbi5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImZpbGU6Ly8vRTovbWp3b3JrL1hvcm0vc3JjL2RlY29yYXRvci9QcmltYXJ5Q29sdW1uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEscUNBQWdGO0FBRWhGLHVCQUE4QixNQUFZO0lBQ3RDLE1BQU0sQ0FBQyxVQUFVLE1BQWMsRUFBRSxHQUFXO1FBQ3hDLElBQUksSUFBSSxHQUFzQixtQkFBUyxDQUFDLEdBQUcsQ0FBQyxNQUFNLENBQUMsSUFBSSwrQkFBcUIsRUFBRSxDQUFDO1FBQy9FLElBQUksQ0FBQyxPQUFPLEdBQUcsR0FBRyxDQUFDO1FBQ25CLG1CQUFTLENBQUMsR0FBRyxDQUFDLE1BQU0sRUFBRSxJQUFJLENBQUMsQ0FBQztJQUNoQyxDQUFDLENBQUE7QUFDTCxDQUFDO0FBTkQsc0NBTUMifQ==
-});
 ___scope___.file("decorator/PrimaryGeneratedColumn.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
@@ -753,6 +753,89 @@ ___scope___.file("driver/driver.js", function(exports, require, module, __filena
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZHJpdmVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiZmlsZTovLy9FOi9tandvcmsvWG9ybS9zcmMvZHJpdmVyL2RyaXZlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIn0=
+});
+___scope___.file("gc.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+/**
+ * 垃圾回收器，负责回收被监视的对象
+ * 回收逻辑
+ *  1.当对象被监视的时候，对象被放入a容器，
+ *  2.30秒后，被标记的对象被放入b容器，待清除
+ *  3.此时如果b容器发生变动，对象仍旧回a容器
+ *  4.30秒后，如果b容器内的元素不再发生任何变动，则清除b容器内所有的引用，回收系统资源
+ */
+var GC_STEP_TIME = 30000;
+var GC = (function () {
+    function GC() {
+        this.boxA = new Map();
+        this.boxB = new Map();
+    }
+    GC.prototype.start = function () {
+        var _this = this;
+        setInterval(function () {
+            try {
+                //清空所有B容器的元素
+                for (var _a = tslib_1.__values(_this.boxB), _b = _a.next(); !_b.done; _b = _a.next()) {
+                    var _c = tslib_1.__read(_b.value, 2), key = _c[0], val = _c[1];
+                    _this.boxB.delete(key);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_b && !_b.done && (_d = _a.return)) _d.call(_a);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            //将容器A的东西全部放入容器B
+            _this.boxB = _this.boxA;
+            _this.boxA = new Map();
+            console.log("容器A大小", _this.boxA.size);
+            console.log("容器B大小", _this.boxB.size);
+            var e_1, _d;
+        }, GC_STEP_TIME);
+    };
+    GC.prototype.addObserveObject = function (obj) {
+        var _this = this;
+        var watching = {
+            changed: {}
+        };
+        var proxy = new Proxy(obj, {
+            set: function (obj, key, val) {
+                watching.changed[key] = true;
+                //如果这时候元素在B容器，那么放回A容器
+                if (_this.boxB.has(proxy)) {
+                    _this.boxB.delete(proxy);
+                    _this.boxA.set(proxy, watching);
+                }
+                else if (!_this.boxA.has(proxy)) {
+                    _this.boxA.set(proxy, watching);
+                }
+                return obj[key] = val;
+            }
+        });
+        //首先放入容器A
+        this.boxA.set(proxy, watching);
+        return proxy;
+    };
+    GC.prototype.getChanged = function (obj) {
+        var val = this.boxA.get(obj) || this.boxB.get(obj);
+        if (!val) {
+            return [];
+        }
+        return Object.keys(val.changed);
+    };
+    return GC;
+}());
+exports.ObservingObject = new GC;
+/**
+ * 开启
+ */
+// ObservingObject.start(); 
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZ2MuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmaWxlOi8vL0U6L21qd29yay9Yb3JtL3NyYy9nYy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFBQTs7Ozs7OztHQU9HO0FBQ0gsSUFBTSxZQUFZLEdBQUcsS0FBSyxDQUFDO0FBRTNCO0lBQUE7UUFDVyxTQUFJLEdBQUcsSUFBSSxHQUFHLEVBQUUsQ0FBQztRQUNqQixTQUFJLEdBQUcsSUFBSSxHQUFHLEVBQUUsQ0FBQztJQWlENUIsQ0FBQztJQS9DRyxrQkFBSyxHQUFMO1FBQUEsaUJBY0M7UUFiRyxXQUFXLENBQUM7O2dCQUNSLFlBQVk7Z0JBQ1osR0FBRyxDQUFDLENBQXFCLElBQUEsS0FBQSxpQkFBQSxLQUFJLENBQUMsSUFBSSxDQUFBLGdCQUFBO29CQUF2QixJQUFBLGdDQUFVLEVBQVQsV0FBRyxFQUFFLFdBQUc7b0JBQ2hCLEtBQUksQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDO2lCQUN6Qjs7Ozs7Ozs7O1lBQ0QsZ0JBQWdCO1lBQ2hCLEtBQUksQ0FBQyxJQUFJLEdBQUcsS0FBSSxDQUFDLElBQUksQ0FBQztZQUN0QixLQUFJLENBQUMsSUFBSSxHQUFHLElBQUksR0FBRyxFQUFFLENBQUM7WUFFdEIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxPQUFPLEVBQUUsS0FBSSxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsQ0FBQztZQUNyQyxPQUFPLENBQUMsR0FBRyxDQUFDLE9BQU8sRUFBRSxLQUFJLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxDQUFDOztRQUV6QyxDQUFDLEVBQUUsWUFBWSxDQUFDLENBQUM7SUFDckIsQ0FBQztJQUVELDZCQUFnQixHQUFoQixVQUFpQixHQUFXO1FBQTVCLGlCQXNCQztRQXJCRyxJQUFJLFFBQVEsR0FBRztZQUNYLE9BQU8sRUFBRSxFQUNSO1NBQ0osQ0FBQTtRQUNELElBQUksS0FBSyxHQUFHLElBQUksS0FBSyxDQUFDLEdBQVUsRUFBRTtZQUM5QixHQUFHLEVBQUUsVUFBQyxHQUFRLEVBQUUsR0FBUSxFQUFFLEdBQVE7Z0JBQzdCLFFBQVEsQ0FBQyxPQUFlLENBQUMsR0FBRyxDQUFDLEdBQUcsSUFBSSxDQUFDO2dCQUN0QyxxQkFBcUI7Z0JBQ3JCLEVBQUUsQ0FBQyxDQUFDLEtBQUksQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQztvQkFDdkIsS0FBSSxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUMsS0FBSyxDQUFDLENBQUM7b0JBQ3hCLEtBQUksQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLEtBQUssRUFBRSxRQUFRLENBQUMsQ0FBQztnQkFDbkMsQ0FBQztnQkFDRCxJQUFJLENBQUMsRUFBRSxDQUFBLENBQUMsQ0FBQyxLQUFJLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFBLENBQUM7b0JBQzNCLEtBQUksQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLEtBQUssRUFBQyxRQUFRLENBQUMsQ0FBQztnQkFDbEMsQ0FBQztnQkFDRCxNQUFNLENBQUMsR0FBRyxDQUFDLEdBQUcsQ0FBQyxHQUFHLEdBQUcsQ0FBQztZQUMxQixDQUFDO1NBQ0osQ0FBQyxDQUFDO1FBQ0gsU0FBUztRQUNULElBQUksQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLEtBQUssRUFBRSxRQUFRLENBQUMsQ0FBQztRQUMvQixNQUFNLENBQUMsS0FBSyxDQUFDO0lBQ2pCLENBQUM7SUFFRCx1QkFBVSxHQUFWLFVBQVcsR0FBVztRQUNsQixJQUFJLEdBQUcsR0FBRyxJQUFJLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxHQUFHLENBQUMsSUFBSSxJQUFJLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxHQUFHLENBQUMsQ0FBQztRQUNuRCxFQUFFLENBQUEsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxDQUFBLENBQUM7WUFDTCxNQUFNLENBQUMsRUFBRSxDQUFDO1FBQ2QsQ0FBQztRQUNELE1BQU0sQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxPQUFPLENBQUMsQ0FBQztJQUNwQyxDQUFDO0lBQ0wsU0FBQztBQUFELENBQUMsQUFuREQsSUFtREM7QUFHWSxRQUFBLGVBQWUsR0FBRyxJQUFJLEVBQUUsQ0FBQztBQUV0Qzs7R0FFRztBQUNILDJCQUEyQiJ9
 });
 ___scope___.file("header/config.js", function(exports, require, module, __filename, __dirname){
 

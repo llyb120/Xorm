@@ -40,23 +40,28 @@ export class XEntityManager {
         }
         else {
             var model = <T>models;
-            var changed = ObservingObject.getChanged(model);
             //查找描述信息
             var desc = EntityMap.get((model as any).__proto__.constructor.name);
             if (!desc) {
                 return model;
             }
+
             //没有发生任何改变的情况
+            var changed = Object.keys(model);
+            // var changed = ObservingObject.getChanged(model);
             if (!changed || !changed.length) {
                 return model;
             }
+            // var entries = Object.entries(model);
+
             //查询主键，如果没有的情况，默认为“ID"
             var constructor = (model as any).__proto__.constructor as {
                 new(): any
             }
            
             if (changed.includes(desc.primary) || !(desc.primary in model)) {
-                let ret = this.getRepository(constructor).insert(model);
+                // let ret = this.getRepository(constructor).insert(model);
+                let ret = this.getConnection(desc.database).insert(model as Partial<T>,desc);
                 return ret;
             }
             else {
@@ -90,19 +95,40 @@ export class XEntityManager {
      * @param option 
      */
     async find<T>(entity: Entity<T>, option: FindOption<T>, observable = false): Promise<T[]> {
-        var result = await this.getRepository(entity).find(option);
-        if (observable) {
-            var ret = [];
-            for (var item of result) {
-                var observed = ObservingObject.addObserveObject(item);
-                //劫持API，这才是你的亲爹
-                observed.__proto__ = entity.prototype;
-                ret.push(observed);
-            }
-            return ret;
+        const desc = EntityMap.get(entity.name);
+        if(!desc){
+            return [];
         }
-        return result;
+        var result = await this.getConnection(desc.database).find<T>(option,desc);
+        var ret = [];
+        for(let item of result){
+            //新版API
+            if (entity.prototype.onGet) {
+                entity.prototype.onGet.call(item);
+            }
+            //兼容以前的写法
+            if(entity.prototype.onLoad){
+                entity.prototype.onLoad.call(item);
+            }
 
+            //黑魔法,将原型指向该字段，取Object.entries的时候只会取到变化的字段
+            item.constructor = entity;
+            let obj = Object.create(item);
+            ret.push(obj);
+        }
+        return ret;
+        // var result = await this.getRepository(entity).find(option);
+        // if (observable) {
+        //     var ret = [];
+        //     for (var item of result) {
+        //         var observed = ObservingObject.addObserveObject(item);
+        //         //劫持API，这才是你的亲爹
+        //         observed.__proto__ = entity.prototype;
+        //         ret.push(observed);
+        //     }
+        //     return ret;
+        // }
+        // return result;
     }
 
     /**
@@ -112,14 +138,16 @@ export class XEntityManager {
      * @param option 
      */
     async findOne<T>(entity: Entity<T>, option: FindOption<T>): Promise<T> {
-        var result = await this.getRepository(entity).findOne(option);
-        if (result) {
-            var observed = ObservingObject.addObserveObject(result);
-            //劫持API，这才是你的亲爹
-            observed.__proto__ = entity.prototype;
-            return observed;
-        }
-        return result;
+        var result = await this.find(entity,option);
+        return result[0];
+        // var result = await this.getRepository(entity).findOne(option);
+        // if (result) {
+        //     var observed = ObservingObject.addObserveObject(result);
+        //     //劫持API，这才是你的亲爹
+        //     observed.__proto__ = entity.prototype;
+        //     return observed;
+        // }
+        // return result;
     }
 
 
@@ -134,6 +162,10 @@ export class XEntityManager {
         if (!Array.isArray(configs)) {
             configs = [configs];
         }
+
+        //启动垃圾回收器
+        
+
         //开始启动连接池
         var promises: Promise<any>[] = [];
         configs.forEach(config => {
@@ -180,7 +212,7 @@ export class XEntityManager {
 
 
     /**
- * 得到一个连接
+ ```````````* 得到一个连接
  */
     getConnection(type = 'default'): IDriverBase {
         return this.hasConnection(type) ? ORMCONFIG.CONNECTION_MANAGER[type] : undefined;

@@ -67,4 +67,4 @@ export const ObservingObject = new GC;
 /**
  * 开启
  */
-ObservingObject.start();
+// ObservingObject.start();

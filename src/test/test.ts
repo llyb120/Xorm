@@ -8,12 +8,6 @@ import { Repository } from '../repository';
 import { X } from '../x';
 import { ObservingObject } from '../gc';
 
-
-
-
-// console.log(a)
-// var d = EntityWatchingMap.get(a);
-// console.log(d)
 X.start(
     {
         "name": "default",
@@ -35,12 +29,12 @@ X.start(
         "tablesPrefix": "ra_"
     }
 ).then(async managers => {
-  
-    var a = new Member;
-    a.member_id = 1;
-    console.log(ObservingObject.getChanged(a));
 
-    var ret = await X.find(Member,{
+    var a = new Member;
+    a.member_id = 1; 
+    // console.log(ObservingObject.getChanged(a));
+
+    var ret = await X.find(Member, {
         where: {
             member_name: ['like', 'cubi'],
             member_id: ['in', [10, 20, 30]],
@@ -58,20 +52,28 @@ X.start(
         group: 'member_id',
         limit: 10
     })
-    var b = ret[0];
-    b.member_name = 'fuck';
-    console.log(X.getChanged(b));
-    X.save(b);
+    // var b = ret[0];
+    // for(var i in b){
+    //     console.log(b[i]);
+    // }
+    // b.member_name = 1;
+    // console.log(Object.entries(b));
 
-    b = undefined;
+    // return;
 
-    X.transition(async x => {
-        
-    });
+    // b.member_name = 'fuck';
+    // console.log(X.getChanged(b));
+    // X.save(b);
 
-    setInterval(function(){
-        console.log(EntityWatchingMap)
-    },10000)
+    // b = undefined;
+
+    // X.transition(async x => {
+
+    // });
+
+    // setInterval(function () {
+    //     console.log(EntityWatchingMap)
+    // }, 10000)
 
 
     // getEntityManager().getRepository(Member);

@@ -41,17 +41,17 @@ export function XEntity(first?: Function | string | XEntityConfig): any {
         ORMCONFIG.MODELS[type] = ORMCONFIG.MODELS[type] || [];
         ORMCONFIG.MODELS[type].push(target);
 
-        var newClass =  class extends target.prototype.constructor {
-            constructor() {
-                super();
-                return ObservingObject.addObserveObject(this);
-            }
-        }
-        //更改名字，偷天换日
-        Object.defineProperty(newClass,'name',{
-            value : target.name
-        });
-        return newClass;
+        // var newClass =  class extends target.prototype.constructor {
+        //     constructor() {
+        //         super();
+        //         return ObservingObject.addObserveObject(this);
+        //     }
+        // }
+        // //更改名字，偷天换日
+        // Object.defineProperty(newClass,'name',{
+        //     value : target.name
+        // });
+        // return newClass;
         // newClass.name = target.name;
         // console.log(newClass)
 

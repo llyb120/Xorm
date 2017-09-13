@@ -192,7 +192,7 @@ var XEntityManager = (function () {
         return resp;
     };
     /**
- * 得到一个连接
+ ```````````* 得到一个连接
  */
     XEntityManager.prototype.getConnection = function (type) {
         if (type === void 0) { type = 'default'; }

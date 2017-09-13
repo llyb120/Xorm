@@ -96,14 +96,14 @@ export class MysqlConnectionManager implements IDriverBase {
     async insert<T>(data: T, desc: EntityDescirption): Promise<T> {
         var fields = [],
             values = [];
-        for (const key in data) {
-            if (typeof data[key] == 'function') continue;
+        for (const [key,val] of Object.entries(data)) {
+            if (typeof val == 'function') continue;
             fields.push(`\`${key}\``);
-            if (data[key] == null) {
+            if (val == null) {
                 values.push('null');
             }
             else {
-                values.push(`'${data[key]}'`);
+                values.push(`'${val}'`);
             }
         }
         var dbname = this.config.database;
