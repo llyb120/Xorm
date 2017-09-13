@@ -4,7 +4,7 @@ import { XOrmConfig } from "./header/config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
-import { FindOption, Repository } from './repository';
+import { FindOption, Repository, WhereOptionCompare, WhereOption } from './repository';
 import { ObservingObject } from './gc';
 
 
@@ -23,13 +23,13 @@ export class XEntityManager {
      * 保存多个实例
      * @param models 
      */
-    save<T>(models: T[]): T[];
+    save<T>(models: T[]): Promise<T[]>;
     /**
      * 保存单个实例
      * @param model 
      */
-    save<T>(model: T): T;
-    save<T>(models: any): any {
+    save<T>(model: T): Promise<T>;
+    async save<T>(models: any): Promise<any> {
         if (Array.isArray(models)) {
             models = models as T[];
             var ret = [];
@@ -43,7 +43,7 @@ export class XEntityManager {
             //查找描述信息
             var desc = EntityMap.get((model as any).__proto__.constructor.name);
             if (!desc) {
-                return model;
+                throw new Error("desc not found:" + (model as any).__proto__.constructor.name);
             }
 
             //没有发生任何改变的情况
@@ -58,20 +58,66 @@ export class XEntityManager {
             var constructor = (model as any).__proto__.constructor as {
                 new(): any
             }
-           
+
             if (changed.includes(desc.primary) || !(desc.primary in model)) {
                 // let ret = this.getRepository(constructor).insert(model);
-                let ret = this.getConnection(desc.database).insert(model as Partial<T>,desc);
+                let ret = await this.getConnection(desc.database).insert(model as Partial<T>, desc);
                 return ret;
             }
             else {
+                // return this.update((model as any).__proto__.constructor,)
                 if (!(desc.primary in model)) {
-                    return model;
+                    return false;
                 }
-                this.getRepository(constructor).updateById((model as any)[desc.primary], model)
+                var condition = {};
+                (condition as any)[desc.primary] = (model as any)[desc.primary];
+                var updateData: any = { ...(model as Object) };
+                delete updateData[desc.primary];
+                let ret = await this.getConnection(desc.database).update(condition, updateData, desc);
+                return model;
             }
         }
     }
+
+
+
+    /**
+     * 更新函数，可以传入多个精湛的参数
+     * @param entity 
+     * @param condition 
+     * @param data 
+     */
+    async update<T>(entity: Entity<T>, condition: string, data: Partial<T>): Promise<Partial<T>>;
+    async update<T>(entity: Entity<T>, condition: number, data: Partial<T>): Promise<Partial<T>>;
+    async update<T>(entity: Entity<T>, codnition: WhereOption<T>, data: Partial<T>): Promise<Partial<T>>;
+    async update<T>(entity: Entity<T>, condition: string | number | WhereOption<T>, data: Partial<T>): Promise<Partial<T>> {
+        var desc = EntityMap.get(entity.name);
+        if (!desc) {
+            throw new Error("desc not found:" + entity.name);
+        }
+        if (!(desc.primary in data)) {
+            throw new Error("desc primary not found:" + entity.name)
+        }
+        let _condition: any;
+        let ret;
+        switch (typeof condition) {
+            case 'string':
+            case 'number':
+                _condition = {};
+                _condition[desc.primary] = condition;
+                break;
+            default:
+                _condition = condition;
+                break;
+        }
+        ret = await this.getConnection(desc.database).update(_condition, data, desc);
+        return data;
+    }
+
+    /**
+     * 删除函数
+     */
+
 
     /**
      * 万能查询函数，对于不想声明的entity可以直接使用sql语句查询
@@ -96,18 +142,18 @@ export class XEntityManager {
      */
     async find<T>(entity: Entity<T>, option: FindOption<T>, observable = false): Promise<T[]> {
         const desc = EntityMap.get(entity.name);
-        if(!desc){
+        if (!desc) {
             return [];
         }
-        var result = await this.getConnection(desc.database).find<T>(option,desc);
+        var result = await this.getConnection(desc.database).find<T>(option, desc);
         var ret = [];
-        for(let item of result){
+        for (let item of result) {
             //新版API
             if (entity.prototype.onGet) {
                 entity.prototype.onGet.call(item);
             }
             //兼容以前的写法
-            if(entity.prototype.onLoad){
+            if (entity.prototype.onLoad) {
                 entity.prototype.onLoad.call(item);
             }
 
@@ -138,7 +184,7 @@ export class XEntityManager {
      * @param option 
      */
     async findOne<T>(entity: Entity<T>, option: FindOption<T>): Promise<T> {
-        var result = await this.find(entity,option);
+        var result = await this.find(entity, option);
         return result[0];
         // var result = await this.getRepository(entity).findOne(option);
         // if (result) {
@@ -164,7 +210,7 @@ export class XEntityManager {
         }
 
         //启动垃圾回收器
-        
+
 
         //开始启动连接池
         var promises: Promise<any>[] = [];
@@ -212,8 +258,8 @@ export class XEntityManager {
 
 
     /**
- ```````````* 得到一个连接
- */
+    * 得到一个连接
+    */
     getConnection(type = 'default'): IDriverBase {
         return this.hasConnection(type) ? ORMCONFIG.CONNECTION_MANAGER[type] : undefined;
     }

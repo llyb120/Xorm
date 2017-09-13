@@ -9,11 +9,35 @@ import { QueryBuilder } from '../../querybuilder';
 
 export class MysqlConnectionManager implements IDriverBase {
 
+    async update<T>(condition: WhereOption<T>, data: T,desc : EntityDescirption): Promise<any> {
+        var str = this.buildWhere(condition,desc);
+        var sql = `
+            update \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` 
+            set ${(() => {
+                var buf = [];
+                for(const [key,val] of Object.entries(data)){
+                    var fieldName = desc.tableName + '.' + key;
+                    if(val == null){
+                        buf.push(`${fieldName} = null`);
+                    } 
+                    else{
+                        buf.push(`${fieldName} = '${val}'`);
+                    }
+                }
+                return buf.join(",");
+            })()}
+        `;
+        if(str != ''){
+            sql += ' where ' + str;
+        }
+        return this.query(sql);
+    }
+
     private buildWhere<T>(whereOption: WhereOption<T>, desc: EntityDescirption) {
         var buffer: string[] = [];
         //build and
         if (whereOption.and) {
-            var str = this.buildWhere(whereOption.and, desc).trim();
+            var str = this.buildWhere(whereOption.and, desc);
             if (str != '') {
                 buffer.push(' and (' + str + ')');
             }
@@ -22,7 +46,7 @@ export class MysqlConnectionManager implements IDriverBase {
         //build or
         if (whereOption.or) {
             var str = this.buildWhere(whereOption.or, desc);
-            if (str.trim() != '') {
+            if (str != '') {
                 buffer.push(' or ( ' + str + ')');
             }
             delete whereOption.or;
@@ -48,7 +72,7 @@ export class MysqlConnectionManager implements IDriverBase {
                 }
             }
         }
-        return buffer.join(" ").replace(/^\s*(and|or)/, "");
+        return buffer.join(" ").replace(/^\s*(and|or)/, "").trim();
     }
 
 

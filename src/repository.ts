@@ -1,5 +1,5 @@
 import { getConnection } from './index';
-import { EntityMap} from './decorator/XEntity';
+import { EntityMap, EntityDescirption } from './decorator/XEntity';
 import { X } from './x';
 import { QueryBuilder } from './querybuilder';
 
@@ -41,8 +41,15 @@ export class Repository<T>{
     constructor(public factory: { new(): T }) {
     }
 
-    updateById<K extends keyof T>(primaryKey: T[K], model: T) {
-
+    updateById(primaryKey: number | string, model: Partial<T>) {
+        return X.update(this.factory,primaryKey as string,model);
+        // var desc = EntityMap.get(this.factory.name);
+        // if(!desc){
+        //     return false;
+        // }
+        // var condition = {};
+        // condition[desc.primary] = 
+        // return getConnection(desc.database).update({})
     }
 
 

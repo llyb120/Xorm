@@ -1,6 +1,6 @@
 import { EntityDescirption } from './../decorator/XEntity';
 import { MysqlConnectionManager } from './mysql/manager';
-import { FindOption } from '../repository';
+import { FindOption, WhereOption } from '../repository';
 import { QueryBuilder } from '../querybuilder';
 
 export interface IDriverBase {
@@ -10,6 +10,7 @@ export interface IDriverBase {
 
     find<T>(findOption : FindOption<T>,desc : EntityDescirption) : Promise<T[]>;
 
+    update<T>(condition : WhereOption<T>,data : Partial<T>,desc : EntityDescirption) : Promise<any>;
 }
 
 
