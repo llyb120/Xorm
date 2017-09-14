@@ -64,7 +64,8 @@ export class MysqlConnectionManager implements IDriverBase {
 
         for (var name in whereOption) {
             var val = (whereOption as any)[name];
-            var fieldName = desc.tableName + '.' + name; ``
+            //添加前缀，防止占用关键字
+            var fieldName = 't_' + desc.tableName + '.' + name; ``
             if (Array.isArray(val)) {
                 if (val[0] == 'like') {
                     buffer.push(` and ${fieldName} like '${val[1]}'`);
@@ -91,7 +92,7 @@ export class MysqlConnectionManager implements IDriverBase {
         var group = '';
 
         var sql = `
-            select * from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` as ${desc.tableName}
+            select * from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` as t_${desc.tableName}
         `;
         if (findOption.where) {
             var str = this.buildWhere(findOption.where, desc);
@@ -100,12 +101,12 @@ export class MysqlConnectionManager implements IDriverBase {
             }
         }
         if (findOption.group) {
-            sql += ' group by ' + `${desc.tableName}.${findOption.group}`;
+            sql += ' group by ' + `t_${desc.tableName}.${findOption.group}`;
         }
         if (findOption.order) {
             var buf = [];
             for (const name in findOption.order) {
-                buf.push(`${desc.tableName}.${name} ${findOption.order[name]}`);
+                buf.push(`t_${desc.tableName}.${name} ${findOption.order[name]}`);
             }
             sql += " order by " + buf.join(",");
         }
@@ -117,6 +118,7 @@ export class MysqlConnectionManager implements IDriverBase {
                 sql += ' limit ' + findOption.limit;
             }
         }
+        console.log(sql)
         return sql;
     }
 

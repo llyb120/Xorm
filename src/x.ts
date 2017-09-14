@@ -1,5 +1,5 @@
 import { EntityMap, Entity, XEntity, EntityWatchingMap, IWatchedModel, EntityDescirption } from './decorator/XEntity';
-import { ObjectType, declare } from './header/ObjectType';
+import { ObjectType } from './header/ObjectType';
 import { XOrmConfig } from "./header/config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
@@ -151,11 +151,11 @@ export class XEntityManager {
         }
         else if (args.length == 2) {
             desc = EntityMap.get(args[0].name) as EntityDescirption;
-            if(!desc){
-                    throw new Error("desc not found");
+            if (!desc) {
+                throw new Error("desc not found");
             }
-            var condition : any = {};
-            switch(typeof args[1]){
+            var condition: any = {};
+            switch (typeof args[1]) {
                 case 'number':
                 case 'string':
                     condition[desc.primary] = args[1];
@@ -164,7 +164,7 @@ export class XEntityManager {
                     condition = args[1];
                     break;
             }
-            return await this.getConnection(desc.database).delete(condition,desc);
+            return await this.getConnection(desc.database).delete(condition, desc);
         }
         else {
             throw new Error("delete 参数不对");
@@ -209,6 +209,9 @@ export class XEntityManager {
                 entity.prototype.onLoad.call(item);
             }
 
+            //处理addon，追加需要连接的字段
+
+
             //黑魔法,将原型指向该字段，取Object.entries的时候只会取到变化的字段
             item.constructor = entity;
             let obj = Object.create(item);
@@ -231,6 +234,18 @@ export class XEntityManager {
     }
 
 
+    // async makeAddon<T>(entity : T[]);
+    // async makeAddon<T>(entity : T);
+    // async makeAddon<T>(entity : T | T[]){
+    //     if(Array.isArray(entity)){
+
+    //     }
+    //     else{
+
+    //     }
+    // }
+
+
     /**
      * 启动函数，只有调用了这个并且传入对应的数据库连接配置，XORM才会生效
      * @param configs 
@@ -244,7 +259,6 @@ export class XEntityManager {
         }
 
         //启动垃圾回收器
-
 
         //开始启动连接池
         var promises: Promise<any>[] = [];
@@ -277,6 +291,44 @@ export class XEntityManager {
     ): Promise<any> {
 
         return null;
+    }
+
+
+    /**
+     * 因为采取了原型内魔法
+     */
+    toJSON(...args: any[]): string {
+        return JSON.stringify(this.toObject.apply(this, args));
+    }
+    /**
+     * 同上
+     */
+    toObject(data: any): object {
+        var ret;
+        if (Array.isArray(data)) {
+            ret = [];
+            for (var item of data) {
+                ret.push(this.toObject(item));
+            }
+            return ret;
+        }
+        else {
+            for (var i in data) {
+                switch (typeof data[i] as any) {
+                    case 'function':
+                        break;
+
+                    case 'array':
+                        data[i] = this.toObject(data[i]);
+                        break;
+
+                    default:
+                        data[i] = data[i];
+                        break;
+                }
+            }
+            return data;
+        }
     }
 
     getRepository<T>(model: Entity<T>) {

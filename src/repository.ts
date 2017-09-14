@@ -23,6 +23,10 @@ export type WhereOption<T> = SingleWhereOption<T> & {
     or?: WhereOption<T>
 }
 
+export type AddOnOption<T> = {
+    [key in keyof T]? : any;
+}
+
 // export type 
 /**
  * {
@@ -34,6 +38,7 @@ export interface FindOption<T> {
     group?: GroupOption<T>;
     order?: OrderOption<T>;
     limit?: number[] | number;
+    addon? : AddOnOption<T>;
 }
 
 export class Repository<T>{

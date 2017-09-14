@@ -83,6 +83,13 @@ export interface EntityDescirption {
     primary: string,
     database: string;
     tableName: string;
+    external : {
+        [key : string] : {
+            entity : Function,
+            key : string,
+            type : "1v1" | "1vn" | "nv1"
+        } 
+    }
 }
 
 export function InitEntityDescirption(): EntityDescirption {
@@ -90,7 +97,8 @@ export function InitEntityDescirption(): EntityDescirption {
         fields: [],
         primary: 'id',
         database: 'default',
-        tableName: ''
+        tableName: '',
+        external : {}
     }
 }
 

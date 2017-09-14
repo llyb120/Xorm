@@ -1,6 +1,7 @@
 import { XEntity } from '../decorator/XEntity';
 import { X } from '../x';
 import { PrimaryColumn } from "../decorator/PrimaryColumn";
+import {  ManyToOne } from '../decorator/Link';
 
 @XEntity()
 export class Member{
@@ -18,14 +19,11 @@ export class Member{
     
 }
 
-@XEntity
-export class Profile{
-
-    @PrimaryColumn()
-    public member_id : number;
 
 
-    // public 
 
-}
+
+
+
+
 

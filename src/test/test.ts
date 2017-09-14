@@ -3,11 +3,12 @@
 // import { getConnection } from '../index';
 // import { IDriverBase } from '../driver/driver';
 import { EntityMap, EntityWatchingMap } from '../decorator/XEntity';
-import { Member, Profile } from './member';
+import { Member,  } from './member';
 import { Repository } from '../repository';
 import { X } from '../x';
 import { ObservingObject } from '../gc';
-
+import { OrderGoods } from './order_goods';
+import { Order } from './order';
 X.start(
     {
         "name": "default",
@@ -52,6 +53,28 @@ X.start(
         group: 'member_id',
         limit: 10
     })
+
+    X.find(Order,{
+        where : {
+             
+        }
+    })
+
+    b(Member,{
+         
+    })
+
+    function b<T>(c : {new() : T},d : {
+        [key in keyof T] : number
+    }){
+
+    }
+
+    b(Member,{})
+
+    console.log(X.toObject(d))
+    console.log(d.order_sn)
+    console.log(d.order_goods)
     // var b = ret[0];
     // for(var i in b){
     //     console.log(b[i]);
