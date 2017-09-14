@@ -1,39 +1,32 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
 /**
  * 为了兼容typeorm而写，实际可以抛弃这个做查询
  */
-var QueryBuilder = (function () {
-    function QueryBuilder(factory, alias) {
+class QueryBuilder {
+    constructor(factory, alias) {
         this.factory = factory;
         this.alias = alias;
     }
-    QueryBuilder.prototype.andWhere = function (condition, replacement) {
+    andWhere(condition, replacement) {
         return this;
-    };
-    QueryBuilder.prototype.orWhere = function (condition, replacement) {
+    }
+    orWhere(condition, replacement) {
         return this;
-    };
-    QueryBuilder.prototype.where = function (condition, replacement) {
+    }
+    where(condition, replacement) {
         return this;
-    };
-    QueryBuilder.prototype.getCount = function () {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            return tslib_1.__generator(this, function (_a) {
-                return [2 /*return*/];
-            });
-        });
-    };
-    QueryBuilder.prototype.getMany = function () {
-    };
-    QueryBuilder.prototype.getManyAndCount = function () {
-    };
-    QueryBuilder.prototype.getOne = function () {
-    };
-    QueryBuilder.prototype.getSql = function () {
-    };
-    return QueryBuilder;
-}());
+    }
+    async getCount() {
+    }
+    getMany() {
+    }
+    getManyAndCount() {
+    }
+    getOne() {
+    }
+    getSql() {
+    }
+}
 exports.QueryBuilder = QueryBuilder;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicXVlcnlidWlsZGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vc3JjL3F1ZXJ5YnVpbGRlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFFQTs7R0FFRztBQUNIO0lBQ0ksc0JBQ1ksT0FBcUIsRUFDckIsS0FBYTtRQURiLFlBQU8sR0FBUCxPQUFPLENBQWM7UUFDckIsVUFBSyxHQUFMLEtBQUssQ0FBUTtJQUd6QixDQUFDO0lBRUQsK0JBQVEsR0FBUixVQUFTLFNBQWlCLEVBQUUsV0FBbUI7UUFDM0MsTUFBTSxDQUFDLElBQUksQ0FBQztJQUNoQixDQUFDO0lBRUQsOEJBQU8sR0FBUCxVQUFRLFNBQWlCLEVBQUUsV0FBbUI7UUFDMUMsTUFBTSxDQUFDLElBQUksQ0FBQztJQUNoQixDQUFDO0lBRUQsNEJBQUssR0FBTCxVQUFNLFNBQWlCLEVBQUUsV0FBbUI7UUFDeEMsTUFBTSxDQUFDLElBQUksQ0FBQztJQUNoQixDQUFDO0lBRUssK0JBQVEsR0FBZDs7Ozs7O0tBRUM7SUFFRCw4QkFBTyxHQUFQO0lBRUEsQ0FBQztJQUVELHNDQUFlLEdBQWY7SUFFQSxDQUFDO0lBRUQsNkJBQU0sR0FBTjtJQUVBLENBQUM7SUFFRCw2QkFBTSxHQUFOO0lBRUEsQ0FBQztJQUNMLG1CQUFDO0FBQUQsQ0FBQyxBQXZDRCxJQXVDQztBQXZDWSxvQ0FBWSJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicXVlcnlidWlsZGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vc3JjL3F1ZXJ5YnVpbGRlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUVBOztHQUVHO0FBQ0g7SUFDSSxZQUNZLE9BQXFCLEVBQ3JCLEtBQWE7UUFEYixZQUFPLEdBQVAsT0FBTyxDQUFjO1FBQ3JCLFVBQUssR0FBTCxLQUFLLENBQVE7SUFHekIsQ0FBQztJQUVELFFBQVEsQ0FBQyxTQUFpQixFQUFFLFdBQW1CO1FBQzNDLE1BQU0sQ0FBQyxJQUFJLENBQUM7SUFDaEIsQ0FBQztJQUVELE9BQU8sQ0FBQyxTQUFpQixFQUFFLFdBQW1CO1FBQzFDLE1BQU0sQ0FBQyxJQUFJLENBQUM7SUFDaEIsQ0FBQztJQUVELEtBQUssQ0FBQyxTQUFpQixFQUFFLFdBQW1CO1FBQ3hDLE1BQU0sQ0FBQyxJQUFJLENBQUM7SUFDaEIsQ0FBQztJQUVELEtBQUssQ0FBQyxRQUFRO0lBRWQsQ0FBQztJQUVELE9BQU87SUFFUCxDQUFDO0lBRUQsZUFBZTtJQUVmLENBQUM7SUFFRCxNQUFNO0lBRU4sQ0FBQztJQUVELE1BQU07SUFFTixDQUFDO0NBQ0o7QUF2Q0Qsb0NBdUNDIn0=

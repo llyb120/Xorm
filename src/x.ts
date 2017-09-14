@@ -4,12 +4,13 @@ import { XOrmConfig } from "./header/config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
-import { FindOption, Repository, WhereOptionCompare, WhereOption } from './repository';
+import { FindOption, Repository, WhereOptionCompare, WhereOption, AddOnOption } from './repository';
 import { ObservingObject } from './gc';
 
 
+var isRuning = false;
 
-export class XEntityManager <U>{
+export class XEntityManager<U>{
 
     private repoInstance = new Map<any, Repository<any>>();
 
@@ -23,12 +24,12 @@ export class XEntityManager <U>{
      * 因为typescript无法通过省略参数来识别出第一个泛型，所以增加以下的变量以及方法，应对find方法，其他方法应该不受影响
      */
     /** start */
-    private factory : Function;
+    private factory: Function;
 
-    of<K>(entity : Entity<K>) : XEntityManager<K>{
+    of<K>(entity: Entity<K>): XEntityManager<K> {
         this.factory = entity;
         return this as any;
-    }    
+    }
     /**end */
 
 
@@ -84,7 +85,7 @@ export class XEntityManager <U>{
                 }
                 var condition = {};
                 (condition as any)[desc.primary] = (model as any)[desc.primary];
-                var updateData: any = { ...(model as Object) };
+                var updateData: any = Object.assign({},model);
                 delete updateData[desc.primary];
                 let ret = await this.getConnection(desc.database).update(condition, updateData, desc);
                 return model;
@@ -103,7 +104,7 @@ export class XEntityManager <U>{
     // async update( condition: string, data: Partial<U>): Promise<Partial<U>>;
     // async update( condition: number, data: Partial<U>): Promise<Partial<U>>;
     // async update( condition: WhereOption<U>, data: Partial<U>): Promise<Partial<U>>;
-    async update( condition: string | number | WhereOption<U>, data: Partial<U>): Promise<Partial<U>> {
+    async update(condition: string | number | WhereOption<U>, data: Partial<U>): Promise<Partial<U>> {
         var name = this.factory ? this.factory.name : '';
         var desc = EntityMap.get(name);
         if (!desc) {
@@ -206,15 +207,22 @@ export class XEntityManager <U>{
      * @param entity 
      * @param option 
      */
-    async find(option: FindOption<U>, observable = false): Promise<U[]> {
+    async find(option: FindOption<U> = {}, observable = false): Promise<U[]> {
         var name = this.factory ? this.factory.name : '';
         const desc = EntityMap.get(name);
         if (!desc) {
             throw new Error("desc not found");
             // return [];
         }
+
         var result = await this.getConnection(desc.database).find<U>(option, desc);
-        var ret = [];
+        //判断是否要追加字段
+        // if (option.addon) {
+        //     var addons = Object.keys(desc.external).filter(item => desc.external[item]);
+
+
+        // }
+        var ret : any[] = [];
         for (let item of result) {
             //新版API
             if (this.factory.prototype.onGet) {
@@ -225,14 +233,20 @@ export class XEntityManager <U>{
                 this.factory.prototype.onLoad.call(item);
             }
 
-            //处理addon，追加需要连接的字段
-
-
             //黑魔法,将原型指向该字段，取Object.entries的时候只会取到变化的字段
             item.constructor = this.factory;
             let obj = Object.create(item);
             ret.push(obj);
         }
+
+        if (option.addon) {
+            var addons = Object.keys(option.addon).filter(item => desc.external[item]);
+            //使用in统一查询，减少负担                    
+            await Promise.all(addons.map(async key => {
+                await this.makeAddon(ret, key);
+            }));
+        }
+
         return ret;
 
     }
@@ -243,36 +257,103 @@ export class XEntityManager <U>{
      * @param entity 
      * @param option 
      */
-    async findOne(option: FindOption<U>): Promise<U> {
+    async findOne(option: FindOption<U> = {}): Promise<U> {
         var result = await this.find(option);
         return result[0];
 
     }
 
 
-    // async makeAddon<T>(entity : T[]);
-    // async makeAddon<T>(entity : T);
-    // async makeAddon<T>(entity : T | T[]){
-    //     if(Array.isArray(entity)){
+    async makeAddon<T>(entity: T[], key?: string | string[]): Promise<void>;
+    async makeAddon<T>(entity: T, key?: string | string[]): Promise<void>;
+    async makeAddon<T>(entity: T | T[], key?: any): Promise<void> {
+        if (!Array.isArray(entity)) {
+            entity = [entity];
+        }
+        if (!entity.length) {
+            return;
+        }
 
-    //     }
-    //     else{
+        let desc = EntityMap.get((entity[0] as any).__proto__.constructor.name); if (!desc) {
+            throw new Error("desc not found");
+        }
 
-    //     }
-    // }
+        //如果没有传递key这个参数，那么默认生成所有的连接关系
+        if (!key) {
+            var keys = Object.keys(desc.external);
+            if (!keys.length) {
+                return;
+            }
+            await Promise.all(keys.map(async key => await this.makeAddon(entity, key)));
+            return;
+        }
+        if (!Array.isArray(key)) {
+            key = [key];
+        }
+
+        //真正的查询从这里开始
+        for (const k of key) {
+            var addon = (desc as any).external[k];
+            var cVals = entity.map(item => {
+                return (item as any)[addon.fromKey];
+            })
+            var condition: any = {};
+            condition[addon.toKey] = ['in', cVals];
+            var targetEntity = EntityMap.get(addon.entity);
+            if(!targetEntity){
+                continue;
+            }
+            let result = await this.of(targetEntity.entity as any).find({
+                where: condition
+            });
+            //按指定条件分组                
+            var groups: any = {};
+            result.forEach(item => {
+                var k = (item as any)[addon.toKey];
+                groups[k] = groups[k] || [];
+                groups[k].push(item);
+            });
+            if (addon.type == '1vn') {
+                for (var item of entity) {
+                    var target = groups[(item as any)[addon.fromKey]];
+                    if(target){
+                        (item as any).__proto__[addon.field] = groups[(item as any)[addon.fromKey]];
+                    }
+                    else{
+                        (item as any).__proto__[addon.field] = []; 
+                    }
+                }
+            }
+            //只针对一个的情况
+            else {
+                for (var item of entity) {
+                    var target = groups[(item as any)[addon.fromKey]]
+                    if(target && target.length){
+                        (item as any).__proto__[addon.field] = target[0];
+                    }
+                }
+            }
+        }
+    }
 
 
     /**
      * 启动函数，只有调用了这个并且传入对应的数据库连接配置，XORM才会生效
      * @param configs 
      */
-    start(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
+    async start(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
         if (!configs) {
             throw new Error("Xorm 配置文件错误");
         }
         if (!Array.isArray(configs)) {
             configs = [configs];
         }
+
+        //设为正在运行的状态，防止后面有人重新启动
+        if (isRuning) {
+            return [];
+        }
+        isRuning = true;
 
         //启动垃圾回收器
 
@@ -297,6 +378,7 @@ export class XEntityManager <U>{
                 resolve(manager);
             }))
         });
+
         //返回对应的连接实例
         return Promise.all(promises);
     }

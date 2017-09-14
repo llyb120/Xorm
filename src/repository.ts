@@ -47,7 +47,7 @@ export class Repository<T>{
     }
 
     updateById(primaryKey: number | string, model: Partial<T>) {
-        return X.update(this.factory,primaryKey as string,model);
+        return X.of(this.factory).update(primaryKey as string,model);
         // var desc = EntityMap.get(this.factory.name);
         // if(!desc){
         //     return false;

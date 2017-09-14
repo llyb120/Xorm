@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
                            
-    "target": "es5",                          
+    "target": "ESNEXT",                          
     "module": "commonjs",                     
     "lib": ["es5","es6","es7","esnext"],                             
     "allowJs": true, 

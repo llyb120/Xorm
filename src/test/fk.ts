@@ -1,29 +1,6 @@
-import { Member } from './member';
-import { X } from '../x';
+import { a } from './fk2';
+export class b{
 
-type O<U> = {
-    c : U
-    where : {
-        [key in keyof U] : any 
-    }
-} 
-function d<T>( d : O<T>){
-    try{
-
-    }catch{
-
-    }
 }
 
-function M(obj){
-    return X.of(obj);
-}
-
-X[Member]
-
-d({
-    c : Member,
-    where : {
-        
-    }
-})
+console.log(a);

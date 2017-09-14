@@ -30,6 +30,7 @@ export function XEntity(first?: Function | string | XEntityConfig): any {
         else {
             info = EntityMap.get(target.name) as EntityDescirption;
         }
+        info.entity = target;
         info.database = type;
         info.tableName = target.name.replace(/^[A-Z]/, function (a) {
             return a.toLowerCase();
@@ -79,26 +80,30 @@ export var EntityWatchingMap = new WeakMap<Object, IWatchedModel>();
 
 
 export interface EntityDescirption {
+    entity: Function,
     fields: any[],
     primary: string,
     database: string;
     tableName: string;
-    external : {
-        [key : string] : {
-            entity : Function,
-            key : string,
-            type : "1v1" | "1vn" | "nv1"
-        } 
+    external: {
+        [key: string]: {
+            entity: string,
+            field: string,
+            fromKey: string,
+            toKey: string,
+            type: "1v1" | "1vn" | "nv1"
+        }
     }
 }
 
 export function InitEntityDescirption(): EntityDescirption {
     return {
+        entity: () => null,
         fields: [],
         primary: 'id',
         database: 'default',
         tableName: '',
-        external : {}
+        external: {}
     }
 }
 

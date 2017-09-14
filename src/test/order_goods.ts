@@ -8,6 +8,6 @@ export class OrderGoods{
     order_id : number;
 
 
-    @ManyToOne(Order,"order_id")
+    @ManyToOne(Order,"Order.order_id","order_id")
     order : Order;
 }

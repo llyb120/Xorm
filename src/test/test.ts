@@ -9,6 +9,9 @@ import { X } from '../x';
 import { ObservingObject } from '../gc';
 import { OrderGoods } from './order_goods';
 import { Order } from './order';
+
+OrderGoods.name;
+
 X.start(
     {
         "name": "default",
@@ -30,7 +33,6 @@ X.start(
         "tablesPrefix": "ra_"
     }
 ).then(async managers => {
-
     var a = new Member;
     a.member_id = 1; 
     // console.log(ObservingObject.getChanged(a));
@@ -55,17 +57,38 @@ X.start(
     })
 
 
-    function b<T>(c : {new() : T},d : {
-        [key in keyof T] : number
-    }){
+    var d = await X.of(Order).findOne({
+        where : {
+            order_sn : "1504498057635203"
+        },
+        addon : {
+            order_goods : 1
+        }
+    });
 
-    }
+    var og = d.order_goods;
 
-    b(Member,{})
+    await X.makeAddon(og,"order");
+  
+    console.log(X.toObject(d));
+    // console.log(X.toObject(og[0].order))
+    console.log(X.toJSON(og));
+    
+    // console.log(X.toObject(og[0].order));
+    // console.log(X.toObject(d.order_goods));
 
-    console.log(X.toObject(d))
-    console.log(d.order_sn)
-    console.log(d.order_goods)
+
+    // function b<T>(c : {new() : T},d : {
+    //     [key in keyof T] : number
+    // }){
+
+    // }
+
+    // b(Member,{})
+
+    // console.log(X.toObject(d))
+    // console.log(d.order_sn)
+    // console.log(d.order_goods)
     // var b = ret[0];
     // for(var i in b){
     //     console.log(b[i]);

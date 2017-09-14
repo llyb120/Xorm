@@ -11,6 +11,6 @@ export class Order{
 
     // order_goods : 
 
-    @OneToMany(OrderGoods,"order_id")
+    @OneToMany(OrderGoods,"OrderGoods.order_id",'order_id')
     order_goods : OrderGoods[]
 }

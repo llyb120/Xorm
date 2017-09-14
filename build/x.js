@@ -1,71 +1,149 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = require("tslib");
-var XEntity_1 = require("./decorator/XEntity");
-var manager_1 = require("./driver/mysql/manager");
-var constant_1 = require("./constant");
-var repository_1 = require("./repository");
-var gc_1 = require("./gc");
-var XEntityManager = (function () {
-    function XEntityManager() {
+const XEntity_1 = require("./decorator/XEntity");
+const manager_1 = require("./driver/mysql/manager");
+const constant_1 = require("./constant");
+const repository_1 = require("./repository");
+var isRuning = false;
+class XEntityManager {
+    constructor() {
         this.repoInstance = new Map();
     }
-    XEntityManager.prototype.save = function (models) {
+    of(entity) {
+        this.factory = entity;
+        return this;
+    }
+    async save(models) {
         if (Array.isArray(models)) {
             models = models;
             var ret = [];
-            try {
-                for (var models_1 = tslib_1.__values(models), models_1_1 = models_1.next(); !models_1_1.done; models_1_1 = models_1.next()) {
-                    var model_1 = models_1_1.value;
-                    ret.push(this.save(model_1));
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (models_1_1 && !models_1_1.done && (_a = models_1.return)) _a.call(models_1);
-                }
-                finally { if (e_1) throw e_1.error; }
+            for (let model of models) {
+                ret.push(this.save(model));
             }
             return ret;
         }
         else {
             var model = models;
-            var changed = gc_1.ObservingObject.getChanged(model);
             //查找描述信息
             var desc = XEntity_1.EntityMap.get(model.__proto__.constructor.name);
             if (!desc) {
-                return model;
+                throw new Error("desc not found:" + model.__proto__.constructor.name);
             }
             //没有发生任何改变的情况
+            var changed = Object.keys(model);
+            // var changed = ObservingObject.getChanged(model);
             if (!changed || !changed.length) {
                 return model;
             }
+            // var entries = Object.entries(model);
             //查询主键，如果没有的情况，默认为“ID"
             var constructor = model.__proto__.constructor;
             if (changed.includes(desc.primary) || !(desc.primary in model)) {
-                var ret_1 = this.getRepository(constructor).insert(model);
-                return ret_1;
+                // let ret = this.getRepository(constructor).insert(model);
+                let ret = await this.getConnection(desc.database).insert(model, desc);
+                return ret;
             }
             else {
+                // return this.update((model as any).__proto__.constructor,)
                 if (!(desc.primary in model)) {
-                    return model;
+                    return false;
                 }
-                this.getRepository(constructor).updateById(model[desc.primary], model);
+                var condition = {};
+                condition[desc.primary] = model[desc.primary];
+                var updateData = Object.assign({}, model);
+                delete updateData[desc.primary];
+                let ret = await this.getConnection(desc.database).update(condition, updateData, desc);
+                return model;
             }
         }
-        var e_1, _a;
-    };
-    XEntityManager.prototype.query = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
+    }
+    /**
+     * 更新函数，可以传入多个精湛的参数
+     * @param entity
+     * @param condition
+     * @param data
+     */
+    // async update( condition: string, data: Partial<U>): Promise<Partial<U>>;
+    // async update( condition: number, data: Partial<U>): Promise<Partial<U>>;
+    // async update( condition: WhereOption<U>, data: Partial<U>): Promise<Partial<U>>;
+    async update(condition, data) {
+        var name = this.factory ? this.factory.name : '';
+        var desc = XEntity_1.EntityMap.get(name);
+        if (!desc) {
+            throw new Error("desc not found:" + name);
         }
+        if (!(desc.primary in data)) {
+            throw new Error("desc primary not found:" + name);
+        }
+        let _condition;
+        let ret;
+        switch (typeof condition) {
+            case 'string':
+            case 'number':
+                _condition = {};
+                _condition[desc.primary] = condition;
+                break;
+            default:
+                _condition = condition;
+                break;
+        }
+        ret = await this.getConnection(desc.database).update(_condition, data, desc);
+        return data;
+    }
+    async delete(...args) {
+        let desc;
+        if (args.length == 1) {
+            let entity = args[0];
+            if (Array.isArray(entity)) {
+                if (!entity.length) {
+                    return false;
+                }
+                desc = XEntity_1.EntityMap.get(entity[0].__proto__.constructor.name);
+                if (!desc) {
+                    throw new Error("desc not found");
+                }
+                var ids = entity.map(item => item[desc.primary]).filter(item => item != null && item != '');
+                var condition = {};
+                condition[desc.primary] = ['in', ids];
+                return await this.getConnection(desc.database).delete(condition, desc);
+            }
+            else {
+                desc = XEntity_1.EntityMap.get(entity[0].__proto__.constructor.name);
+                if (!desc) {
+                    throw new Error("desc not found");
+                }
+                var condition = {};
+                condition[desc.primary] = entity[desc.primary];
+                return await this.getConnection(desc.database).delete(condition, desc);
+            }
+        }
+        else if (args.length == 2) {
+            desc = XEntity_1.EntityMap.get(args[0].name);
+            if (!desc) {
+                throw new Error("desc not found");
+            }
+            var condition = {};
+            switch (typeof args[1]) {
+                case 'number':
+                case 'string':
+                    condition[desc.primary] = args[1];
+                    break;
+                default:
+                    condition = args[1];
+                    break;
+            }
+            return await this.getConnection(desc.database).delete(condition, desc);
+        }
+        else {
+            throw new Error("delete 参数不对");
+        }
+    }
+    query(...args) {
         if (args.length == 2) {
             return this.getConnection(args[0]).query(args[1]);
         }
         return this.getConnection().query(args[0]);
-    };
+    }
     /**
      * 对find方法的封装，有提示，有提示，有提示，重点要说三遍
      * 为了效率着想，暂时不自动检测内部属性变化
@@ -73,80 +151,139 @@ var XEntityManager = (function () {
      * @param entity
      * @param option
      */
-    XEntityManager.prototype.find = function (entity, option, observable) {
-        if (observable === void 0) { observable = false; }
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var result, ret, result_1, result_1_1, item, observed, e_2, _a;
-            return tslib_1.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.getRepository(entity).find(option)];
-                    case 1:
-                        result = _b.sent();
-                        if (observable) {
-                            ret = [];
-                            try {
-                                for (result_1 = tslib_1.__values(result), result_1_1 = result_1.next(); !result_1_1.done; result_1_1 = result_1.next()) {
-                                    item = result_1_1.value;
-                                    observed = gc_1.ObservingObject.addObserveObject(item);
-                                    //劫持API，这才是你的亲爹
-                                    observed.__proto__ = entity.prototype;
-                                    ret.push(observed);
-                                }
-                            }
-                            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                            finally {
-                                try {
-                                    if (result_1_1 && !result_1_1.done && (_a = result_1.return)) _a.call(result_1);
-                                }
-                                finally { if (e_2) throw e_2.error; }
-                            }
-                            return [2 /*return*/, ret];
-                        }
-                        return [2 /*return*/, result];
-                }
-            });
-        });
-    };
+    async find(option = {}, observable = false) {
+        var name = this.factory ? this.factory.name : '';
+        const desc = XEntity_1.EntityMap.get(name);
+        if (!desc) {
+            throw new Error("desc not found");
+            // return [];
+        }
+        var result = await this.getConnection(desc.database).find(option, desc);
+        //判断是否要追加字段
+        // if (option.addon) {
+        //     var addons = Object.keys(desc.external).filter(item => desc.external[item]);
+        // }
+        var ret = [];
+        for (let item of result) {
+            //新版API
+            if (this.factory.prototype.onGet) {
+                this.factory.prototype.onGet.call(item);
+            }
+            //兼容以前的写法
+            if (this.factory.prototype.onLoad) {
+                this.factory.prototype.onLoad.call(item);
+            }
+            //黑魔法,将原型指向该字段，取Object.entries的时候只会取到变化的字段
+            item.constructor = this.factory;
+            let obj = Object.create(item);
+            ret.push(obj);
+        }
+        if (option.addon) {
+            var addons = Object.keys(option.addon).filter(item => desc.external[item]);
+            //使用in统一查询，减少负担                    
+            await Promise.all(addons.map(async (key) => {
+                await this.makeAddon(ret, key);
+            }));
+        }
+        return ret;
+    }
     /**
      * findOne默认追加observable
      * 可以检测到该元素内部的变动
      * @param entity
      * @param option
      */
-    XEntityManager.prototype.findOne = function (entity, option) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var result, observed;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getRepository(entity).findOne(option)];
-                    case 1:
-                        result = _a.sent();
-                        if (result) {
-                            observed = gc_1.ObservingObject.addObserveObject(result);
-                            //劫持API，这才是你的亲爹
-                            observed.__proto__ = entity.prototype;
-                            return [2 /*return*/, observed];
-                        }
-                        return [2 /*return*/, result];
-                }
+    async findOne(option = {}) {
+        var result = await this.find(option);
+        return result[0];
+    }
+    async makeAddon(entity, key) {
+        if (!Array.isArray(entity)) {
+            entity = [entity];
+        }
+        if (!entity.length) {
+            return;
+        }
+        let desc = XEntity_1.EntityMap.get(entity[0].__proto__.constructor.name);
+        if (!desc) {
+            throw new Error("desc not found");
+        }
+        //如果没有传递key这个参数，那么默认生成所有的连接关系
+        if (!key) {
+            var keys = Object.keys(desc.external);
+            if (!keys.length) {
+                return;
+            }
+            await Promise.all(keys.map(async (key) => await this.makeAddon(entity, key)));
+            return;
+        }
+        if (!Array.isArray(key)) {
+            key = [key];
+        }
+        //真正的查询从这里开始
+        for (const k of key) {
+            var addon = desc.external[k];
+            var cVals = entity.map(item => {
+                return item[addon.fromKey];
             });
-        });
-    };
+            var condition = {};
+            condition[addon.toKey] = ['in', cVals];
+            var targetEntity = XEntity_1.EntityMap.get(addon.entity);
+            if (!targetEntity) {
+                continue;
+            }
+            let result = await this.of(targetEntity.entity).find({
+                where: condition
+            });
+            //按指定条件分组                
+            var groups = {};
+            result.forEach(item => {
+                var k = item[addon.toKey];
+                groups[k] = groups[k] || [];
+                groups[k].push(item);
+            });
+            if (addon.type == '1vn') {
+                for (var item of entity) {
+                    var target = groups[item[addon.fromKey]];
+                    if (target) {
+                        item.__proto__[addon.field] = groups[item[addon.fromKey]];
+                    }
+                    else {
+                        item.__proto__[addon.field] = [];
+                    }
+                }
+            }
+            else {
+                for (var item of entity) {
+                    var target = groups[item[addon.fromKey]];
+                    if (target && target.length) {
+                        item.__proto__[addon.field] = target[0];
+                    }
+                }
+            }
+        }
+    }
     /**
      * 启动函数，只有调用了这个并且传入对应的数据库连接配置，XORM才会生效
      * @param configs
      */
-    XEntityManager.prototype.start = function (configs) {
+    async start(configs) {
         if (!configs) {
             throw new Error("Xorm 配置文件错误");
         }
         if (!Array.isArray(configs)) {
             configs = [configs];
         }
+        //设为正在运行的状态，防止后面有人重新启动
+        if (isRuning) {
+            return [];
+        }
+        isRuning = true;
+        //启动垃圾回收器
         //开始启动连接池
         var promises = [];
-        configs.forEach(function (config) {
-            var manager;
+        configs.forEach(config => {
+            let manager;
             switch (config.type) {
                 case 'mysql':
                     manager = new manager_1.MysqlConnectionManager(config);
@@ -155,59 +292,87 @@ var XEntityManager = (function () {
                     throw new Error("未被识别的数据库驱动：" + config.type);
             }
             constant_1.ORMCONFIG.CONFIGS[config.name] = config;
-            promises.push(new Promise(function (resolve, reject) {
-                return tslib_1.__awaiter(this, void 0, void 0, function () {
-                    return tslib_1.__generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, manager.start()];
-                            case 1:
-                                _a.sent();
-                                constant_1.ORMCONFIG.CONNECTION_MANAGER[config.name] = manager;
-                                resolve(manager);
-                                return [2 /*return*/];
-                        }
-                    });
-                });
+            promises.push(new Promise(async function (resolve, reject) {
+                await manager.start();
+                constant_1.ORMCONFIG.CONNECTION_MANAGER[config.name] = manager;
+                resolve(manager);
             }));
         });
         //返回对应的连接实例
         return Promise.all(promises);
-    };
-    XEntityManager.prototype.transition = function (command) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            return tslib_1.__generator(this, function (_a) {
-                return [2 /*return*/, null];
-            });
-        });
-    };
-    XEntityManager.prototype.getRepository = function (model) {
-        var _this = this;
+    }
+    async transition(command) {
+        return null;
+    }
+    /**
+     * 因为采取了原型内魔法
+     */
+    toJSON(...args) {
+        return JSON.stringify(this.toObject.apply(this, args));
+    }
+    /**
+     * 同上
+     */
+    toObject(data) {
+        var ret;
+        if (Array.isArray(data)) {
+            ret = [];
+            for (var item of data) {
+                ret.push(this.toObject(item));
+            }
+            return ret;
+        }
+        else {
+            for (var i in data) {
+                switch (typeof data[i]) {
+                    case 'function':
+                        break;
+                    case 'array':
+                        data[i] = this.toObject(data[i]);
+                        break;
+                    default:
+                        data[i] = data[i];
+                        break;
+                }
+            }
+            return data;
+        }
+    }
+    getRepository(model) {
         // return new Repository(model);
         //让单例见鸡儿去吧
-        var resp = this.repoInstance.get(model.name) || (function () {
+        var resp = this.repoInstance.get(model.name) || (() => {
             var resp = new repository_1.Repository(model);
-            _this.repoInstance.set(model.name, resp);
+            this.repoInstance.set(model.name, resp);
             return resp;
         })();
         return resp;
-    };
+    }
     /**
- ```````````* 得到一个连接
- */
-    XEntityManager.prototype.getConnection = function (type) {
-        if (type === void 0) { type = 'default'; }
+    * 得到一个连接
+    */
+    getConnection(type = 'default') {
         return this.hasConnection(type) ? constant_1.ORMCONFIG.CONNECTION_MANAGER[type] : undefined;
-    };
+    }
     /**
      * 判断是否存在这个数据库连接
      * @param type
      */
-    XEntityManager.prototype.hasConnection = function (type) {
-        if (type === void 0) { type = 'default'; }
+    hasConnection(type = 'default') {
         return constant_1.ORMCONFIG.CONNECTION_MANAGER[type];
-    };
-    return XEntityManager;
-}());
+    }
+}
 exports.XEntityManager = XEntityManager;
 exports.X = new XEntityManager;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoieC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy94LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBLCtDQUFtRztBQUluRyxrREFBZ0U7QUFDaEUsdUNBQXVDO0FBQ3ZDLDJDQUFzRDtBQUN0RCwyQkFBdUM7QUFJdkM7SUFBQTtRQUVZLGlCQUFZLEdBQUcsSUFBSSxHQUFHLEVBQXdCLENBQUM7SUFzTDNELENBQUM7SUFwS0csNkJBQUksR0FBSixVQUFRLE1BQVc7UUFDZixFQUFFLENBQUMsQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDLE1BQU0sQ0FBQyxDQUFDLENBQUMsQ0FBQztZQUN4QixNQUFNLEdBQUcsTUFBYSxDQUFDO1lBQ3ZCLElBQUksR0FBRyxHQUFHLEVBQUUsQ0FBQzs7Z0JBQ2IsR0FBRyxDQUFDLENBQWMsSUFBQSxXQUFBLGlCQUFBLE1BQU0sQ0FBQSw4QkFBQTtvQkFBbkIsSUFBSSxPQUFLLG1CQUFBO29CQUNWLEdBQUcsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxPQUFLLENBQUMsQ0FBQyxDQUFDO2lCQUM5Qjs7Ozs7Ozs7O1lBQ0QsTUFBTSxDQUFDLEdBQUcsQ0FBQztRQUNmLENBQUM7UUFDRCxJQUFJLENBQUMsQ0FBQztZQUNGLElBQUksS0FBSyxHQUFNLE1BQU0sQ0FBQztZQUN0QixJQUFJLE9BQU8sR0FBRyxvQkFBZSxDQUFDLFVBQVUsQ0FBQyxLQUFLLENBQUMsQ0FBQztZQUNoRCxRQUFRO1lBQ1IsSUFBSSxJQUFJLEdBQUcsbUJBQVMsQ0FBQyxHQUFHLENBQUUsS0FBYSxDQUFDLFNBQVMsQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLENBQUM7WUFDcEUsRUFBRSxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDO2dCQUNSLE1BQU0sQ0FBQyxLQUFLLENBQUM7WUFDakIsQ0FBQztZQUNELGFBQWE7WUFDYixFQUFFLENBQUMsQ0FBQyxDQUFDLE9BQU8sSUFBSSxDQUFDLE9B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
+// function X() {
+// return xx;
+// }
+// namespace X {
+// export const hasConnection = xx.hasConnection;
+// export const 
+// export function hasConnection() {
+//     return xx.hasConnection
+// }
+// }
+// export {X};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoieC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy94LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsaURBQXNIO0FBSXRILG9EQUFnRTtBQUNoRSx5Q0FBdUM7QUFDdkMsNkNBQW9HO0FBSXBHLElBQUksUUFBUSxHQUFHLEtBQUssQ0FBQztBQUVyQjtJQUFBO1FBRVksaUJBQVksR0FBRyxJQUFJLEdBQUcsRUFBd0IsQ0FBQztJQTJiM0QsQ0FBQztJQTdhRyxFQUFFLENBQUksTUFBaUI7UUFDbkIsSUFBSSxDQUFDLE9BQU8sR0FBRyxNQUFNLENBQUM7UUFDdEIsTUFBTSxDQUFDLElBQVcsQ0FBQztJQUN2QixDQUFDO0lBY0QsS0FBSyxDQUFDLElBQUksQ0FBSSxNQUFXO1FBQ3JCLEVBQUUsQ0FBQyxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsTUFBTSxDQUFDLENBQUMsQ0FBQyxDQUFDO1lBQ3hCLE1BQU0sR0FBRyxNQUFhLENBQUM7WUFDdkIsSUFBSSxHQUFHLEdBQUcsRUFBRSxDQUFDO1lBQ2IsR0FBRyxDQUFDLENBQUMsSUFBSSxLQUFLLElBQUksTUFBTSxDQUFDLENBQUMsQ0FBQztnQkFDdkIsR0FBRyxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7WUFDL0IsQ0FBQztZQUNELE1BQU0sQ0FBQyxHQUFHLENBQUM7UUFDZixDQUFDO1FBQ0QsSUFBSSxDQUFDLENBQUM7WUFDRixJQUFJLEtBQUssR0FBTSxNQUFNLENBQUM7WUFDdEIsUUFBUTtZQUNSLElBQUksSUFBSSxHQUFHLG1CQUFTLENBQUMsR0FBRyxDQUFFLEtBQWEsQ0FBQyxTQUFTLENBQUMsV0FBVyxDQUFDLElBQUksQ0FBQyxDQUFDO1lBQ3BFLEVBQUUsQ0FBQyxDQUFDLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQztnQkFDUixNQUFNLElBQUksS0FBSyxDQUFDLGlCQUFpQixHQUFJLEtBQWEsQ0FBQyxTQUFTLENB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
