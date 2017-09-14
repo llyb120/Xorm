@@ -86,7 +86,7 @@ export class Repository<T>{
     findOne(
         findOption: FindOption<T>
     ) : Promise<T>{
-        return X.findOne(this.factory,findOption);
+        return X.of(this.factory).findOne(findOption);
 
         // findOption.limit = 1;
         // var ret = await this.find(findOption);
@@ -99,7 +99,7 @@ export class Repository<T>{
     find(
         findOption : FindOption<T>
     ) : Promise<T[]>{
-        return X.find(this.factory,findOption);
+        return X.of(this.factory).find(findOption);
 
         // var desc = EntityMap.get(this.factory.name);
         // if(!desc){

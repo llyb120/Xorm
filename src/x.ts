@@ -9,7 +9,7 @@ import { ObservingObject } from './gc';
 
 
 
-export class XEntityManager {
+export class XEntityManager <U>{
 
     private repoInstance = new Map<any, Repository<any>>();
 
@@ -18,6 +18,19 @@ export class XEntityManager {
      * 此时需要一个新的EntiyManager实例
      */
     private connection: any;
+
+    /**
+     * 因为typescript无法通过省略参数来识别出第一个泛型，所以增加以下的变量以及方法，应对find方法，其他方法应该不受影响
+     */
+    /** start */
+    private factory : Function;
+
+    of<K>(entity : Entity<K>) : XEntityManager<K>{
+        this.factory = entity;
+        return this as any;
+    }    
+    /**end */
+
 
     /**
      * 保存多个实例
@@ -87,16 +100,17 @@ export class XEntityManager {
      * @param condition 
      * @param data 
      */
-    async update<T>(entity: Entity<T>, condition: string, data: Partial<T>): Promise<Partial<T>>;
-    async update<T>(entity: Entity<T>, condition: number, data: Partial<T>): Promise<Partial<T>>;
-    async update<T>(entity: Entity<T>, codnition: WhereOption<T>, data: Partial<T>): Promise<Partial<T>>;
-    async update<T>(entity: Entity<T>, condition: string | number | WhereOption<T>, data: Partial<T>): Promise<Partial<T>> {
-        var desc = EntityMap.get(entity.name);
+    // async update( condition: string, data: Partial<U>): Promise<Partial<U>>;
+    // async update( condition: number, data: Partial<U>): Promise<Partial<U>>;
+    // async update( condition: WhereOption<U>, data: Partial<U>): Promise<Partial<U>>;
+    async update( condition: string | number | WhereOption<U>, data: Partial<U>): Promise<Partial<U>> {
+        var name = this.factory ? this.factory.name : '';
+        var desc = EntityMap.get(name);
         if (!desc) {
-            throw new Error("desc not found:" + entity.name);
+            throw new Error("desc not found:" + name);
         }
         if (!(desc.primary in data)) {
-            throw new Error("desc primary not found:" + entity.name)
+            throw new Error("desc primary not found:" + name)
         }
         let _condition: any;
         let ret;
@@ -192,28 +206,30 @@ export class XEntityManager {
      * @param entity 
      * @param option 
      */
-    async find<T>(entity: Entity<T>, option: FindOption<T>, observable = false): Promise<T[]> {
-        const desc = EntityMap.get(entity.name);
+    async find(option: FindOption<U>, observable = false): Promise<U[]> {
+        var name = this.factory ? this.factory.name : '';
+        const desc = EntityMap.get(name);
         if (!desc) {
-            return [];
+            throw new Error("desc not found");
+            // return [];
         }
-        var result = await this.getConnection(desc.database).find<T>(option, desc);
+        var result = await this.getConnection(desc.database).find<U>(option, desc);
         var ret = [];
         for (let item of result) {
             //新版API
-            if (entity.prototype.onGet) {
-                entity.prototype.onGet.call(item);
+            if (this.factory.prototype.onGet) {
+                this.factory.prototype.onGet.call(item);
             }
             //兼容以前的写法
-            if (entity.prototype.onLoad) {
-                entity.prototype.onLoad.call(item);
+            if (this.factory.prototype.onLoad) {
+                this.factory.prototype.onLoad.call(item);
             }
 
             //处理addon，追加需要连接的字段
 
 
             //黑魔法,将原型指向该字段，取Object.entries的时候只会取到变化的字段
-            item.constructor = entity;
+            item.constructor = this.factory;
             let obj = Object.create(item);
             ret.push(obj);
         }
@@ -227,8 +243,8 @@ export class XEntityManager {
      * @param entity 
      * @param option 
      */
-    async findOne<T>(entity: Entity<T>, option: FindOption<T>): Promise<T> {
-        var result = await this.find(entity, option);
+    async findOne(option: FindOption<U>): Promise<U> {
+        var result = await this.find(option);
         return result[0];
 
     }
@@ -287,7 +303,7 @@ export class XEntityManager {
 
 
     async transition(
-        command: (x: XEntityManager) => Promise<any>
+        command: (x: XEntityManager<any>) => Promise<any>
     ): Promise<any> {
 
         return null;
@@ -360,4 +376,18 @@ export class XEntityManager {
 }
 
 export const X = new XEntityManager;
+
+// function X() {
+    // return xx;
+// }
+
+// namespace X {
+    // export const hasConnection = xx.hasConnection;
+    // export const 
+    // export function hasConnection() {
+    //     return xx.hasConnection
+    // }
+// }
+
+// export {X};
 

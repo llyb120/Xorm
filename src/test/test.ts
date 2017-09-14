@@ -4,7 +4,7 @@
 // import { IDriverBase } from '../driver/driver';
 import { EntityMap, EntityWatchingMap } from '../decorator/XEntity';
 import { Member,  } from './member';
-import { Repository } from '../repository';
+import { Repository, WhereOption, type } from '../repository';
 import { X } from '../x';
 import { ObservingObject } from '../gc';
 import { OrderGoods } from './order_goods';
@@ -35,7 +35,7 @@ X.start(
     a.member_id = 1; 
     // console.log(ObservingObject.getChanged(a));
 
-    var ret = await X.find(Member, {
+    var ret = await X.of(Member).find({
         where: {
             member_name: ['like', 'cubi'],
             member_id: ['in', [10, 20, 30]],
@@ -54,15 +54,6 @@ X.start(
         limit: 10
     })
 
-    X.find(Order,{
-        where : {
-             
-        }
-    })
-
-    b(Member,{
-         
-    })
 
     function b<T>(c : {new() : T},d : {
         [key in keyof T] : number

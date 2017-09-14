@@ -1,41 +1,29 @@
-import { getEntityManager } from '../index';
-import { X } from '../x';
 import { Member } from './member';
-import { FindOption } from '../repository';
-class b{
-    public casdffasfasd : number;
-}
+import { X } from '../x';
 
-
-interface Option<U>{
+type O<U> = {
+    c : U
     where : {
-        [key in keyof U]? : any
+        [key in keyof U] : any 
     }
-};
-class d<U>{
-    test(op : FindOption<U>){
-    }
+} 
+function d<T>( d : O<T>){
+    try{
 
-    of<K>(factory : new() => K) : d<K>{
-        // return this;
-        return this as d<K>;
+    }catch{
+
     }
 }
 
+function M(obj){
+    return X.of(obj);
+}
 
-var e = new d;
-e.of(b).test({
-    where : {
-        casdffasfasd : 1,
-        and : {
-            casdffasfasd
-        }
-    }
-})
-// e.of(b).
-e.test(b,{
+X[Member]
+
+d({
+    c : Member,
     where : {
         
     }
 })
-e.of
