@@ -1,5 +1,5 @@
-import { EntityMap, Entity, XEntity, EntityWatchingMap, IWatchedModel } from './decorator/XEntity';
-import { ObjectType } from "./header/ObjectType";
+import { EntityMap, Entity, XEntity, EntityWatchingMap, IWatchedModel, EntityDescirption } from './decorator/XEntity';
+import { ObjectType, declare } from './header/ObjectType';
 import { XOrmConfig } from "./header/config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
@@ -117,7 +117,59 @@ export class XEntityManager {
     /**
      * 删除函数
      */
-
+    async delete<T>(entity: T): Promise<boolean>;
+    async delete<T>(entity: T[]): Promise<boolean>;
+    async delete<T>(entity: Entity<T>, condition: WhereOption<T>): Promise<boolean>;
+    async delete<T>(entity: Entity<T>, condition: number): Promise<boolean>;
+    async delete<T>(entity: Entity<T>, condition: string): Promise<boolean>;
+    async delete<T>(...args: any[]) {
+        let desc: EntityDescirption;
+        if (args.length == 1) {
+            let entity = args[0];
+            if (Array.isArray(entity)) {
+                if (!entity.length) {
+                    return false;
+                }
+                desc = EntityMap.get(entity[0].__proto__.constructor.name) as EntityDescirption;
+                if (!desc) {
+                    throw new Error("desc not found");
+                }
+                var ids = entity.map(item => (item as any)[desc.primary]).filter(item => item != null && item != '');
+                var condition: any = {};
+                condition[desc.primary] = ['in', ids];
+                return await this.getConnection(desc.database).delete(condition, desc);
+            }
+            else {
+                desc = EntityMap.get(entity[0].__proto__.constructor.name) as EntityDescirption;
+                if (!desc) {
+                    throw new Error("desc not found");
+                }
+                var condition: any = {};
+                condition[desc.primary] = (entity as any)[desc.primary]
+                return await this.getConnection(desc.database).delete(condition, desc);
+            }
+        }
+        else if (args.length == 2) {
+            desc = EntityMap.get(args[0].name) as EntityDescirption;
+            if(!desc){
+                    throw new Error("desc not found");
+            }
+            var condition : any = {};
+            switch(typeof args[1]){
+                case 'number':
+                case 'string':
+                    condition[desc.primary] = args[1];
+                    break;
+                default:
+                    condition = args[1];
+                    break;
+            }
+            return await this.getConnection(desc.database).delete(condition,desc);
+        }
+        else {
+            throw new Error("delete 参数不对");
+        }
+    }
 
     /**
      * 万能查询函数，对于不想声明的entity可以直接使用sql语句查询
@@ -163,18 +215,7 @@ export class XEntityManager {
             ret.push(obj);
         }
         return ret;
-        // var result = await this.getRepository(entity).find(option);
-        // if (observable) {
-        //     var ret = [];
-        //     for (var item of result) {
-        //         var observed = ObservingObject.addObserveObject(item);
-        //         //劫持API，这才是你的亲爹
-        //         observed.__proto__ = entity.prototype;
-        //         ret.push(observed);
-        //     }
-        //     return ret;
-        // }
-        // return result;
+
     }
 
     /**
@@ -186,14 +227,7 @@ export class XEntityManager {
     async findOne<T>(entity: Entity<T>, option: FindOption<T>): Promise<T> {
         var result = await this.find(entity, option);
         return result[0];
-        // var result = await this.getRepository(entity).findOne(option);
-        // if (result) {
-        //     var observed = ObservingObject.addObserveObject(result);
-        //     //劫持API，这才是你的亲爹
-        //     observed.__proto__ = entity.prototype;
-        //     return observed;
-        // }
-        // return result;
+
     }
 
 

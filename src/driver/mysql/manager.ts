@@ -8,26 +8,36 @@ import { FindOption, WhereOption } from '../../repository';
 import { QueryBuilder } from '../../querybuilder';
 
 export class MysqlConnectionManager implements IDriverBase {
+    async delete<T>(condition: WhereOption<T>, desc: EntityDescirption): Promise<boolean> {
+        var str = this.buildWhere(condition, desc);
+        var sql = `
+            delete from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\`
+        `;
+        if (str != '') {
+            sql += ' where ' + str;
+        }
+        return await this.query(sql) ? true : false;
+    }
 
-    async update<T>(condition: WhereOption<T>, data: T,desc : EntityDescirption): Promise<any> {
-        var str = this.buildWhere(condition,desc);
+    async update<T>(condition: WhereOption<T>, data: T, desc: EntityDescirption): Promise<any> {
+        var str = this.buildWhere(condition, desc);
         var sql = `
             update \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` 
             set ${(() => {
                 var buf = [];
-                for(const [key,val] of Object.entries(data)){
+                for (const [key, val] of Object.entries(data)) {
                     var fieldName = desc.tableName + '.' + key;
-                    if(val == null){
+                    if (val == null) {
                         buf.push(`${fieldName} = null`);
-                    } 
-                    else{
+                    }
+                    else {
                         buf.push(`${fieldName} = '${val}'`);
                     }
                 }
                 return buf.join(",");
             })()}
         `;
-        if(str != ''){
+        if (str != '') {
             sql += ' where ' + str;
         }
         return this.query(sql);
@@ -79,13 +89,13 @@ export class MysqlConnectionManager implements IDriverBase {
     public buildSql<T>(findOption: FindOption<T>, desc: EntityDescirption): string {
         var where;
         var group = '';
-        
+
         var sql = `
             select * from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` as ${desc.tableName}
         `;
         if (findOption.where) {
             var str = this.buildWhere(findOption.where, desc);
-            if(str != ''){
+            if (str != '') {
                 sql += ' where ' + str;
             }
         }
@@ -120,7 +130,7 @@ export class MysqlConnectionManager implements IDriverBase {
     async insert<T>(data: T, desc: EntityDescirption): Promise<T> {
         var fields = [],
             values = [];
-        for (const [key,val] of Object.entries(data)) {
+        for (const [key, val] of Object.entries(data)) {
             if (typeof val == 'function') continue;
             fields.push(`\`${key}\``);
             if (val == null) {

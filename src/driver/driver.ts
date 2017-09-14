@@ -11,6 +11,8 @@ export interface IDriverBase {
     find<T>(findOption : FindOption<T>,desc : EntityDescirption) : Promise<T[]>;
 
     update<T>(condition : WhereOption<T>,data : Partial<T>,desc : EntityDescirption) : Promise<any>;
+
+    delete<T>(condition : WhereOption<T>,desc : EntityDescirption) : Promise<boolean>;
 }
 
 
