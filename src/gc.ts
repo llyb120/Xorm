@@ -9,8 +9,8 @@
 const GC_STEP_TIME = 30000;
 
 class GC {
-    public boxA = new Map();
-    public boxB = new Map();
+    private boxA = new Map();
+    private boxB = new Map();
 
     start() {
         setInterval(() => {
@@ -58,6 +58,14 @@ class GC {
             return [];
         }
         return Object.keys(val.changed);
+    }
+
+    clearChanged(obj : Object){
+        var val = this.boxA.get(obj) || this.boxB.get(obj);
+        if(!val){
+            return false;
+        }
+        val.changed = {};
     }
 }
 

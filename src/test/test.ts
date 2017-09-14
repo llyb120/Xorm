@@ -59,20 +59,24 @@ X.start(
 
     var d = await X.of(Order).findOne({
         where : {
-            order_sn : "1504498057635203"
+            order_sn : "810694381770"
         },
         addon : {
             order_goods : 1
         }
-    });
+
+    }); 
 
     var og = d.order_goods;
+    // console.log(d,og);
+    og[0].goods_name = 'cubi';
 
     await X.makeAddon(og,"order");
   
-    console.log(X.toObject(d));
-    // console.log(X.toObject(og[0].order))
-    console.log(X.toJSON(og));
+    console.log(d)
+    // console.log(X.toObject(d));
+    // // console.log(X.toObject(og[0].order))
+    // console.log(X.toJSON(og));
     
     // console.log(X.toObject(og[0].order));
     // console.log(X.toObject(d.order_goods));

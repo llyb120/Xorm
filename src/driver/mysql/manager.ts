@@ -20,13 +20,13 @@ export class MysqlConnectionManager implements IDriverBase {
     }
 
     async update<T>(condition: WhereOption<T>, data: T, desc: EntityDescirption): Promise<any> {
-        var str = this.buildWhere(condition, desc);
+        var str = this.buildWhere(condition, desc, false);
         var sql = `
-            update \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` 
+            update \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\`
             set ${(() => {
                 var buf = [];
                 for (const [key, val] of Object.entries(data)) {
-                    var fieldName = desc.tableName + '.' + key;
+                    var fieldName = '`' + key + '`';
                     if (val == null) {
                         buf.push(`${fieldName} = null`);
                     }
@@ -40,10 +40,11 @@ export class MysqlConnectionManager implements IDriverBase {
         if (str != '') {
             sql += ' where ' + str;
         }
+        console.log(sql)
         return this.query(sql);
     }
 
-    private buildWhere<T>(whereOption: WhereOption<T>, desc: EntityDescirption) {
+    private buildWhere<T>(whereOption: WhereOption<T>, desc: EntityDescirption, addPrefix = true) {
         var buffer: string[] = [];
         //build and
         if (whereOption.and) {
@@ -65,7 +66,7 @@ export class MysqlConnectionManager implements IDriverBase {
         for (var name in whereOption) {
             var val = (whereOption as any)[name];
             //添加前缀，防止占用关键字
-            var fieldName = 't_' + desc.tableName + '.' + name; ``
+            var fieldName = (addPrefix ? 't_' + desc.tableName + '.' : "") + name; ``
             if (Array.isArray(val)) {
                 if (val[0] == 'like') {
                     buffer.push(` and ${fieldName} like '${val[1]}'`);

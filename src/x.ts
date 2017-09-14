@@ -37,60 +37,105 @@ export class XEntityManager<U>{
      * 保存多个实例
      * @param models 
      */
-    save<T>(models: T[]): Promise<T[]>;
+    async save<T>(models: T[]): Promise<T[]>;
     /**
      * 保存单个实例
      * @param model 
      */
-    save<T>(model: T): Promise<T>;
+    async save<T>(model: T): Promise<T>;
     async save<T>(models: any): Promise<any> {
-        if (Array.isArray(models)) {
-            models = models as T[];
-            var ret = [];
-            for (let model of models) {
-                ret.push(this.save(model));
-            }
-            return ret;
+        var isMultipul = Array.isArray(models);
+        if(!isMultipul){
+            models = [models];
         }
-        else {
-            var model = <T>models;
-            //查找描述信息
-            var desc = EntityMap.get((model as any).__proto__.constructor.name);
-            if (!desc) {
-                throw new Error("desc not found:" + (model as any).__proto__.constructor.name);
-            }
-
-            //没有发生任何改变的情况
-            var changed = Object.keys(model);
-            // var changed = ObservingObject.getChanged(model);
+        models = models as any[];
+        if(!models.length){
+            return [];
+        }
+        var desc = EntityMap.get(models[0].__proto__.constructor.name) as EntityDescirption;
+        if (!desc) {
+            throw new Error("desc not found:");
+        } 
+        // var ret = [];
+        var ret = await Promise.all((models as any[]).map(async model => {
+            var changed = ObservingObject.getChanged(model);
             if (!changed || !changed.length) {
                 return model;
-            }
-            // var entries = Object.entries(model);
-
-            //查询主键，如果没有的情况，默认为“ID"
-            var constructor = (model as any).__proto__.constructor as {
-                new(): any
-            }
-
+            } 
             if (changed.includes(desc.primary) || !(desc.primary in model)) {
                 // let ret = this.getRepository(constructor).insert(model);
                 let ret = await this.getConnection(desc.database).insert(model as Partial<T>, desc);
+                ObservingObject.clearChanged(model); 
                 return ret;
             }
-            else {
-                // return this.update((model as any).__proto__.constructor,)
-                if (!(desc.primary in model)) {
-                    return false;
-                }
-                var condition = {};
-                (condition as any)[desc.primary] = (model as any)[desc.primary];
-                var updateData: any = Object.assign({},model);
-                delete updateData[desc.primary];
-                let ret = await this.getConnection(desc.database).update(condition, updateData, desc);
+            else{
+                var condition : any = {}; 
+                condition[desc.primary] = model[desc.primary];
+                var updateData : any= {}; 
+                changed.forEach(change => {
+                    updateData[change] = model[change];
+                })
+                await this.getConnection(desc.database).update(condition,updateData,desc);
+                ObservingObject.clearChanged(model);
                 return model;
             }
+        }));
+        if(isMultipul){
+            return ret;
         }
+        return ret[0];
+
+        // if (Array.isArray(models)) {
+        //     models = models as T[];
+        //     var ret = [];
+        //     for (let model of models) {
+        //         ret.push(this.save(model));
+        //     }
+        //     return ret;
+        // }
+        // else {
+        //     var model = <T>models;
+        //     //查找描述信息
+        //     var desc = EntityMap.get((model as any).__proto__.constructor.name);
+        //     if (!desc) {
+        //         throw new Error("desc not found:" + (model as any).__proto__.constructor.name);
+        //     }
+
+        //     //没有发生任何改变的情况
+        //     // var changed = Object.keys(model);
+        //     var changed = ObservingObject.getChanged(model);
+        //     if (!changed || !changed.length) {
+        //         return model;
+        //     }
+        //     // var entries = Object.entries(model);
+
+        //     //查询主键，如果没有的情况，默认为“ID"
+        //     var constructor = (model as any).__proto__.constructor as {
+        //         new(): any
+        //     }
+
+        //     if (changed.includes(desc.primary) || !(desc.primary in model)) {
+        //         // let ret = this.getRepository(constructor).insert(model);
+        //         let ret = await this.getConnection(desc.database).insert(model as Partial<T>, desc);
+        //         return ret;
+        //     }
+        //     else {
+        //         // return this.update((model as any).__proto__.constructor,)
+        //         if (!(desc.primary in model)) {
+        //             return false;
+        //         }
+        //         var condition = {};
+        //         (condition as any)[desc.primary] = (model as any)[desc.primary];
+        //         var updateData: any = Object.assign({},model);
+        //         var updateData : any = {};
+        //         for(const change of changed){
+        //             updateData[change] = model[change]
+        //         }
+        //         delete updateData[desc.primary];
+        //         let ret = await this.getConnection(desc.database).update(condition, updateData, desc);
+        //         return model;
+        //     }
+        // }
     }
 
 
@@ -234,9 +279,12 @@ export class XEntityManager<U>{
             }
 
             //黑魔法,将原型指向该字段，取Object.entries的时候只会取到变化的字段
-            item.constructor = this.factory;
-            let obj = Object.create(item);
-            ret.push(obj);
+            var observed = ObservingObject.addObserveObject(item);
+            observed.__proto__ = desc.entity.prototype;
+            ret.push(observed);
+            // item.constructor = this.factory;
+            // let obj = Object.create(item);
+            // ret.push(obj);
         }
 
         if (option.addon) {
@@ -317,10 +365,10 @@ export class XEntityManager<U>{
                 for (var item of entity) {
                     var target = groups[(item as any)[addon.fromKey]];
                     if(target){
-                        (item as any).__proto__[addon.field] = groups[(item as any)[addon.fromKey]];
+                        (item as any)[addon.field] = groups[(item as any)[addon.fromKey]];
                     }
                     else{
-                        (item as any).__proto__[addon.field] = []; 
+                        (item as any)[addon.field] = []; 
                     }
                 }
             }
@@ -329,7 +377,7 @@ export class XEntityManager<U>{
                 for (var item of entity) {
                     var target = groups[(item as any)[addon.fromKey]]
                     if(target && target.length){
-                        (item as any).__proto__[addon.field] = target[0];
+                        (item as any)[addon.field] = target[0];
                     }
                 }
             }
@@ -356,6 +404,7 @@ export class XEntityManager<U>{
         isRuning = true;
 
         //启动垃圾回收器
+        ObservingObject.start();
 
         //开始启动连接池
         var promises: Promise<any>[] = [];
@@ -395,39 +444,39 @@ export class XEntityManager<U>{
     /**
      * 因为采取了原型内魔法
      */
-    toJSON(...args: any[]): string {
-        return JSON.stringify(this.toObject.apply(this, args));
-    }
-    /**
-     * 同上
-     */
-    toObject(data: any): object {
-        var ret;
-        if (Array.isArray(data)) {
-            ret = [];
-            for (var item of data) {
-                ret.push(this.toObject(item));
-            }
-            return ret;
-        }
-        else {
-            for (var i in data) {
-                switch (typeof data[i] as any) {
-                    case 'function':
-                        break;
+    // toJSON(...args: any[]): string {
+    //     return JSON.stringify(this.toObject.apply(this, args));
+    // }
+    // /**
+    //  * 同上
+    //  */
+    // toObject(data: any): object {
+    //     var ret;
+    //     if (Array.isArray(data)) {
+    //         ret = [];
+    //         for (var item of data) {
+    //             ret.push(this.toObject(item));
+    //         }
+    //         return ret;
+    //     }
+    //     else {
+    //         for (var i in data) {
+    //             switch (typeof data[i] as any) {
+    //                 case 'function':
+    //                     break;
 
-                    case 'array':
-                        data[i] = this.toObject(data[i]);
-                        break;
+    //                 case 'array':
+    //                     data[i] = this.toObject(data[i]);
+    //                     break;
 
-                    default:
-                        data[i] = data[i];
-                        break;
-                }
-            }
-            return data;
-        }
-    }
+    //                 default:
+    //                     data[i] = data[i];
+    //                     break;
+    //             }
+    //         }
+    //         return data;
+    //     }
+    // }
 
     getRepository<T>(model: Entity<T>) {
         // return new Repository(model);
