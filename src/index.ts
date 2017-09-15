@@ -25,3 +25,17 @@ export function hasConnection(type = 'default'): boolean {
 export function getEntityManager() {
     return X;
 }
+
+export * from "./constant";
+export * from "./gc";
+export * from "./repository";
+export * from "./querybuilder";
+export * from "./x";
+
+export * from "./header/config";
+export * from "./driver/driver";
+export * from "./driver/mysql/manager";
+export * from "./decorator/XEntity";
+export * from "./decorator/PrimaryColumn";
+export * from "./decorator/XEntity";
+export * from "./decorator/Link"

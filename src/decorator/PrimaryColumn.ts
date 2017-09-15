@@ -7,3 +7,8 @@ export function PrimaryColumn(column?: any) {
         EntityMap.set(target.constructor.name, info);
     }
 }
+
+
+export function PrimaryGeneratedColumn(column : any){
+    return PrimaryColumn(column);
+}

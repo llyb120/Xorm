@@ -1,6 +1,6 @@
 import { PrimaryColumn } from './../decorator/PrimaryColumn';
 import { XEntity } from '../decorator/XEntity';
-import { ManyToOne, test } from '../decorator/Link';
+import { ManyToOne} from '../decorator/Link';
 import { Order } from './order';
 @XEntity
 export class OrderGoods{
