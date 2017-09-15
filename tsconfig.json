@@ -18,7 +18,6 @@
             
     "strict": true ,                           
     
-    "sourceMap": true,
     "inlineSourceMap": true,
     
     
