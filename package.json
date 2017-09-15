@@ -1,4 +1,6 @@
 {
+  "name": "x-orm",
+  "version": "0.1",
   "main": "./build/index.js",
   "devDependencies": {
     "@types/mysql": "^0.0.34",
