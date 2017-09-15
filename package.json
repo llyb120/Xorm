@@ -9,7 +9,8 @@
     "typescript": "^2.5.2"
   },
   "scripts": {
-    "dev": "node tools/dev.js"
+    "dev": "node tools/dev.js",
+    "compile" : "tsc"
   },
   "dependencies": {
     "@types/glob": "^5.0.32",
