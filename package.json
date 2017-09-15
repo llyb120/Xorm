@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev": "node tools/dev.js",
-    "compile" : "tsc"
+    "compile" : "tsc",
+    "install": "tsc"
   },
   "dependencies": {
     "@types/glob": "^5.0.32",
