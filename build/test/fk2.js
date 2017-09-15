@@ -1,10 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fk_1 = require("./fk");
-class a {
+const member_1 = require("./member");
+// function a(i : any);
+function a(p1, p2) {
 }
-exports.a = a;
-setTimeout(() => {
-    console.log(fk_1.b);
-}, 0);
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZmsyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3Rlc3QvZmsyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsNkJBQXlCO0FBQ3pCO0NBRUM7QUFGRCxjQUVDO0FBRUQsVUFBVSxDQUFDO0lBQ1AsT0FBTyxDQUFDLEdBQUcsQ0FBQyxNQUFDLENBQUMsQ0FBQztBQUVuQixDQUFDLEVBQUMsQ0FBQyxDQUFDLENBQUEifQ==
+a(member_1.Member, {
+    c(item) {
+        item.member_id;
+    },
+    d(itm) {
+        itm.member_add_time;
+    }
+});
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZmsyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3Rlc3QvZmsyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQ0EscUNBQWtDO0FBTWxDLHVCQUF1QjtBQUN2QixXQUFjLEVBQWtCLEVBQUMsRUFBWTtBQUU3QyxDQUFDO0FBQ0QsQ0FBQyxDQUFDLGVBQU0sRUFBQztJQUNMLENBQUMsQ0FBQyxJQUFJO1FBQ0YsSUFBSSxDQUFDLFNBQVMsQ0FBQTtJQUNsQixDQUFDO0lBQ0QsQ0FBQyxDQUFDLEdBQUc7UUFDRCxHQUFHLENBQUMsZUFBZSxDQUFBO0lBQ3ZCLENBQUM7Q0FDSixDQUFDLENBQUEifQ==

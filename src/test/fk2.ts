@@ -6,10 +6,10 @@ interface Test<T> {
     d : (a : T) => any;
 }
 // function a(i : any);
-function a<T>(p1 : (type?:any) => (new() => T),p2 : Test<T>){
+function a<T>(p1 :  (new() => T),p2 : Test<T>){
 
 }
-a(type => Member,{
+a(Member,{
     c(item){
         item.member_id
     },
@@ -17,18 +17,3 @@ a(type => Member,{
         itm.member_add_time
     }
 })
-a(type => Member,{
-})
-
-a({
-    c(){
-
-   },
-    d(){
-
-    }
-})
-a(Member,m => m.member_id)
-a(Member,m => m.member_add_time)
-
-ManyToOne(type => Member,m => m )

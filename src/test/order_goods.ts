@@ -12,6 +12,16 @@ export class OrderGoods{
 
     goods_name : string;
 
-    @ManyToOne(Order,from => )
+    @ManyToOne(Order,{
+        to(item){
+            return item.order_id
+        },
+        from(item){
+            return "order_id";
+        },
+        reverse(item){
+            return item.order_goods;
+        }
+    })
     order : Order;
 }

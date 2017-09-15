@@ -59,7 +59,7 @@ X.start(
 
     var d = await X.of(Order).findOne({
         where : {
-            order_sn : "810694381770"
+            order_sn : "1504498057635203"
         },
         addon : {
             order_goods : 1
@@ -67,6 +67,7 @@ X.start(
 
     }); 
 
+    console.log(EntityMap)
     var og = d.order_goods;
     // console.log(d,og);
     og[0].goods_name = 'cubi';
