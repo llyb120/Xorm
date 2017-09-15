@@ -1,19 +1,49 @@
 import { ManyToOne } from './../decorator/Link';
 import { Member } from './member';
-type d = keyof Member; 
-interface Test<T> {
-    c : ( a : T) =>any;
-    d : (a : T) => any;
+
+
+class a{
+    public a1 : number;
+    public a2 : number;
 }
-// function a(i : any);
-function a<T>(p1 :  (new() => T),p2 : Test<T>){
+
+class c {
+    public e: a;
+}
+
+class b {
+    public fucku:c ;
+    public ccccc : number;
+}
+
+interface TTT<T, K extends keyof T>{
+    where : {
+        [key in K]? :  {
+            [key in keyof T[K]]? : TTT<T[K],keyof T[K]> 
+        } | boolean
+    }
+  
+}
+
+
+
+type test<T> = {
+    where : Pick<T,keyof T>
+}
+
+var eee : test<b> = {
+    where : {
+        fucku : {
+            e : {
+
+            }
+        }
+    }
+}
+
+function test<T>(o: new() => T, o1: test<T>) {
 
 }
-a(Member,{
-    c(item){
-        item.member_id
-    },
-    d(itm){
-        itm.member_add_time
-    }
-})
+
+
+

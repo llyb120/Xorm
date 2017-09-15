@@ -289,6 +289,9 @@ export class XEntityManager<U>{
 
         if (option.addon) {
             var addons = Object.keys(option.addon).filter(item => desc.external[item]);
+
+            //TODO : 将查询更近一层，做出多级嵌套效果（多级可能没有提示）
+
             //使用in统一查询，减少负担                    
             await Promise.all(addons.map(async key => {
                 await this.makeAddon(ret, key);
