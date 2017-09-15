@@ -34,8 +34,26 @@ X.start(
     }
 ).then(async managers => {
     var a = new Member;
-    a.member_id = 1; 
-    // console.log(ObservingObject.getChanged(a));
+    // a.member_id = 1; 
+    // // console.log(ObservingObject.getChanged(a));
+    // var member = new Member;
+    // member.member_name = 'cubi';
+    // X.save(member);
+
+    // var member = await X.of(Member).findOne({
+    //     where : {
+    //         member_name : 'cubi'
+    //     }
+    // });
+
+    // member.member_name = '222';
+    // await X.save(member);
+
+    // var a = await X.of(Member).findOne(1);
+    // X.of(member);
+    // console.log(a.prototype,a.__proto__)
+    return;
+
 
     var ret = await X.of(Member).find({
         where: {
@@ -59,13 +77,22 @@ X.start(
 
     var d = await X.of(Order).findOne({
         where : {
-            order_sn : "1504498057635203"
+            order_sn : "1504498057635203",
         },
         addon : {
             order_goods : 1
         }
 
     }); 
+
+    X.of(Order).findOne({
+        where : {
+            order_sn : "123213",
+        },
+        addon : {
+            order_goods :true 
+        }
+    })
 
     console.log(EntityMap)
     var og = d.order_goods;

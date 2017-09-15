@@ -3,10 +3,10 @@ import { X } from '../x';
 import { PrimaryColumn } from "../decorator/PrimaryColumn";
 import {  ManyToOne } from '../decorator/Link';
 
-@XEntity()
+@X.Entity
 export class Member{
 
-    @PrimaryColumn()
+    @X.PrimaryColumn()
     public member_id : number;  
 
     public member_name : string;

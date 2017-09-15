@@ -1,4 +1,4 @@
-import { XOrmConfig } from './header/config';
+import { XOrmConfig } from './config';
 import { MysqlConnectionManager } from './driver/mysql/manager';
 import { IDriverBase } from './driver/driver';
 import { ORMCONFIG } from './constant';
@@ -32,7 +32,7 @@ export * from "./repository";
 export * from "./querybuilder";
 export * from "./x";
 
-export * from "./header/config";
+export * from "./config";
 export * from "./driver/driver";
 export * from "./driver/mysql/manager";
 export * from "./decorator/XEntity";

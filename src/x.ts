@@ -1,11 +1,12 @@
 import { EntityMap, Entity, XEntity, EntityWatchingMap, IWatchedModel, EntityDescirption } from './decorator/XEntity';
-import { ObjectType } from './header/ObjectType';
-import { XOrmConfig } from "./header/config";
+import { XOrmConfig } from "./config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
 import { FindOption, Repository, WhereOptionCompare, WhereOption, AddOnOption } from './repository';
 import { ObservingObject } from './gc';
+import { OneToOne, ManyToOne } from './decorator/Link';
+import { PrimaryColumn, PrimaryGeneratedColumn } from './decorator/PrimaryColumn';
 
 
 var isRuning = false;
@@ -26,8 +27,16 @@ export class XEntityManager<U>{
     /** start */
     private factory: Function;
 
-    of<K>(entity: Entity<K>): XEntityManager<K> {
-        this.factory = entity;
+    of<K>(entity: Entity<K>): XEntityManager<K>;
+    of<K>(entity: K): XEntityManager<K>;
+    of(entity: any): any {
+        entity = entity as any;
+        if (entity.prototype) {
+            this.factory = entity;
+        }
+        else if (entity.__proto__) {
+            this.factory = entity.__proto__;
+        }
         return this as any;
     }
     /**end */
@@ -45,42 +54,42 @@ export class XEntityManager<U>{
     async save<T>(model: T): Promise<T>;
     async save<T>(models: any): Promise<any> {
         var isMultipul = Array.isArray(models);
-        if(!isMultipul){
+        if (!isMultipul) {
             models = [models];
         }
         models = models as any[];
-        if(!models.length){
+        if (!models.length) {
             return [];
         }
         var desc = EntityMap.get(models[0].__proto__.constructor.name) as EntityDescirption;
         if (!desc) {
             throw new Error("desc not found:");
-        } 
+        }
         // var ret = [];
         var ret = await Promise.all((models as any[]).map(async model => {
             var changed = ObservingObject.getChanged(model);
             if (!changed || !changed.length) {
                 return model;
-            } 
+            }
             if (changed.includes(desc.primary) || !(desc.primary in model)) {
                 // let ret = this.getRepository(constructor).insert(model);
                 let ret = await this.getConnection(desc.database).insert(model as Partial<T>, desc);
-                ObservingObject.clearChanged(model); 
+                ObservingObject.clearChanged(model);
                 return ret;
             }
-            else{
-                var condition : any = {}; 
+            else {
+                var condition: any = {};
                 condition[desc.primary] = model[desc.primary];
-                var updateData : any= {}; 
+                var updateData: any = {};
                 changed.forEach(change => {
                     updateData[change] = model[change];
                 })
-                await this.getConnection(desc.database).update(condition,updateData,desc);
+                await this.getConnection(desc.database).update(condition, updateData, desc);
                 ObservingObject.clearChanged(model);
                 return model;
             }
         }));
-        if(isMultipul){
+        if (isMultipul) {
             return ret;
         }
         return ret[0];
@@ -139,7 +148,6 @@ export class XEntityManager<U>{
     }
 
 
-
     /**
      * 更新函数，可以传入多个精湛的参数
      * @param entity 
@@ -176,59 +184,120 @@ export class XEntityManager<U>{
 
     /**
      * 删除函数
+     * 
+     * 为了安全起见，删除函数要求必须传递条件
      */
-    async delete<T>(entity: T): Promise<boolean>;
-    async delete<T>(entity: T[]): Promise<boolean>;
-    async delete<T>(entity: Entity<T>, condition: WhereOption<T>): Promise<boolean>;
-    async delete<T>(entity: Entity<T>, condition: number): Promise<boolean>;
-    async delete<T>(entity: Entity<T>, condition: string): Promise<boolean>;
-    async delete<T>(...args: any[]) {
-        let desc: EntityDescirption;
-        if (args.length == 1) {
-            let entity = args[0];
-            if (Array.isArray(entity)) {
-                if (!entity.length) {
-                    return false;
-                }
-                desc = EntityMap.get(entity[0].__proto__.constructor.name) as EntityDescirption;
+    // async delete<T>(entity: T): Promise<boolean>;
+    // async delete<T>(entity: T[]): Promise<boolean>;
+    async delete<T>(condition: WhereOption<U> | string | number | T | any[]): Promise<boolean> {
+        // async delete<T>(entity: Entity<T>, condition: number): Promise<boolean>;
+        // async delete<T>(entity: Entity<T>, condition: string): Promise<boolean>;
+        // async delete(...args: any[]) {
+        let desc: EntityDescirption | undefined;
+        let option: WhereOption<U>;
+
+        //非条件的情况
+        if (!Array.isArray(condition)) {
+            if (typeof condition === 'object') {
+                desc = EntityMap.get(this.factory.name) as EntityDescirption;
                 if (!desc) {
                     throw new Error("desc not found");
                 }
-                var ids = entity.map(item => (item as any)[desc.primary]).filter(item => item != null && item != '');
-                var condition: any = {};
-                condition[desc.primary] = ['in', ids];
-                return await this.getConnection(desc.database).delete(condition, desc);
+                return this.getConnection(desc.database).delete(condition, desc);
+            }
+            //单一主键删除
+            condition = [condition];
+        }
+
+        //此时condition必然为数组
+        condition = condition as any[];
+        var ids = condition.map((item: any) => {
+            if (typeof item == 'object') {
+                desc = desc || EntityMap.get(item.__proto__.constructor.name) as EntityDescirption;
+                return item[desc.primary];
             }
             else {
-                desc = EntityMap.get(entity[0].__proto__.constructor.name) as EntityDescirption;
-                if (!desc) {
-                    throw new Error("desc not found");
-                }
-                var condition: any = {};
-                condition[desc.primary] = (entity as any)[desc.primary]
-                return await this.getConnection(desc.database).delete(condition, desc);
+                desc = desc || EntityMap.get(this.factory.name) as EntityDescirption;
+                return item;
             }
+        });
+        option = {};
+        if (!desc) {
+            throw new Error("desc not found");
         }
-        else if (args.length == 2) {
-            desc = EntityMap.get(args[0].name) as EntityDescirption;
-            if (!desc) {
-                throw new Error("desc not found");
-            }
-            var condition: any = {};
-            switch (typeof args[1]) {
-                case 'number':
-                case 'string':
-                    condition[desc.primary] = args[1];
-                    break;
-                default:
-                    condition = args[1];
-                    break;
-            }
-            return await this.getConnection(desc.database).delete(condition, desc);
-        }
-        else {
-            throw new Error("delete 参数不对");
-        }
+        (option as any)[desc.primary] = ids.filter((item: any) => {
+            return item;
+        });
+        return this.getConnection(desc.database).delete(option, desc);
+
+
+        // if(Array.isArray(condition)){
+        //     if(!condition.length){
+        //         return false;
+        //     }
+        //     //批量删除实例，必须有主键
+        //     if(typeof condition[0] == 'object'){
+        //         desc = EntityMap.get(condition[0].__proto__.constructor.name) as EntityDescirption;
+        //         var ids = condition.map(item => (item as any)[desc.primary]).filter(item => item != null && item != '');
+        //         option = {};
+        //         (option as any)[desc.primary] = ['in',ids];
+        //     }
+        //     else{
+        //         desc = EntityMap.get(this.factory.name) as EntityDescirption;
+        //     }
+        // }
+        // else{
+        //     desc
+        // }
+
+        // return await this.getConnection(desc.database).delete(option, desc);
+
+
+        // if (args.length == 1) {
+        //     let entity = args[0];
+        //     if (Array.isArray(entity)) {
+        //         if (!entity.length) {
+        //             return false;
+        //         }
+        //         desc = EntityMap.get(entity[0].__proto__.constructor.name) as EntityDescirption;
+        //         if (!desc) {
+        //             throw new Error("desc not found");
+        //         }
+        //         var ids = entity.map(item => (item as any)[desc.primary]).filter(item => item != null && item != '');
+        //         var condition: any = {};
+        //         condition[desc.primary] = ['in', ids];
+        //         return await this.getConnection(desc.database).delete(condition, desc);
+        //     }
+        //     else {
+        //         desc = EntityMap.get(entity[0].__proto__.constructor.name) as EntityDescirption;
+        //         if (!desc) {
+        //             throw new Error("desc not found");
+        //         }
+        //         var condition: any = {};
+        //         condition[desc.primary] = (entity as any)[desc.primary]
+        //         return await this.getConnection(desc.database).delete(condition, desc);
+        //     }
+        // }
+        // else if (args.length == 2) {
+        //     desc = EntityMap.get(args[0].name) as EntityDescirption;
+        //     if (!desc) {
+        //         throw new Error("desc not found");
+        //     }
+        //     var condition: any = {};
+        //     switch (typeof args[1]) {
+        //         case 'number':
+        //         case 'string':
+        //             condition[desc.primary] = args[1];
+        //             break;
+        //         default:
+        //             condition = args[1];
+        //             break;
+        //     }
+        //     return await this.getConnection(desc.database).delete(condition, desc);
+        // }
+        // else {
+        //     throw new Error("delete 参数不对");
+        // }
     }
 
     /**
@@ -252,22 +321,43 @@ export class XEntityManager<U>{
      * @param entity 
      * @param option 
      */
-    async find(option: FindOption<U> = {}, observable = false): Promise<U[]> {
+    async find(option?: FindOption<U> | number | string | any[]): Promise<U[]> {
+        let condition: FindOption<U>;
         var name = this.factory ? this.factory.name : '';
         const desc = EntityMap.get(name);
         if (!desc) {
             throw new Error("desc not found");
-            // return [];
         }
 
-        var result = await this.getConnection(desc.database).find<U>(option, desc);
-        //判断是否要追加字段
-        // if (option.addon) {
-        //     var addons = Object.keys(desc.external).filter(item => desc.external[item]);
+        do {
+            if (!Array.isArray(option)) {
+                //直接输入条件的情况
+                if (typeof option == 'object') {
+                    condition = option;
+                    break;
+                }
+                //主键查询的情况
+                else {
+                    option = [option];
+                }
+            }
 
+            option = option as any[];
+            if (!option.length) {
+                return [];
+            }
+            //构造主键查询
+            condition = { where: {} };
+            (condition.where as any)[desc.primary] = ['in', option];
+        } while (0);
 
+        if (!condition) {
+            return [];
+        }
+
+        var result = await this.getConnection(desc.database).find<U>(condition, desc);
         // }
-        var ret : any[] = [];
+        var ret: any[] = [];
         for (let item of result) {
             //新版API
             if (this.factory.prototype.onGet) {
@@ -287,8 +377,8 @@ export class XEntityManager<U>{
             // ret.push(obj);
         }
 
-        if (option.addon) {
-            var addons = Object.keys(option.addon).filter(item => desc.external[item]);
+        if (condition.addon) {
+            var addons = Object.keys(condition.addon).filter(item => desc.external[item]);
 
             //TODO : 将查询更近一层，做出多级嵌套效果（多级可能没有提示）
 
@@ -308,10 +398,12 @@ export class XEntityManager<U>{
      * @param entity 
      * @param option 
      */
-    async findOne(option: FindOption<U> = {}): Promise<U> {
+    async findOne(option?: FindOption<U> | number | string | any[]): Promise<U | any> {
         var result = await this.find(option);
-        return result[0];
-
+        if (result.length) {
+            return result[0];
+        }
+        return null;
     }
 
 
@@ -351,7 +443,7 @@ export class XEntityManager<U>{
             var condition: any = {};
             condition[addon.toKey] = ['in', cVals];
             var targetEntity = EntityMap.get(addon.entity);
-            if(!targetEntity){
+            if (!targetEntity) {
                 continue;
             }
             let result = await this.of(targetEntity.entity as any).find({
@@ -367,11 +459,11 @@ export class XEntityManager<U>{
             if (addon.type == '1vn') {
                 for (var item of entity) {
                     var target = groups[(item as any)[addon.fromKey]];
-                    if(target){
+                    if (target) {
                         (item as any)[addon.field] = groups[(item as any)[addon.fromKey]];
                     }
-                    else{
-                        (item as any)[addon.field] = []; 
+                    else {
+                        (item as any)[addon.field] = [];
                     }
                 }
             }
@@ -379,7 +471,7 @@ export class XEntityManager<U>{
             else {
                 for (var item of entity) {
                     var target = groups[(item as any)[addon.fromKey]]
-                    if(target && target.length){
+                    if (target && target.length) {
                         (item as any)[addon.field] = target[0];
                     }
                 }
@@ -506,6 +598,30 @@ export class XEntityManager<U>{
      */
     hasConnection(type = 'default'): boolean {
         return ORMCONFIG.CONNECTION_MANAGER[type];
+    }
+
+
+    /**
+     * 封装一些常用的引用，使之只需要导入一个X就可以
+     */
+    get Entity() {
+        return XEntity;
+    }
+
+    get OneToOne() {
+        return OneToOne;
+    }
+
+    get ManyToOne() {
+        return ManyToOne;
+    }
+
+    get PrimaryColumn() {
+        return PrimaryColumn;
+    }
+
+    get PrimaryGeneratedColumn() {
+        return PrimaryGeneratedColumn;
     }
 }
 

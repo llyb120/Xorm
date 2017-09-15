@@ -1,4 +1,4 @@
-import { MysqlConfig } from '../driver/mysql/manager';
+import { MysqlConfig } from './driver/mysql/manager';
 export interface XEntityConfig{
     
 }

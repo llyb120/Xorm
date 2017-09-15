@@ -9,8 +9,5 @@ export class Order{
 
     order_amount : number;
 
-    // order_goods : 
-
-    // @OneToMany(OrderGoods,"OrderGoods.order_id",'order_id')
     order_goods : OrderGoods[]
 }

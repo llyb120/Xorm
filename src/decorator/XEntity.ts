@@ -1,6 +1,5 @@
-import { XEntityConfig } from '../header/config';
+import { XEntityConfig } from '../config';
 import { ORMCONFIG } from '../constant';
-import { ObjectType } from "../header/ObjectType";
 import { ObservingObject } from '../gc';
 
 

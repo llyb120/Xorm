@@ -1,5 +1,5 @@
 import { ORMCONFIG } from './../../constant';
-import { XOrmConfig } from '../../header/config';
+import { XOrmConfig } from '../../config';
 import * as mysql from "mysql";
 import { IPool } from "mysql";
 import { IDriverBase } from '../driver';
@@ -9,7 +9,7 @@ import { QueryBuilder } from '../../querybuilder';
 
 export class MysqlConnectionManager implements IDriverBase {
     async delete<T>(condition: WhereOption<T>, desc: EntityDescirption): Promise<boolean> {
-        var str = this.buildWhere(condition, desc);
+        var str = this.buildWhere(condition, desc, false);
         var sql = `
             delete from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\`
         `;
