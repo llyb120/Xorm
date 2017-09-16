@@ -33,7 +33,7 @@ X.start(
         "tablesPrefix": "ra_"
     }
 ).then(async managers => {
-    X.registerEntity(Member,c => c.member_id);
+    // X.registerEntity(Member,c => c.member_id);
     
     var a = new Member;
     // a.member_id = 1; 
@@ -42,8 +42,15 @@ X.start(
     // member.member_name = 'cubi';
     // X.save(member);
 
-    var member = await X.of(Member).findOne();
-    console.log(member);
+    console.log(EntityMap);
+
+    var order = await X.of(Order).findOne({
+        addon : {
+            order_goods : 1
+        }
+    });
+
+    console.log(order);
     // var member = await X.of(Member).findOne({
     //     where : {
     //         member_name : 'cubi'

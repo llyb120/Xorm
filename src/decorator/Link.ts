@@ -1,9 +1,15 @@
 import { Entity, EntityDescirption, EntityMap, InitEntityDescirption } from './XEntity';
 
-interface LinkOption<T> {
+export interface LinkOption<T> {
     from?: (item: any) => any,
     to: (item: T) => any,
     reverse?: (item: T) => any
+}
+
+export interface LinkOptionEX<T,K>{
+    from : (item : T) => any,
+    to : (item : K) => any;
+    reverse? : (item : K) => any;
 }
 // export function OneToMany(proto : Object,key : string) : void;
 /**

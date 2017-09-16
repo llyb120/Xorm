@@ -5,7 +5,7 @@ import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
 import { FindOption, Repository, WhereOptionCompare, WhereOption, AddOnOption } from './repository';
 import { ObservingObject } from './gc';
-import { OneToOne, ManyToOne, makeFactory } from './decorator/Link';
+import { OneToOne, ManyToOne, makeFactory, LinkOption, LinkOptionEX } from './decorator/Link';
 import { PrimaryColumn, PrimaryGeneratedColumn } from './decorator/PrimaryColumn';
 
 
@@ -321,7 +321,7 @@ export class XEntityManager<U>{
      * @param entity 
      * @param option 
      */
-    async find(option?: FindOption<U> | number | string | any[]): Promise<U[]> {
+    async find(option?: FindOption<U> | number | string | any[],onlyOne = false): Promise<U[]> {
         let condition: FindOption<U>;
         var name = this.factory ? this.factory.name : '';
         const desc = EntityMap.get(name);
@@ -358,6 +358,9 @@ export class XEntityManager<U>{
 
         if (!condition) {
             return [];
+        }
+        if(onlyOne){
+            condition.limit = 1;
         }
 
         var result = await this.getConnection(desc.database).find<U>(condition, desc);
@@ -404,7 +407,7 @@ export class XEntityManager<U>{
      * @param option 
      */
     async findOne(option?: FindOption<U> | number | string | any[]): Promise<U | any> {
-        var result = await this.find(option);
+        var result = await this.find(option,true);
         if (result.length) {
             return result[0];
         }
@@ -640,10 +643,31 @@ export class XEntityManager<U>{
         primary : (c : T) => any,
         fromDb : string = 'default',
     ){
+        if(EntityMap.has(entity.name)){
+            return;
+        }
+
         var newEntity = XEntity(fromDb)(entity) as Function;
         // Xen  
         PrimaryColumn()(newEntity.prototype,makeFactory(primary));
     }
+
+    addManyToOneLink<T,K>(
+        from : Entity<T>,
+        to : Entity<K>,
+        option : LinkOptionEX<T,K>
+    ){
+        ManyToOne(to,option)(from.prototype,makeFactory(option.from));
+    }
+
+    addOneToOneLink<T,K>(
+        from : Entity<T>,
+        to : Entity<K>,
+        option : LinkOptionEX<T,K>
+    ){
+        OneToOne(to,option)(from.prototype,makeFactory(option.from));
+    }
+    
 }
 
 export const X = new XEntityManager;

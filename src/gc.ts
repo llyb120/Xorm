@@ -6,7 +6,7 @@
  *  3.此时如果b容器发生变动，对象仍旧回a容器
  *  4.30秒后，如果b容器内的元素不再发生任何变动，则清除b容器内所有的引用，回收系统资源
  */
-const GC_STEP_TIME = 30000;
+const GC_STEP_TIME = 5000;
 
 class GC {
     private boxA = new Map();
@@ -24,7 +24,8 @@ class GC {
 
             console.log("容器A大小", this.boxA.size);
             console.log("容器B大小", this.boxB.size);
-
+            console.log(this.boxB)
+ 
         }, GC_STEP_TIME);
     }
 
