@@ -3,10 +3,8 @@ import { X } from '../x';
 import { PrimaryColumn } from "../decorator/PrimaryColumn";
 import {  ManyToOne } from '../decorator/Link';
 
-@X.Entity
 export class Member{
 
-    @X.PrimaryColumn()
     public member_id : number;  
 
     public member_name : string;
@@ -19,7 +17,7 @@ export class Member{
     
 }
 
-
+X.registerEntity(Member,m => m.member_id);
 
 
 

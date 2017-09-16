@@ -34,7 +34,7 @@ export function OneToMany<T>(
     }
 }
 
-function makeFactory(callback: Function | undefined) {
+export function makeFactory(callback: Function | undefined) {
     if (!callback) {
         return null;
     }

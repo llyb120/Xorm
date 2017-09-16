@@ -33,6 +33,8 @@ X.start(
         "tablesPrefix": "ra_"
     }
 ).then(async managers => {
+    X.registerEntity(Member,c => c.member_id);
+    
     var a = new Member;
     // a.member_id = 1; 
     // // console.log(ObservingObject.getChanged(a));
@@ -40,6 +42,8 @@ X.start(
     // member.member_name = 'cubi';
     // X.save(member);
 
+    var member = await X.of(Member).findOne();
+    console.log(member);
     // var member = await X.of(Member).findOne({
     //     where : {
     //         member_name : 'cubi'
@@ -53,6 +57,7 @@ X.start(
     // X.of(member);
     // console.log(a.prototype,a.__proto__)
     return;
+
 
 
     var ret = await X.of(Member).find({

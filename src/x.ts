@@ -5,7 +5,7 @@ import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
 import { FindOption, Repository, WhereOptionCompare, WhereOption, AddOnOption } from './repository';
 import { ObservingObject } from './gc';
-import { OneToOne, ManyToOne } from './decorator/Link';
+import { OneToOne, ManyToOne, makeFactory } from './decorator/Link';
 import { PrimaryColumn, PrimaryGeneratedColumn } from './decorator/PrimaryColumn';
 
 
@@ -330,6 +330,11 @@ export class XEntityManager<U>{
         }
 
         do {
+            if(!option){
+                condition = {};
+                break;
+            }
+
             if (!Array.isArray(option)) {
                 //直接输入条件的情况
                 if (typeof option == 'object') {
@@ -622,6 +627,22 @@ export class XEntityManager<U>{
 
     get PrimaryGeneratedColumn() {
         return PrimaryGeneratedColumn;
+    }
+
+    /**
+     * 封装一些不依赖装饰器的行为
+     */
+    /**
+     * 注册一个控制器
+     */
+    registerEntity<T>(
+        entity : Entity<T>,
+        primary : (c : T) => any,
+        fromDb : string = 'default',
+    ){
+        var newEntity = XEntity(fromDb)(entity) as Function;
+        // Xen  
+        PrimaryColumn()(newEntity.prototype,makeFactory(primary));
     }
 }
 
