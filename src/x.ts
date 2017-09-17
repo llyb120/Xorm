@@ -492,7 +492,7 @@ export class XEntityManager<U>{
      * 启动函数，只有调用了这个并且传入对应的数据库连接配置，XORM才会生效
      * @param configs 
      */
-    async start(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
+    async startORM(configs: XOrmConfig[] | XOrmConfig): Promise<IDriverBase[]> {
         if (!configs) {
             throw new Error("Xorm 配置文件错误");
         }

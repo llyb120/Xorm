@@ -12,7 +12,7 @@ import { Order } from './order';
 
 OrderGoods.name;
 
-X.start(
+X.startORM(
     {
         "name": "default",
         "type": "mysql",
