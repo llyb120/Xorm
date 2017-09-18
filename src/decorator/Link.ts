@@ -40,16 +40,18 @@ export function OneToMany<T>(
     }
 }
 
+var factory : any = null;
+
 export function makeFactory(callback: Function | undefined) {
     if (!callback) {
         return null;
     }
-    var proxy = new Proxy({}, {
+    factory = factory || new Proxy({}, {
         get: (obj, key) => {
             return key;
         }
     });
-    return callback(proxy);
+    return callback(factory);
 }
 
 export function ManyToOne<T>(
