@@ -632,12 +632,22 @@ export class XEntityManager<U>{
             //大概会用到吧
             ORMCONFIG.MODELS[config.database] = ORMCONFIG.MODELS[config.database] || [];
             ORMCONFIG.MODELS[config.database].push(entity);
-            var newClass = class extends entity.prototype.constructor {
-                constructor() {
-                    super();
-                    return ObservingObject.addObserveObject(this);
+
+            var code = new Function('entity','ObservingObject',`
+                return class extends entity.prototype.constructor {
+                    constructor() {
+                        super();
+                        return ObservingObject.addObserveObject(this);
+                    }
                 }
-            }
+            `);
+            var newClass = code.call(null,entity,ObservingObject);
+            // var newClass = class extends entity.prototype.constructor {
+            //     constructor() {
+            //         super();
+            //         return ObservingObject.addObserveObject(this);
+            //     }
+            // }
             Object.defineProperty(newClass,'name',{
                 value : entity.name
             });

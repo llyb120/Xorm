@@ -22,9 +22,9 @@ class GC {
             this.boxB = this.boxA;
             this.boxA = new Map();
 
-            console.log("容器A大小", this.boxA.size);
-            console.log("容器B大小", this.boxB.size);
-            console.log(this.boxB)
+            // console.log("容器A大小", this.boxA.size);
+            // console.log("容器B大小", this.boxB.size);
+            // console.log(this.boxB)
  
         }, GC_STEP_TIME);
     }

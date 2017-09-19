@@ -1,24 +1,30 @@
 {
-  "name": "x-orm",
-  "version": "0.0.1",
-  "main": "./build/index.js",
-  "devDependencies": {
-    "@types/mysql": "^0.0.34",
-    "@types/node": "^8.0.27",
-    "fuse-box": "^2.2.31",
-    "typescript": "^2.5.2"
-  },
-  "scripts": {
-    "dev": "node tools/dev.js",
-    "compile" : "tsc"
-  },
-  "dependencies": {
-    "@types/glob": "^5.0.32",
-    "glob": "^7.1.2",
-    "mysql": "^2.14.1",
-    "tslib": "^1.7.1"
-  },
-  "module" : "./build/index",
-  "typings": "include/index.d.ts",
-  "types": "include/index.d.ts"
+    "name": "x-orm",
+    "version": "0.0.1",
+    "main": "./build/index.js",
+    "devDependencies": {
+        "@types/mocha": "^2.2.43",
+        "@types/mysql": "^0.0.34",
+        "@types/node": "^8.0.27",
+        "@types/should": "^11.2.0",
+        "fuse-box": "^2.2.31",
+        "mocha": "^3.5.3",
+        "should": "^13.0.1",
+        "ts-node": "^3.3.0",
+        "typescript": "^2.5.2"
+    },
+    "scripts": {
+        "dev": "node tools/dev.js",
+        "compile": "tsc",
+        "test": "./node_modules/.bin/mocha -w -r ./node_modules/ts-node/register  src/test/*.ts"
+    },
+    "dependencies": {
+        "@types/glob": "^5.0.32",
+        "glob": "^7.1.2",
+        "mysql": "^2.14.1",
+        "tslib": "^1.7.1"
+    },
+    "module": "./build/index",
+    "typings": "include/index.d.ts",
+    "types": "include/index.d.ts"
 }
