@@ -37,7 +37,7 @@ X.startORM(
 ).then(async managers => {
     // X.registerEntity(Member,c => c.member_id);
     
-    var a = new Member;
+
     // a.member_id = 1; 
     // // console.log(ObservingObject.getChanged(a));
     // var member = new Member;
