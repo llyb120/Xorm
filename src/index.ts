@@ -29,7 +29,7 @@ export function getEntityManager() {
 export * from "./constant";
 export * from "./gc";
 export * from "./repository";
-export * from "./querybuilder";
+// export * from "./querybuilder";
 export * from "./x";
 
 export * from "./config";

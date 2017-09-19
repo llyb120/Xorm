@@ -5,7 +5,7 @@ import { IPool } from "mysql";
 import { IDriverBase } from '../driver';
 import { EntityDescirption } from "../../decorator/XEntity";
 import { FindOption, WhereOption } from '../../repository';
-import { QueryBuilder } from '../../querybuilder';
+// import { QueryBuilder } from '../../querybuilder';
 
 export class MysqlConnectionManager implements IDriverBase {
     async delete<T>(condition: WhereOption<T>, desc: EntityDescirption): Promise<boolean> {

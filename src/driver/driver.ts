@@ -1,7 +1,7 @@
 import { EntityDescirption } from './../decorator/XEntity';
 import { MysqlConnectionManager } from './mysql/manager';
 import { FindOption, WhereOption } from '../repository';
-import { QueryBuilder } from '../querybuilder';
+// import { QueryBuilder } from '../querybuilder';
 
 export interface IDriverBase {
     start(): Promise<any> | void;

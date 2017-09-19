@@ -1,4 +1,5 @@
-import { XOrmConfig } from "./header/config";
+import { XOrmConfig } from './config';
+
 
 export enum ORMMODE {
     DESIGN,

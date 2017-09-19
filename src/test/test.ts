@@ -63,57 +63,57 @@ X.startORM(
     // var a = await X.of(Member).findOne(1);
     // X.of(member);
     // console.log(a.prototype,a.__proto__)
-    return;
+    throw new Error();
 
 
 
-    var ret = await X.of(Member).find({
-        where: {
-            member_name: ['like', 'cubi'],
-            member_id: ['in', [10, 20, 30]],
-            member_add_time: ['>', new Date().getTime() / 1000],
-            and: {
-                member_id: 1,
-            },
-            or: {
-                member_name: "cubi"
-            }
-        },
-        order: {
-            member_id: "asc"
-        },
-        group: 'member_id',
-        limit: 10
-    })
+    // var ret = await X.of(Member).find({
+    //     where: {
+    //         member_name: ['like', 'cubi'],
+    //         member_id: ['in', [10, 20, 30]],
+    //         member_add_time: ['>', new Date().getTime() / 1000],
+    //         and: {
+    //             member_id: 1,
+    //         },
+    //         or: {
+    //             member_name: "cubi"
+    //         }
+    //     },
+    //     order: {
+    //         member_id: "asc"
+    //     },
+    //     group: 'member_id',
+    //     limit: 10
+    // })
 
 
-    var d = await X.of(Order).findOne({
-        where : {
-            order_sn : "1504498057635203",
-        },
-        addon : {
-            order_goods : 1
-        }
+    // var d = await X.of(Order).findOne({
+    //     where : {
+    //         order_sn : "1504498057635203",
+    //     },
+    //     addon : {
+    //         order_goods : 1
+    //     }
 
-    }); 
+    // }); 
 
-    X.of(Order).findOne({
-        where : {
-            order_sn : "123213",
-        },
-        addon : {
-            order_goods :true 
-        }
-    })
+    // X.of(Order).findOne({
+    //     where : {
+    //         order_sn : "123213",
+    //     },
+    //     addon : {
+    //         order_goods :true 
+    //     }
+    // })
 
-    console.log(EntityMap)
-    var og = d.order_goods;
-    // console.log(d,og);
-    og[0].goods_name = 'cubi';
+    // console.log(EntityMap)
+    // var og = d.order_goods;
+    // // console.log(d,og);
+    // og[0].goods_name = 'cubi';
 
-    await X.makeAddon(og,"order");
+    // await X.makeAddon(og,"order");
   
-    console.log(d)
+    // console.log(d)
     // console.log(X.toObject(d));
     // // console.log(X.toObject(og[0].order))
     // console.log(X.toJSON(og));
@@ -160,7 +160,7 @@ X.startORM(
     // getEntityManager().getRepository(Member);
 
     // var a = getEntityManager().getRepository(Member).createQueryBuilder("cubi")
-    return;
+    // return;
 
     // return;
     // console.log(X.getChanged(c))

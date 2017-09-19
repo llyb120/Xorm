@@ -348,7 +348,7 @@ export class XEntityManager<U>{
             }
 
             option = option as any[];
-            if (!option.length) {
+            if (!(option as any[]).length) {
                 return [];
             }
             //构造主键查询
