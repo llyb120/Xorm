@@ -340,12 +340,13 @@ export class XEntityManager<U>{
      * @param entity 
      * @param option 
      */
-    async findOne(option?: FindOption<U> | number | string | any[]): Promise<U | any> {
+    async findOne(option?: FindOption<U> | number | string | any[]): Promise<U | undefined> {
         var result = await this.find(option, true);
         if (result.length) {
             return result[0];
         }
-        return null;
+        // return new this.factory.prototype.constructor;
+        // return null as U;
     }
 
 

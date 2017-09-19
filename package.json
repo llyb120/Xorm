@@ -16,7 +16,7 @@
     "scripts": {
         "dev": "node tools/dev.js",
         "compile": "tsc",
-        "test": "./node_modules/.bin/mocha -w -r ./node_modules/ts-node/register  src/test/*.ts"
+        "test": "./node_modules/.bin/mocha -r ./node_modules/ts-node/register  src/test/*.ts --watch --watch-extensions ts"
     },
     "dependencies": {
         "@types/glob": "^5.0.32",
