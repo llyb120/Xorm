@@ -2,7 +2,7 @@
 // import { getEntityManager } from './../entity_manager';
 // import { getConnection } from '../index';
 // import { IDriverBase } from '../driver/driver';
-import { EntityMap, EntityWatchingMap } from '../decorator/XEntity';
+import { EntityMap, EntityWatchingMap, Entity } from '../decorator/XEntity';
 import { Member,  } from './member';
 import { Repository, WhereOption, } from '../repository';
 import { X } from '../x';
@@ -11,6 +11,8 @@ import { OrderGoods } from './order_goods';
 import { Order } from './order';
 
 OrderGoods.name;
+
+
 
 X.startORM(
     {
@@ -42,7 +44,7 @@ X.startORM(
     // member.member_name = 'cubi';
     // X.save(member);
 
-    console.log(EntityMap);
+    // console.log(EntityMap);
 
     var order = await X.of(Order).findOne({
         addon : {
@@ -63,7 +65,6 @@ X.startORM(
     // var a = await X.of(Member).findOne(1);
     // X.of(member);
     // console.log(a.prototype,a.__proto__)
-    throw new Error();
 
 
 
@@ -87,16 +88,16 @@ X.startORM(
     // })
 
 
-    // var d = await X.of(Order).findOne({
-    //     where : {
-    //         order_sn : "1504498057635203",
-    //     },
-    //     addon : {
-    //         order_goods : 1
-    //     }
+//     var d = await X.of(Order).findOne({
+//         where : {
+//             order_sn : "1504498057635203",
+//         },
+//         addon : {
+//             order_goods : 1
+//         }
 
-    // }); 
-
+//     }); 
+// console.log(d)
     // X.of(Order).findOne({
     //     where : {
     //         order_sn : "123213",

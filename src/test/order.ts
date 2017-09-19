@@ -1,7 +1,9 @@
-import { XEntity } from '../decorator/XEntity';
-import { OneToMany } from '../decorator/Link';
 import { OrderGoods } from './order_goods';
-@XEntity
+import { X } from '../x';
+
+@X.Entity({
+    primary : 'order_id'
+})
 export class Order{
     order_id : number;
     
@@ -11,3 +13,7 @@ export class Order{
 
     order_goods : OrderGoods[]
 }
+
+// X.registerEntity(Order,{
+//     primary : o => o.order_id
+// })

@@ -3,7 +3,6 @@ import { MysqlConnectionManager } from './driver/mysql/manager';
 import { IDriverBase } from './driver/driver';
 import { ORMCONFIG } from './constant';
 import { X } from './x';
-
 //对外封装常用的方法
 
 
@@ -35,7 +34,7 @@ export * from "./x";
 export * from "./config";
 export * from "./driver/driver";
 export * from "./driver/mysql/manager";
+// export * from "./decorator/XEntity";
+// export * from "./decorator/PrimaryColumn";
 export * from "./decorator/XEntity";
-export * from "./decorator/PrimaryColumn";
-export * from "./decorator/XEntity";
-export * from "./decorator/Link"
+export {LinkOption} from "./decorator/Link"

@@ -1,12 +1,13 @@
-import { EntityMap, Entity, XEntity, EntityWatchingMap, IWatchedModel, EntityDescirption } from './decorator/XEntity';
+import { EntityMap, Entity, EntityWatchingMap, IWatchedModel, EntityDescirption, InitEntityDescirption } from './decorator/XEntity';
 import { XOrmConfig } from "./config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
 import { FindOption, Repository, WhereOptionCompare, WhereOption, AddOnOption } from './repository';
 import { ObservingObject } from './gc';
-import { OneToOne, ManyToOne, makeFactory, LinkOption, LinkOptionEX } from './decorator/Link';
-import { PrimaryColumn, PrimaryGeneratedColumn } from './decorator/PrimaryColumn';
+import { OneToOne, ManyToOne, makeFactory, LinkOption } from './decorator/Link';
+// import { PrimaryColumn, PrimaryGeneratedColumn } from './decorator/PrimaryColumn';
+import { EntityConfig } from './api';
 
 
 var isRuning = false;
@@ -231,73 +232,6 @@ export class XEntityManager<U>{
         return this.getConnection(desc.database).delete(option, desc);
 
 
-        // if(Array.isArray(condition)){
-        //     if(!condition.length){
-        //         return false;
-        //     }
-        //     //批量删除实例，必须有主键
-        //     if(typeof condition[0] == 'object'){
-        //         desc = EntityMap.get(condition[0].__proto__.constructor.name) as EntityDescirption;
-        //         var ids = condition.map(item => (item as any)[desc.primary]).filter(item => item != null && item != '');
-        //         option = {};
-        //         (option as any)[desc.primary] = ['in',ids];
-        //     }
-        //     else{
-        //         desc = EntityMap.get(this.factory.name) as EntityDescirption;
-        //     }
-        // }
-        // else{
-        //     desc
-        // }
-
-        // return await this.getConnection(desc.database).delete(option, desc);
-
-
-        // if (args.length == 1) {
-        //     let entity = args[0];
-        //     if (Array.isArray(entity)) {
-        //         if (!entity.length) {
-        //             return false;
-        //         }
-        //         desc = EntityMap.get(entity[0].__proto__.constructor.name) as EntityDescirption;
-        //         if (!desc) {
-        //             throw new Error("desc not found");
-        //         }
-        //         var ids = entity.map(item => (item as any)[desc.primary]).filter(item => item != null && item != '');
-        //         var condition: any = {};
-        //         condition[desc.primary] = ['in', ids];
-        //         return await this.getConnection(desc.database).delete(condition, desc);
-        //     }
-        //     else {
-        //         desc = EntityMap.get(entity[0].__proto__.constructor.name) as EntityDescirption;
-        //         if (!desc) {
-        //             throw new Error("desc not found");
-        //         }
-        //         var condition: any = {};
-        //         condition[desc.primary] = (entity as any)[desc.primary]
-        //         return await this.getConnection(desc.database).delete(condition, desc);
-        //     }
-        // }
-        // else if (args.length == 2) {
-        //     desc = EntityMap.get(args[0].name) as EntityDescirption;
-        //     if (!desc) {
-        //         throw new Error("desc not found");
-        //     }
-        //     var condition: any = {};
-        //     switch (typeof args[1]) {
-        //         case 'number':
-        //         case 'string':
-        //             condition[desc.primary] = args[1];
-        //             break;
-        //         default:
-        //             condition = args[1];
-        //             break;
-        //     }
-        //     return await this.getConnection(desc.database).delete(condition, desc);
-        // }
-        // else {
-        //     throw new Error("delete 参数不对");
-        // }
     }
 
     /**
@@ -321,7 +255,7 @@ export class XEntityManager<U>{
      * @param entity 
      * @param option 
      */
-    async find(option?: FindOption<U> | number | string | any[],onlyOne = false): Promise<U[]> {
+    async find(option?: FindOption<U> | number | string | any[], onlyOne = false): Promise<U[]> {
         let condition: FindOption<U>;
         var name = this.factory ? this.factory.name : '';
         const desc = EntityMap.get(name);
@@ -330,7 +264,7 @@ export class XEntityManager<U>{
         }
 
         do {
-            if(!option){
+            if (!option) {
                 condition = {};
                 break;
             }
@@ -359,7 +293,7 @@ export class XEntityManager<U>{
         if (!condition) {
             return [];
         }
-        if(onlyOne){
+        if (onlyOne) {
             condition.limit = 1;
         }
 
@@ -407,7 +341,7 @@ export class XEntityManager<U>{
      * @param option 
      */
     async findOne(option?: FindOption<U> | number | string | any[]): Promise<U | any> {
-        var result = await this.find(option,true);
+        var result = await this.find(option, true);
         if (result.length) {
             return result[0];
         }
@@ -612,9 +546,9 @@ export class XEntityManager<U>{
     /**
      * 封装一些常用的引用，使之只需要导入一个X就可以
      */
-    get Entity() {
-        return XEntity;
-    }
+    // get Entity() {
+    //     return XEntity;
+    // }
 
     get OneToOne() {
         return OneToOne;
@@ -624,13 +558,14 @@ export class XEntityManager<U>{
         return ManyToOne;
     }
 
-    get PrimaryColumn() {
-        return PrimaryColumn;
-    }
 
-    get PrimaryGeneratedColumn() {
-        return PrimaryGeneratedColumn;
-    }
+    // get PrimaryColumn() {
+    //     return PrimaryColumn;
+    // }
+
+    // get PrimaryGeneratedColumn() {
+    //     return PrimaryGeneratedColumn;
+    // }
 
     /**
      * 封装一些不依赖装饰器的行为
@@ -638,36 +573,97 @@ export class XEntityManager<U>{
     /**
      * 注册一个控制器
      */
-    registerEntity<T>(
-        entity : Entity<T>,
-        primary : (c : T) => any,
-        fromDb : string = 'default',
-    ){
-        if(EntityMap.has(entity.name)){
-            return;
+    // registerEntity<T>(
+    //     entity : Entity<T>,
+    //     primary : (c : T) => any,
+    //     fromDb : string = 'default',
+    // ){
+    //     if(EntityMap.has(entity.name)){
+    //         return;
+    //     }
+
+    //     var newEntity = XEntity(fromDb)(entity) as Function;
+    //     // Xen  
+    //     PrimaryColumn()(newEntity.prototype,makeFactory(primary));
+    // }
+
+
+    /**
+     * 用装饰器注册，因为需要改变函数行为，所以必须使用装饰器
+     */
+    // Enitty(
+    //     config : EntityConfig
+    // )
+    // {
+
+    // }   
+
+    Entity<T>(
+        config: EntityConfig
+    ) : Function {
+        return function (entity: Function) {
+            if (!config.database) {
+                config.database = 'default';
+            }
+
+            var primary: any;
+            if (typeof config.primary == 'function') {
+                primary = makeFactory(config.primary);
+            }
+            else {
+                primary = config.primary;
+            }
+            var info: EntityDescirption;
+            if (!EntityMap.has(entity.name)) {
+                info = InitEntityDescirption();
+                EntityMap.set(entity.name, info);
+            }
+            else {
+                info = EntityMap.get(entity.name) as EntityDescirption;
+            }
+            info.database = config.database;
+            info.tableName = entity.name.replace(/^[A-Z]/, function (a) {
+                return a.toLowerCase();
+            }).replace(/[A-Z][a-z]/g, function (a) {
+                return '_' + a.toLowerCase();
+            });
+            info.primary = primary;
+
+            //大概会用到吧
+            ORMCONFIG.MODELS[config.database] = ORMCONFIG.MODELS[config.database] || [];
+            ORMCONFIG.MODELS[config.database].push(entity);
+            var newClass = class extends entity.prototype.constructor {
+                constructor() {
+                    super();
+                    return ObservingObject.addObserveObject(this);
+                }
+            }
+            Object.defineProperty(newClass,'name',{
+                value : entity.name
+            });
+            info.entity = newClass;
+            return newClass;
+
+          
         }
-
-        var newEntity = XEntity(fromDb)(entity) as Function;
-        // Xen  
-        PrimaryColumn()(newEntity.prototype,makeFactory(primary));
     }
 
-    addManyToOneLink<T,K>(
-        from : Entity<T>,
-        to : Entity<K>,
-        option : LinkOptionEX<T,K>
-    ){
-        ManyToOne(to,option)(from.prototype,makeFactory(option.from));
-    }
+    // addManyToOneLink<T, K>(
+    //     from: Entity<T>,
+    //     to: Entity<K>,
+    //     option: LinkOptionEX<T, K>
+    // ) {
+    //     ManyToOne(to, option)(from.prototype, makeFactory(option.from));
+    // }
 
-    addOneToOneLink<T,K>(
-        from : Entity<T>,
-        to : Entity<K>,
-        option : LinkOptionEX<T,K>
-    ){
-        OneToOne(to,option)(from.prototype,makeFactory(option.from));
-    }
-    
+    // addOneToOneLink<T, K>(
+    //     from: Entity<T>,
+    //     to: Entity<K>,
+    //     option: LinkOptionEX<T, K>
+    // ) {
+    //     OneToOne(to, option)(from.prototype, makeFactory(option.from));
+    // }
+
 }
 
 export const X = new XEntityManager;

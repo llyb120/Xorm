@@ -1,46 +1,13 @@
 import { Entity, EntityDescirption, EntityMap, InitEntityDescirption } from './XEntity';
 
-export interface LinkOption<T> {
-    from?: (item: any) => any,
-    to: (item: T) => any,
-    reverse?: (item: T) => any
+export interface LinkOption<T, K> {
+    from?: { (item: T): any } | string,
+    to: { (item: K): any } | string,
+    reverse?: { (item: K): any } | string;
 }
 
-export interface LinkOptionEX<T,K>{
-    from : (item : T) => any,
-    to : (item : K) => any;
-    reverse? : (item : K) => any;
-}
-// export function OneToMany(proto : Object,key : string) : void;
-/**
- * 因为反向链接存在的缘故，这个方法没用了
- * 声明该元素关联的节点
- * @param entity 
- */
-export function OneToMany<T>(
-    entity: Entity<T>,
 
-    targetKey: string,
-    fromKey?: string,
-    // toKey: string
-): Function {
-    console.log(arguments);
-    return function (proto: Object, key: string) {
-        console.log(123)
-        var info: EntityDescirption = EntityMap.get(proto.constructor.name) || InitEntityDescirption();
-        var sp = targetKey.split(".").map(item => item.trim());
-        info.external[key] = {
-            entity: sp[0],
-            fromKey: fromKey || key,
-            toKey: sp[1],
-            type: "1vn",
-            field: key
-        };
-        EntityMap.set(proto.constructor.name, info);
-    }
-}
-
-var factory : any = null;
+var factory: any = null;
 
 export function makeFactory(callback: Function | undefined) {
     if (!callback) {
@@ -54,116 +21,54 @@ export function makeFactory(callback: Function | undefined) {
     return callback(factory);
 }
 
-export function ManyToOne<T>(
-    entity: { new(): T },
-    // link : (item : T) => any
-    option: LinkOption<T>
-    // fromKey : (item : T) => any,
-    // toKey : (item : T) => any,
-    // rLink : (item : T) => any
-    // targetKey: string, fromKey: string
+export function ManyToOne<T, K>(
+    fromEntity: { new(): T },
+    toEntity: { new(): K },
+    option: LinkOption<T, K>,
+    many = true
 ): Function {
     return function (proto: Object, key: string) {
         console.log(option)
-        var fromKey = makeFactory(option.from) || key;
-        var toKey = makeFactory(option.to);
+        var fromKey = (typeof option.from == 'function' ? makeFactory(option.from) : option.from) || key;
+        var toKey = (typeof option.to == 'function' ? makeFactory(option.to) : option.to)
         if (!toKey) {
             throw new Error("没有找到to");
         }
         var info: EntityDescirption = EntityMap.get(proto.constructor.name) || InitEntityDescirption();
         info.external[key] = {
-            entity: entity.name,
+            entity: toEntity.name,
             fromKey: fromKey,
             toKey: toKey,
             field: key,
             // key: linkKey,
-            type: "nv1",
+            type: many ? "nv1" : '1v1',
         };
         EntityMap.set(proto.constructor.name, info);
         //如果有反向关联，给反向表追加连接
-        var reverse = makeFactory(option.reverse);
-        if (reverse) {
-            var info: EntityDescirption = EntityMap.get(entity.name) || InitEntityDescirption();
+        if (option.reverse) {
+            var reverse = typeof option.reverse == 'function' ? makeFactory(option.reverse) : option.reverse;
+            var info: EntityDescirption = EntityMap.get(toEntity.name) || InitEntityDescirption();
             info.external[reverse] = {
                 entity: proto.constructor.name,
                 fromKey: toKey,
                 toKey: fromKey,
                 field: reverse,
                 // key: linkKey,
-                type: "1vn",
+                type: many ? "1vn" : '1v1',
             };
-            EntityMap.set(entity.name, info);
+            EntityMap.set(toEntity.name, info);
         }
     }
-    // console.log(arguments);
-    // return function (proto: Object, key: string) {
-    //     var info: EntityDescirption = EntityMap.get(proto.constructor.name) || InitEntityDescirption();
-    //     var sp = targetKey.split(".").map(item => item.trim());
-    //     info.external[key] = {
-    //         entity: sp[0],
-    //         fromKey: fromKey,
-    //         toKey: sp[1],
-    //         field: key,
-    //         // key: linkKey,
-    //         type: "nv1"
-    //     };
-    //     EntityMap.set(proto.constructor.name, info);
-    // }
+
 }
 
-export function OneToOne<T>(
-    entity: { new(): T },
-    // link : (item : T) => any
-    option: LinkOption<T>
-    // fromKey : (item : T) => any,
-    // toKey : (item : T) => any,
-    // rLink : (item : T) => any
-    // targetKey: string, fromKey: string
+
+export function OneToOne<T, K>(
+    fromEntity: { new(): T },
+    toEntity: { new(): K },
+    option: LinkOption<T, K>,
 ): Function {
-    return function (proto: Object, key: string) {
-        console.log(option)
-        var fromKey = makeFactory(option.from) || key;
-        var toKey = makeFactory(option.to);
-        if (!toKey) {
-            throw new Error("没有找到to");
-        }
-        var info: EntityDescirption = EntityMap.get(proto.constructor.name) || InitEntityDescirption();
-        info.external[key] = {
-            entity: entity.name,
-            fromKey: fromKey,
-            toKey: toKey,
-            field: key,
-            // key: linkKey,
-            type: "1v1",
-        };
-        EntityMap.set(proto.constructor.name, info);
-        //如果有反向关联，给反向表追加连接
-        var reverse = makeFactory(option.reverse);
-        if (reverse) {
-            var info: EntityDescirption = EntityMap.get(entity.name) || InitEntityDescirption();
-            info.external[reverse] = {
-                entity: proto.constructor.name,
-                fromKey: toKey,
-                toKey: fromKey,
-                field: reverse,
-                // key: linkKey,
-                type: "1v1",
-            };
-            EntityMap.set(entity.name, info);
-        }
-    }
-    // console.log(arguments);
-    // return function (proto: Object, key: string) {
-    //     var info: EntityDescirption = EntityMap.get(proto.constructor.name) || InitEntityDescirption();
-    //     var sp = targetKey.split(".").map(item => item.trim());
-    //     info.external[key] = {
-    //         entity: sp[0],
-    //         fromKey: fromKey,
-    //         toKey: sp[1],
-    //         field: key,
-    //         // key: linkKey,
-    //         type: "nv1"
-    //     };
-    //     EntityMap.set(proto.constructor.name, info);
-    // }
+    return ManyToOne(fromEntity, toEntity, option, true);
+    
+
 }

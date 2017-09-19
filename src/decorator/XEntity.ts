@@ -5,72 +5,69 @@ import { ObservingObject } from '../gc';
 
 export var EntityMap = new Map<string, EntityDescirption>();
 
-/**
- * 默认的
- * @param target 
- */
-export function XEntity(target: Function): void;
-/**
- * 归属于哪个数据库，默认为default
- * @param from 
- */
-export function XEntity(from?: string): Function;
+// /**
+//  * 默认的
+//  * @param target 
+//  */
+// export function XEntity(target: Function): void;
+// export function XEntity(from?: string): Function;
 
-export function XEntity(config?: XEntityConfig): Function;
+// export function XEntity(config?: XEntityConfig): Function;
 
-export function XEntity(first?: Function | string | XEntityConfig): any {
-    var type = 'default';
-    var final = function (target: Function) {
-        var info: EntityDescirption;
-        if (!EntityMap.has(target.name)) {
-            info = InitEntityDescirption();
-            EntityMap.set(target.name, info);
-        }
-        else {
-            info = EntityMap.get(target.name) as EntityDescirption;
-        }
-        info.entity = target;
-        info.database = type;
-        info.tableName = target.name.replace(/^[A-Z]/, function (a) {
-            return a.toLowerCase();
-        }).replace(/[A-Z][a-z]/g, function (a) {
-            return '_' + a.toLowerCase();
-        });
+// export function XEntity(first?: Function | string | XEntityConfig): any {
+//     var type = 'default';
+//     var final = function (target: Function) {
+//         var info: EntityDescirption;
+//         if (!EntityMap.has(target.name)) {
+//             info = InitEntityDescirption();
+//             EntityMap.set(target.name, info);
+//         }
+//         else {
+//             info = EntityMap.get(target.name) as EntityDescirption;
+//         }
+//         info.entity = target;
+//         info.database = type;
+//         info.tableName = target.name.replace(/^[A-Z]/, function (a) {
+//             return a.toLowerCase();
+//         }).replace(/[A-Z][a-z]/g, function (a) {
+//             return '_' + a.toLowerCase();
+//         });
 
-        //大概会用到吧
-        ORMCONFIG.MODELS[type] = ORMCONFIG.MODELS[type] || [];
-        ORMCONFIG.MODELS[type].push(target);
+//         //大概会用到吧
+//         ORMCONFIG.MODELS[type] = ORMCONFIG.MODELS[type] || [];
+//         ORMCONFIG.MODELS[type].push(target);
 
-        var newClass =  class extends target.prototype.constructor {
-            // constructor() {
-            //     // super();
-            // }
-        }
-        newClass.prototype.constructor = function(){
-            return ObservingObject.addObserveObject(this);
-        }
-        //更改名字，偷天换日
-        Object.defineProperty(newClass,'name',{
-            value : target.name
-        });
-        return newClass;
-        // newClass.name = target.name;
-        // console.log(newClass)
+//         var newClass = class extends target.prototype.constructor {
+//             constructor() {
+//                 console.log("fucku");
+//                 super();
+//             }
+//         }
+//         // newClass.prototype.constructor = function () {
+//         //     return ObservingObject.addObserveObject(this);
+//         // }
+//         //更改名字，偷天换日
+//         Object.defineProperty(newClass, 'name', {
+//             value: target.name
+//         });
+//         return newClass;
+//         // newClass.name = target.name;
+//         // console.log(newClass)
 
-        // return function(){
-        //    
-        // }
-    }
-    if (first) {
-        if (typeof first == 'function') {
-            return final(first);
-        }
-        else {
-            return final;
-        }
-    }
-    return final;
-}
+//         // return function(){
+//         //    
+//         // }
+//     }
+//     if (first) {
+//         if (typeof first == 'function') {
+//             return final(first);
+//         }
+//         else {
+//             return final;
+//         }
+//     }
+//     return final;
+// }
 
 
 export interface IWatchedModel {
