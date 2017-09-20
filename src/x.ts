@@ -3,7 +3,7 @@ import { XOrmConfig } from "./config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
-import { FindOption, Repository, WhereOptionCompare, WhereOption, AddOnOption } from './repository';
+import { FindOption, WhereOptionCompare, WhereOption, AddOnOption } from './repository';
 import { ObservingObject } from './gc';
 import { OneToOne, ManyToOne, makeFactory, LinkOption } from './decorator/Link';
 // import { PrimaryColumn, PrimaryGeneratedColumn } from './decorator/PrimaryColumn';
@@ -14,7 +14,7 @@ var isRuning = false;
 
 export class XEntityManager<U>{
 
-    private repoInstance = new Map<any, Repository<any>>();
+    // private repoInstance = new Map<any, Repository<any>>();
 
     /**
      * 是否属于transition，当transition开启的时候，所有数据库操作均使用一条新开的事务，其间发生任何事，都进行回滚
@@ -516,16 +516,16 @@ export class XEntityManager<U>{
     //     }
     // }
 
-    getRepository<T>(model: Entity<T>) {
-        // return new Repository(model);
-        //让单例见鸡儿去吧
-        var resp = this.repoInstance.get(model.name) || (() => {
-            var resp = new Repository(model)
-            this.repoInstance.set(model.name, resp);
-            return resp;
-        })();
-        return resp as Repository<T>;
-    }
+    // getRepository<T>(model: Entity<T>) {
+    //     // return new Repository(model);
+    //     //让单例见鸡儿去吧
+    //     var resp = this.repoInstance.get(model.name) || (() => {
+    //         var resp = new Repository(model)
+    //         this.repoInstance.set(model.name, resp);
+    //         return resp;
+    //     })();
+    //     return resp as Repository<T>;
+    // }
 
 
     /**
@@ -659,6 +659,13 @@ export class XEntityManager<U>{
         }
     }
 
+    /**
+     * 创建一个新角色
+     */
+    createRole(){
+
+    }
+
     // addManyToOneLink<T, K>(
     //     from: Entity<T>,
     //     to: Entity<K>,
@@ -679,17 +686,4 @@ export class XEntityManager<U>{
 
 export const X = new XEntityManager;
 
-// function X() {
-    // return xx;
-// }
-
-// namespace X {
-    // export const hasConnection = xx.hasConnection;
-    // export const 
-    // export function hasConnection() {
-    //     return xx.hasConnection
-    // }
-// }
-
-// export {X};
 

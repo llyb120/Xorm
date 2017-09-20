@@ -8,6 +8,13 @@ import { FindOption, WhereOption } from '../../repository';
 // import { QueryBuilder } from '../../querybuilder';
 
 export class MysqlConnectionManager implements IDriverBase {
+
+    private log(...args : any[]) {
+        if(this.config.debug){
+            console.log.call(null,args);
+        }
+    }
+
     async delete<T>(condition: WhereOption<T>, desc: EntityDescirption): Promise<boolean> {
         var str = this.buildWhere(condition, desc, false);
         var sql = `
@@ -40,7 +47,7 @@ export class MysqlConnectionManager implements IDriverBase {
         if (str != '') {
             sql += ' where ' + str;
         }
-        console.log(sql)
+        this.log(sql)
         return this.query(sql);
     }
 
@@ -119,7 +126,7 @@ export class MysqlConnectionManager implements IDriverBase {
                 sql += ' limit ' + findOption.limit;
             }
         }
-        console.log(sql)
+        this.log(sql)
         return sql;
     }
 
@@ -209,5 +216,6 @@ export interface MysqlConfig {
     username: string,
     password: string,
     database: string,
-    tablesPrefix?: string
+    tablesPrefix?: string;
+    debug? : boolean;
 }

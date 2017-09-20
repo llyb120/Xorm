@@ -9,35 +9,35 @@ import { GoodsClass } from '../example/goods_class';
 
 //import
 OrderGoods
-
+var config : MysqlConfig = {
+    "name": "default",
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "123",
+    "database": "yoehi",
+    // "autoSchemaSync": false,`
+    // "entities": [
+    // ],
+    // "subscribers": [
+    // 
+    // ],
+    // "migrations": [
+    // 
+    // ],
+    "tablesPrefix": "ra_",
+    "debug": false
+};
 
 describe('start', () => {
-    it("should start success", (done) => {
-        var config = {
-            "name": "default",
-            "type": "mysql",
-            "host": "localhost",
-            "port": 3306,
-            "username": "root",
-            "password": "123",
-            "database": "yoehi",
-            // "autoSchemaSync": false,`
-            // "entities": [
-            // ],
-            // "subscribers": [
-            // 
-            // ],
-            // "migrations": [
-            // 
-            // ],
-            "tablesPrefix": "ra_"
-        };
-        X.startORM(config as MysqlConfig).then((managers: any) => {
-            should.exists(managers);
-            done();
-        }).catch(e => {
-            should.not.exists(e);
-        });
+    it("should start success", async() => {
+        try{
+            await X.startORM(config);
+        }
+        catch(e){
+            should.not.exist(config);
+        }
     });
 
     var member_id;
