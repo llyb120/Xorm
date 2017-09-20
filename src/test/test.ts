@@ -5,6 +5,7 @@ import "should";
 import { X } from "../x";
 import { MysqlConfig } from "../index";
 import { Order } from '../example/order';
+import { GoodsClass } from '../example/goods_class';
 
 //import
 OrderGoods
@@ -81,6 +82,9 @@ describe('start', () => {
         });
     });
 
+    /**
+     * 测试附加字段
+     */
     it("test addon", (done) => {
         X.of(Order).findOne({
             order: {
@@ -103,5 +107,25 @@ describe('start', () => {
     })
 
 
+    /**
+     * 测试树模式
+     */
+    it("test tree class", async () => {
+        try {
+            let gc = await X.of(GoodsClass).findOne();
+            should.exist(gc);
+            if (gc) {
+                await X.makeAddon(gc, 'children');
+                should.exist(gc.children);
+                gc.children.length.should.above(0);
+                await X.makeAddon(gc, 'parent')
+                should.exist(gc.parent);
+            }
+        }
+        catch (e) {
+            should.not.exist(e);
+        }
+
+    });
 
 }); 
