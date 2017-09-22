@@ -242,9 +242,9 @@ export class XEntityManager<U>{
         if (!desc) {
             throw new Error("desc not found");
         }
-        (option as any)[desc.primary] = ids.filter((item: any) => {
+        (option as any)[desc.primary] = ['in',ids.filter((item: any) => {
             return item;
-        });
+        })];
         return this.getConnection(desc.database).delete(option, desc);
 
 

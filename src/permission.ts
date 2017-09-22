@@ -14,4 +14,4 @@ export class Permission{
 }
 
 //注册一个超级用户
-X.createRole("su");
+// X.createRole("su");
