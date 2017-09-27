@@ -56,7 +56,7 @@ class GC {
     getChanged(obj: Object) {
         var val = this.boxA.get(obj) || this.boxB.get(obj);
         if(!val){
-            return [];
+            return null;
         }
         return Object.keys(val.changed);
     }

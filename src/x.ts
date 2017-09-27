@@ -89,7 +89,10 @@ export class XEntityManager<U>{
         // var ret = [];
         var ret = await Promise.all((models as any[]).map(async model => {
             var changed = ObservingObject.getChanged(model);
-            if (!changed || !changed.length) {
+            if(!changed){
+                changed = Object.keys(model);
+            }
+            if (!changed.length) {
                 return model;
             }
             if (changed.includes(desc.primary) || !(desc.primary in model)) {
