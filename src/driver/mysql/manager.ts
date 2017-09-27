@@ -191,14 +191,17 @@ export class MysqlConnectionManager implements IDriverBase {
         return new Promise((resolve, reject) => {
             this.pool.getConnection((err, connection) => {
                 if (err) {
+                    connection.release();
                     reject(err);
                     return;
                 }
                 connection.query(sql, (err, vals, fields) => {
                     if (err) {
+                        connection.release();
                         reject(err)
                         return;
                     }
+                    connection.release();
                     resolve(vals);
                 })
             });
