@@ -12,7 +12,7 @@ import { EntityConfig } from './api';
 
 var isRuning = false;
 
-export class XEntityManager<U>{
+export class XManager<U>{
 
     // private repoInstance = new Map<any, Repository<any>>();
 
@@ -28,8 +28,8 @@ export class XEntityManager<U>{
     /** start */
     private factory: Function;
 
-    of<K>(entity: Entity<K>): XEntityManager<K>;
-    of<K>(entity: K): XEntityManager<K>;
+    of<K>(entity: Entity<K>): XManager<K>;
+    of<K>(entity: K): XManager<K>;
     of(entity: any): any {
         entity = entity as any;
         if (entity.prototype) {
@@ -501,7 +501,7 @@ export class XEntityManager<U>{
 
 
     async transition(
-        command: (x: XEntityManager<any>) => Promise<any>
+        command: (x: XManager<any>) => Promise<any>
     ): Promise<any> {
 
         return null;
@@ -713,6 +713,6 @@ export class XEntityManager<U>{
 
 }
 
-export const X = new XEntityManager;
+export const X = new XManager;
 
 
