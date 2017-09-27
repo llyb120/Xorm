@@ -79,8 +79,12 @@ export class XEntityManager<U>{
             return [];
         }
         var desc = EntityMap.get(models[0].__proto__.constructor.name) as EntityDescirption;
+        //如果找不到，尝试使用this.facotry
         if (!desc) {
-            throw new Error("desc not found:");
+            desc = EntityMap.get(this.factory.prototype.name) as EntityDescirption;
+            if(!desc){
+                throw new Error("desc not found:");
+            }
         }
         // var ret = [];
         var ret = await Promise.all((models as any[]).map(async model => {
