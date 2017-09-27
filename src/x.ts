@@ -78,14 +78,19 @@ export class XEntityManager<U>{
         if (!models.length) {
             return [];
         }
-        var desc = EntityMap.get(models[0].__proto__.constructor.name) as EntityDescirption;
+        var desc : EntityDescirption;
+        let _desc : any;
+        if(models[0].__proto__){
+            _desc = EntityMap.get(models[0].__proto__.constructor.name);
+        }
         //如果找不到，尝试使用this.facotry
-        if (!desc) {
-            desc = EntityMap.get(this.factory.name) as EntityDescirption;
-            if(!desc){
+        if (!_desc) {
+            _desc = EntityMap.get(this.factory.name);
+            if(!_desc){
                 throw new Error("desc not found:");
             }
         }
+        desc = _desc;
         // var ret = [];
         var ret = await Promise.all((models as any[]).map(async model => {
             var changed = ObservingObject.getChanged(model);
@@ -95,7 +100,8 @@ export class XEntityManager<U>{
             if (!changed.length) {
                 return model;
             }
-            if (changed.includes(desc.primary) || !(desc.primary in model)) {
+            //禁止更改主键，更改了主键就视为新的
+            if (!(desc.primary in model)) {
                 // let ret = this.getRepository(constructor).insert(model);
                 let ret = await this.getConnection(desc.database).insert(model as Partial<T>, desc);
                 ObservingObject.clearChanged(model);
