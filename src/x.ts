@@ -81,7 +81,7 @@ export class XEntityManager<U>{
         var desc = EntityMap.get(models[0].__proto__.constructor.name) as EntityDescirption;
         //如果找不到，尝试使用this.facotry
         if (!desc) {
-            desc = EntityMap.get(this.factory.prototype.name) as EntityDescirption;
+            desc = EntityMap.get(this.factory.name) as EntityDescirption;
             if(!desc){
                 throw new Error("desc not found:");
             }
