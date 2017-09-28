@@ -87,7 +87,7 @@ export class MysqlConnectionManager implements IDriverBase {
                     }
                 }
                 else if(val[0] == 'between'){
-                    buffer.push(`and ${fieldName} between ${val[1]},${val[2]}`); 
+                    buffer.push(`and ${fieldName} between '${val[1]}' and '${val[2]}'`); 
                 }
             }
             else {
