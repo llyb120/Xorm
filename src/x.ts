@@ -101,7 +101,7 @@ export class XManager<U>{
                 return model;
             }
             //禁止更改主键，更改了主键就视为新的
-            if (!(desc.primary in model)) {
+            if (!model[desc.primary]) {
                 // let ret = this.getRepository(constructor).insert(model);
                 let ret = await this.getConnection(desc.database).insert(model as Partial<T>, desc);
                 ObservingObject.clearChanged(model);

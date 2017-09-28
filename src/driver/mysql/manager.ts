@@ -79,7 +79,15 @@ export class MysqlConnectionManager implements IDriverBase {
                     buffer.push(` and ${fieldName} like '${val[1]}'`);
                 }
                 else if (val[0] == 'in') {
-                    buffer.push(` and ${fieldName} in ( ${val[1].map((item: string) => `'${item}'`).join(',')} )`);
+                    if(!Array.isArray(val[1]) || !val[1].length){
+                        buffer.push(` and ${fieldName} in ( -10086 )`);
+                    }
+                    else{
+                        buffer.push(` and ${fieldName} in ( ${val[1].map((item: string) => `'${item}'`).join(',')} )`);
+                    }
+                }
+                else if(val[0] == 'between'){
+                    buffer.push(`and ${fieldName} between ${val[1]},${val[2]}`); 
                 }
             }
             else {

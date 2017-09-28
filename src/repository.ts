@@ -14,9 +14,10 @@ export type WhereOptionValue = any;
 export type WhereOptionLike = ['like', string];
 export type WhereOptionIn = ['in', any[]];
 export type WhereOptionCompare = [Operator, any];
+export type WhereOptionBetween = ['between',any,any]
 
 export type SingleWhereOption<T> = {
-    [key in keyof T]?: WhereOptionValue | WhereOptionLike | WhereOptionIn | WhereOptionCompare;
+    [key in keyof T]?: WhereOptionValue | WhereOptionLike | WhereOptionIn | WhereOptionCompare | WhereOptionBetween;
 }
 export type WhereOption<T> = SingleWhereOption<T> & {
     and?: WhereOption<T>
