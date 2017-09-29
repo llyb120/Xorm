@@ -8,11 +8,23 @@ import { FindOption, WhereOption } from '../../repository';
 // import { QueryBuilder } from '../../querybuilder';
 
 export class MysqlConnectionManager implements IDriverBase {
+   
 
     private log(...args : any[]) {
         if(this.config.debug){
             console.log.call(null,args);
         }
+    }
+
+    async count<T>(condition: FindOption<T>, desc: EntityDescirption): Promise<number> {
+        const sql = this.buildSql(condition,desc,true);
+        const res = await this.query(sql);
+        for(const item of res as any[]){
+            for(let i in item){
+                return item[i];
+            }
+        }
+        return 0;
     }
 
     async delete<T>(condition: WhereOption<T>, desc: EntityDescirption): Promise<boolean> {
@@ -103,12 +115,12 @@ export class MysqlConnectionManager implements IDriverBase {
     }
 
 
-    public buildSql<T>(findOption: FindOption<T>, desc: EntityDescirption): string {
+    public buildSql<T>(findOption: FindOption<T>, desc: EntityDescirption,useCount = false): string {
         var where;
         var group = '';
 
         var sql = `
-            select * from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` as t_${desc.tableName}
+            select ${useCount ? 'count(*)' : "*"} from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` as t_${desc.tableName}
         `;
         if (findOption.where) {
             var str = this.buildWhere(findOption.where, desc);

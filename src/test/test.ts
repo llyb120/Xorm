@@ -30,6 +30,8 @@ var config : MysqlConfig = {
     "debug": false
 };
 
+
+
 describe('start', () => {
     it("should start success", async() => {
         try{
@@ -51,6 +53,16 @@ describe('start', () => {
             done();
         });
 
+    });
+
+    it("count user",async() => {
+        const num = await X.of(Member).count({
+            where : {
+                member_id : ['>=',0]
+            }
+        });
+        should.exist(num);
+        num.should.above(0);
     });
 
     var members: any = null;

@@ -213,6 +213,18 @@ export class XManager<U>{
     }
 
     /**
+     * 计数函数
+     */
+    async count(condition : FindOption<U> = {}) : Promise<number>{
+        let desc = EntityMap.get(this.factory.name);
+        if(!desc){
+            throw new Error("desc not found");
+        }
+        return this.getConnection(desc.database).count(condition, desc);
+    }
+
+
+    /**
      * 删除函数
      * 
      * 为了安全起见，删除函数要求必须传递条件

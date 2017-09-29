@@ -13,6 +13,8 @@ export interface IDriverBase {
     update<T>(condition : WhereOption<T>,data : Partial<T>,desc : EntityDescirption) : Promise<any>;
 
     delete<T>(condition : WhereOption<T>,desc : EntityDescirption) : Promise<boolean>;
+
+    count<T>(condition : FindOption<T>,desc : EntityDescirption) : Promise<number>;
 }
 
 
