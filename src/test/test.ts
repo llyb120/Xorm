@@ -32,137 +32,125 @@ var config : MysqlConfig = {
 };
 
 Member;
-class aa{
-    abc : any;
-    constructor(){
-        return new Proxy(this,{
-            set : function(obj:any,key:any,val:any){
-                console.log(obj,key,val)
-                obj[key] = val;
-                return true;
-            } 
-        })
-    }
-}
-
-var a = new WeakMap();
-setInterval(function(){
-    var b : any = {};
-    var c : any = {};
-    a.set(b,c);
-    b = null;
-    c = null;
-    console.log(process.memoryUsage())
-},1)
 
 
 
-// describe('start', () => {
-//     it("should start success", async() => {
-//         try{
-//             await X.startORM(config);
-//         }
-//         catch(e){
-//             should.not.exist(config);
-//         }
-//     });
+describe('start', () => {
+    it("should start success", async() => {
+        try{
+            await X.startORM(config);
+        }
+        catch(e){
+            should.not.exist(config);
+        }
+    });
 
-//     var member_id;
-//     it("add user", (done) => {
-//         var member = new Member;
-//         member.member_name = 'bin';
-//         X.save(member).then(() => {
-//             should.exists(member.member_id);
-//             member.member_id.should.above(0);
-//             member_id = member.member_id;
-//             done();
-//         });
+    var member_id;
+    it("add user", async() => {
+        var member = new Member;
+        member.member_name = 'bin';
+        await X.save(member);
+        should.exists(member.member_id);
+        member.member_id.should.above(0);
+        member_id = member.member_id;
 
-//     });
+    });
 
-//     it("count user",async() => {
-//         const num = await X.of(Member).count({
-//             where : {
-//                 member_id : ['>=',0]
-//             }
-//         });
-//         should.exist(num);
-//         num.should.above(0);
-//     });
+    it("query",async() => {
+        await X.query("insert into ra_member(member_id)values(null)")  ;
+    })
 
-//     var members: any = null;
-//     it("search user", (done) => {
-//         X.of(Member).find({
-//             where: {
-//                 member_name: "bin"
-//             }
-//         }).then(_members => {
-//             _members.length.should.above(0);
-//             members = _members
-//             done();
-//         });
-//     });
+    it("count user",async() => {
+        const num = await X.of(Member).count({
+            where : {
+                member_id : ['>=',0]
+            }
+        });
+        should.exist(num);
+        num.should.above(0);
+    });
 
-//     it("delete user", (done) => {
-//         should.exist(members);
-//         X.delete(members).then(flag => {
-//             flag.should.equal(true);
-
-//             X.of(Member).find({
-//                 where: {
-//                     member_name: 'bin'
-//                 }
-//             }).then(ms => {
-//                 ms.length.should.eql(0);
-//                 done()
-//             });
-//         });
-//     });
-
-//     /**
-//      * 测试附加字段
-//      */
-//     it("test addon", (done) => {
-//         X.of(Order).findOne({
-//             order: {
-//                 order_id: "desc"
-//             },
-//             addon: {
-//                 order_goods: 1
-//             }
-//         }).then(order => {
-//             should.exist(order);
-//             if (order) {
-//                 should.exist(order.order_goods);
-//                 order.order_goods.length.should.above(0);
-//             }
-//             done();
-//             // order
-//         }).catch(e => {
-//             should.not.exist(e);
-//         });
-//     })
+    var members: any = null;
+    it("search user", async () => {
+        members = await X.of(Member).find({
+            where: {
+                member_name: {
+                    eq : 'bin',
+                    lt : 0
+                }
+            }
+        });
+        members.length.should.eql(0);
+        members = await X.of(Member).find({
+            where : {
+                member_name : 'bin'
+            }
+        });
+        members.length.should.above(0);
+    });
 
 
-//     /**
-//      * 测试树模式
-//      */
-//     it("test tree class", async () => {
-//         try {
-//             let gc = await X.of(GoodsClass).findOne();
-//             should.exist(gc);
-//             if (gc) {
-//                 await X.makeAddon(gc, 'children');
-//                 should.exist(gc.children);
-//                 gc.children.length.should.above(0);
-//                 await X.makeAddon(gc, 'parent')
-//                 should.exist(gc.parent);
-//             }
-//         }
-//         catch (e) {
-//             should.not.exist(e);
-//         }
 
-//     });
+    it("delete user", (done) => {
+        should.exist(members);
+        X.delete(members).then(flag => {
+            flag.should.equal(true);
 
-// }); 
+            X.of(Member).find({
+                where: {
+                    member_name: 'bin'
+                }
+            }).then(ms => {
+                ms.length.should.eql(0);
+                done()
+            });
+        });
+    });
+
+    /**
+     * 测试附加字段
+     */
+    it("test addon", (done) => {
+        X.of(Order).findOne({
+            order: {
+                order_id: "desc"
+            },
+            addon: {
+                order_goods: 1
+            }
+        }).then(order => {
+            should.exist(order);
+            if (order) {
+                should.exist(order.order_goods);
+                order.order_goods.length.should.above(0);
+            }
+            done();
+            // order
+        }).catch(e => {
+            should.not.exist(e);
+        });
+    })
+
+
+    /**
+     * 测试树模式
+     */
+    it("test tree class", async () => {
+        try {
+            let gc = await X.of(GoodsClass).findOne();
+            should.exist(gc);
+            if (gc) {
+                await X.makeAddon(gc, 'children');
+                should.exist(gc.children);
+                gc.children.length.should.above(0);
+                await X.makeAddon(gc, 'parent')
+                should.exist(gc.parent);
+            }
+        }
+        catch (e) {
+            should.not.exist(e);
+        } 
+
+    });
+
+}); 

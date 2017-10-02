@@ -390,6 +390,10 @@ export class XManager<U>{
         // return null as U;
     }
 
+    /**
+     * 用于分页查询的方便方法
+     * @param option 
+     */
     async fetch(option: FetchOption<U> = {}) : Promise<[U[],number]>{
         let rows = option.rows || 20;
         let page = option.page || 1;

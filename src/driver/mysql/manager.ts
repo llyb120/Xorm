@@ -8,19 +8,19 @@ import { FindOption, WhereOption } from '../../repository';
 // import { QueryBuilder } from '../../querybuilder';
 
 export class MysqlConnectionManager implements IDriverBase {
-   
 
-    private log(...args : any[]) {
-        if(this.config.debug){
-            console.log.call(null,args);
+
+    private log(...args: any[]) {
+        if (this.config.debug) {
+            console.log.call(null, args);
         }
     }
 
     async count<T>(condition: FindOption<T>, desc: EntityDescirption): Promise<number> {
-        const sql = this.buildSql(condition,desc,true);
+        const sql = this.buildSql(condition, desc, true);
         const res = await this.query(sql);
-        for(const item of res as any[]){
-            for(let i in item){
+        for (const item of res as any[]) {
+            for (let i in item) {
                 return item[i];
             }
         }
@@ -91,15 +91,81 @@ export class MysqlConnectionManager implements IDriverBase {
                     buffer.push(` and ${fieldName} like '${val[1]}'`);
                 }
                 else if (val[0] == 'in') {
-                    if(!Array.isArray(val[1]) || !val[1].length){
+                    if (!Array.isArray(val[1]) || !val[1].length) {
                         buffer.push(` and ${fieldName} in ( -10086 )`);
                     }
-                    else{
+                    else {
                         buffer.push(` and ${fieldName} in ( ${val[1].map((item: string) => `'${item}'`).join(',')} )`);
                     }
                 }
-                else if(val[0] == 'between'){
-                    buffer.push(`and ${fieldName} between '${val[1]}' and '${val[2]}'`); 
+                else if (val[0] == 'between') {
+                    buffer.push(`and ${fieldName} between '${val[1]}' and '${val[2]}'`);
+                }
+            }
+            //聚合查询
+            else if (Object.prototype.isPrototypeOf(val)) {
+                const conditionBuf = [];
+                for (var key in val) {
+                    let op;
+                    switch (key) {
+                        case 'lt':
+                            conditionBuf.push(`${fieldName} < '${val[key]}'`)
+                            break;
+
+                        case 'gt':
+                            conditionBuf.push(`${fieldName} > '${val[key]}'`)
+                            break;
+
+                        case 'let':
+                            conditionBuf.push(`${fieldName} <= '${val[key]}'`)
+                            break;
+
+                        case 'get':
+                            conditionBuf.push(`${fieldName} >= '${val[key]}'`)
+                            break;
+
+                        case 'eq':
+                            if (val[key] === null || val[key] === undefined) {
+                                conditionBuf.push(`${fieldName} is null`)
+                            }
+                            else {
+                                conditionBuf.push(`${fieldName} = '${val[key]}'`)
+                            }
+                            break;
+
+                        case 'neq':
+                            if (val[key] === null || val[key] === undefined) {
+                                conditionBuf.push(`${fieldName} is not null`)
+                            }
+                            else {
+                                conditionBuf.push(`${fieldName} <> '${val[key]}'`)
+                            }
+                            break;
+
+                        case 'like':
+                            conditionBuf.push(`${fieldName} like '${val[key]}'`)
+                            break;
+
+                        case 'slike':
+                            conditionBuf.push(`${fieldName} like '%${val[key]}%'`)
+                            break;
+
+                        case 'in':
+                            if (!Array.isArray(val[key]) || !val[key].length) {
+                                buffer.push(` and ${fieldName} in ( -10086 )`);
+                            }
+                            else {
+                                buffer.push(` and ${fieldName} in ( ${val[key].map((item: string) => `'${item}'`).join(',')} )`);
+                            }
+                            break;
+
+                        case 'between':
+                            buffer.push(`and ${fieldName} between '${val[key][0]}' and '${val[key][1]}'`);
+                            break;
+                    }
+                }
+                if(conditionBuf.length){
+                    buffer.push(' and ' + conditionBuf.join(" and "));
                 }
             }
             else {
@@ -115,7 +181,7 @@ export class MysqlConnectionManager implements IDriverBase {
     }
 
 
-    public buildSql<T>(findOption: FindOption<T>, desc: EntityDescirption,useCount = false): string {
+    public buildSql<T>(findOption: FindOption<T>, desc: EntityDescirption, useCount = false): string {
         var where;
         var group = '';
 
@@ -240,5 +306,5 @@ export interface MysqlConfig {
     password: string,
     database: string,
     tablesPrefix?: string;
-    debug? : boolean;
+    debug?: boolean;
 }

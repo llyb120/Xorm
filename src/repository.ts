@@ -10,14 +10,30 @@ export type OrderOption<T> = {
 }
 export type GroupOption<T> = keyof T;
 
-export type WhereOptionValue = any;
+export type WhereOptionValue = number | string | boolean;
 export type WhereOptionLike = ['like', string];
 export type WhereOptionIn = ['in', any[]];
 export type WhereOptionCompare = [Operator, any];
 export type WhereOptionBetween = ['between',any,any]
 
+/**
+ * 聚合查询
+ */
+export type WhereOptions = {
+    lt? : any,
+    gt? : any,
+    let? : any,
+    get? : any,
+    eq? : any,
+    neq? : any,
+    like? : any,
+    slike? : any,
+    in? : any[],
+    between? : [any,any]
+}
+
 export type SingleWhereOption<T> = {
-    [key in keyof T]?: WhereOptionValue | WhereOptionLike | WhereOptionIn | WhereOptionCompare | WhereOptionBetween;
+    [key in keyof T]?: WhereOptionValue | WhereOptionLike | WhereOptionIn | WhereOptionCompare | WhereOptionBetween | WhereOptions;
 }
 export type WhereOption<T> = SingleWhereOption<T> & {
     and?: WhereOption<T>
