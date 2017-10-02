@@ -57,17 +57,17 @@ describe('start', () => {
     });
 
     it("query",async() => {
-        await X.query("insert into ra_member(member_id)values(null)")  ;
+        await X.query("insert into ra_member(member_id,member_name)values(null,'bin')")  ;
     })
 
     it("count user",async() => {
-        const num = await X.of(Member).count({
+        const num = await X.of(Member).count({ 
             where : {
                 member_id : ['>=',0]
             }
         });
         should.exist(num);
-        num.should.above(0);
+        num.should.above(0); 
     });
 
     var members: any = null;
