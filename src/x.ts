@@ -3,7 +3,7 @@ import { XOrmConfig } from "./config";
 import { IDriverBase } from "./driver/driver";
 import { MysqlConnectionManager } from "./driver/mysql/manager";
 import { ORMCONFIG } from "./constant";
-import { FindOption, WhereOptionCompare, WhereOption, AddOnOption } from './repository';
+import { FindOption, WhereOptionCompare, WhereOption, AddOnOption, FetchOption } from './repository';
 import { ObservingObject } from './gc';
 import { OneToOne, ManyToOne, makeFactory, LinkOption } from './decorator/Link';
 // import { PrimaryColumn, PrimaryGeneratedColumn } from './decorator/PrimaryColumn';
@@ -388,6 +388,19 @@ export class XManager<U>{
         }
         // return new this.factory.prototype.constructor;
         // return null as U;
+    }
+
+    async fetch(option: FetchOption<U> = {}) : Promise<[U[],number]>{
+        let rows = option.rows || 20;
+        let page = option.page || 1;
+        const limit = [(page - 1) * rows,rows];
+        delete option.limit;
+        const count = await this.count(option);
+        option.limit = limit;
+        const result = await this.find(option);
+        return [
+            result,count
+        ];
     }
 
 
