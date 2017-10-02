@@ -9,23 +9,24 @@
 const GC_STEP_TIME = 5000;
 
 class GC {
-    private boxA = new Map();
-    private boxB = new Map();
+    private boxA = new WeakMap();
+    private boxB = new WeakMap();
 
     start() {
         setInterval(() => {
             //清空所有B容器的元素
-            for (const [key, val] of this.boxB) {
-                this.boxB.delete(key);
-            }
+            // this.boxB = new WeakMap();
+            // for (const [key, val] of this.boxB) {
+            // this.boxB.delete(key);
+            // }
             //将容器A的东西全部放入容器B
             this.boxB = this.boxA;
-            this.boxA = new Map();
+            this.boxA = new WeakMap();
 
             // console.log("容器A大小", this.boxA.size);
             // console.log("容器B大小", this.boxB.size);
             // console.log(this.boxB)
- 
+
         }, GC_STEP_TIME);
     }
 
@@ -42,8 +43,8 @@ class GC {
                     this.boxB.delete(proxy);
                     this.boxA.set(proxy, watching);
                 }
-                else if(!this.boxA.has(proxy)){
-                    this.boxA.set(proxy,watching);
+                else if (!this.boxA.has(proxy)) {
+                    this.boxA.set(proxy, watching);
                 }
                 return obj[key] = val;
             }
@@ -55,15 +56,15 @@ class GC {
 
     getChanged(obj: Object) {
         var val = this.boxA.get(obj) || this.boxB.get(obj);
-        if(!val){
+        if (!val) {
             return null;
         }
         return Object.keys(val.changed);
     }
 
-    clearChanged(obj : Object){
+    clearChanged(obj: Object) {
         var val = this.boxA.get(obj) || this.boxB.get(obj);
-        if(!val){
+        if (!val) {
             return false;
         }
         val.changed = {};
