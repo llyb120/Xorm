@@ -1,3 +1,4 @@
+import { XManager } from './../../x';
 import { ORMCONFIG } from './../../constant';
 import { XOrmConfig } from '../../config';
 import * as mysql from "mysql";
@@ -27,7 +28,7 @@ export class MysqlConnectionManager implements IDriverBase {
         return 0;
     }
 
-    async delete<T>(condition: WhereOption<T>, desc: EntityDescirption): Promise<boolean> {
+    async delete<T>(condition: WhereOption<T>, desc: EntityDescirption, context?: XManager<T>): Promise<boolean> {
         var str = this.buildWhere(condition, desc, false);
         var sql = `
             delete from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\`
@@ -35,10 +36,10 @@ export class MysqlConnectionManager implements IDriverBase {
         if (str != '') {
             sql += ' where ' + str;
         }
-        return await this.query(sql) ? true : false;
+        return await this.query(sql, context, desc.database) ? true : false;
     }
 
-    async update<T>(condition: WhereOption<T>, data: T, desc: EntityDescirption): Promise<any> {
+    async update<T>(condition: WhereOption<T>, data: T, desc: EntityDescirption,context? : XManager<T>): Promise<any> {
         var str = this.buildWhere(condition, desc, false);
         var sql = `
             update \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\`
@@ -60,7 +61,7 @@ export class MysqlConnectionManager implements IDriverBase {
             sql += ' where ' + str;
         }
         this.log(sql)
-        return this.query(sql);
+        return this.query(sql,context,desc.database);
     }
 
     private buildWhere<T>(whereOption: WhereOption<T>, desc: EntityDescirption, addPrefix = true) {
@@ -164,7 +165,7 @@ export class MysqlConnectionManager implements IDriverBase {
                             break;
                     }
                 }
-                if(conditionBuf.length){
+                if (conditionBuf.length) {
                     buffer.push(' and ' + conditionBuf.join(" and "));
                 }
             }
@@ -223,7 +224,7 @@ export class MysqlConnectionManager implements IDriverBase {
         return (ret as T[]) || [];
     }
 
-    async insert<T>(data: T, desc: EntityDescirption): Promise<T> {
+    async insert<T>(data: T, desc: EntityDescirption, context?: XManager<T>): Promise<T> {
         var fields = [],
             values = [];
         for (const [key, val] of Object.entries(data)) {
@@ -248,7 +249,7 @@ export class MysqlConnectionManager implements IDriverBase {
                     ${values.join(",")}
                 );
         `;
-        var ret = await this.query(sql);
+        var ret = await this.query(sql, context, desc.database);
         (data as any)[desc.primary] = (ret as any).insertId;
         return data;
 
@@ -273,25 +274,108 @@ export class MysqlConnectionManager implements IDriverBase {
         });
     }
 
-    query(sql: string) {
+
+    getConnection(): Promise<mysql.IConnection> {
         return new Promise((resolve, reject) => {
             this.pool.getConnection((err, connection) => {
+                // connection.beginTransaction(())
                 if (err) {
-                    connection.release();
                     reject(err);
                     return;
                 }
-                connection.query(sql, (err, vals, fields) => {
-                    if (err) {
+                resolve(connection);
+            });
+        });
+    }
+
+    query(sql: string, context?: XManager<any>, database?: string) {
+        return new Promise(async (resolve, reject) => {
+            /**
+             * 事务
+             */
+            let connection: mysql.IConnection;
+
+            let query = function (connection: mysql.IConnection) {
+                connection.query(sql, (err: any, vals: any, fields: any) => {
+                    if (!context || !context.inTransition) {
+                        console.log("not in transition mode")
                         connection.release();
-                        reject(err)
+                    }
+                    else {
+                        console.log("in transition mode")
+                    }
+                    console.log("query ",sql)
+                    if (err) {
+                        reject(err);
                         return;
                     }
-                    connection.release();
                     resolve(vals);
-                })
-            });
+                });
+            }
+
+            if (context && context.inTransition && database) {
+                if (!context._transitionStroage[database]) {
+                    connection = await this.getConnection();
+                    context._transitionStroage[database] = connection;
+                    //开启事务
+                    console.log("begin transition",database,)
+                    connection.beginTransaction(err => {
+                        if (err) {
+                            reject(err);
+                            return;
+                        }
+                        query(connection);
+                    });
+
+                }
+                else {
+                    connection = context._transitionStroage[database];
+                    query(connection)
+                }
+            }
+            else {
+                connection = await this.getConnection();
+                query(connection);
+            }
+
+
+            // this.pool.getConnection((err, connection) => {
+            //     if (err) {
+            //         connection.release();
+            //         reject(err);
+            //         return;
+            //     }
+            //     connection.query(sql, (err, vals, fields) => {
+            //         if (err) {
+            //             connection.release();
+            //             reject(err)
+            //             return;
+            //         }
+            //         connection.release();
+            //         resolve(vals);
+            //     })
+            // });
         })
+    }
+
+    roolback(connection: mysql.IConnection) {
+        return new Promise((resolve, reject) => {
+            console.log("ROLLBACK");
+            (connection as mysql.IConnection).rollback(() => {
+                connection.release();
+                resolve();
+            });
+        });
+    }
+
+    commit(connection : mysql.IConnection){
+        return new Promise((resolve, reject) => {
+            console.log("COMMIT");
+            (connection as mysql.IConnection).commit(() => {
+                connection.release();
+                resolve();
+            });
+        }); 
     }
 
 

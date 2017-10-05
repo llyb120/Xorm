@@ -10,7 +10,7 @@ import { ObservingObject } from '../gc';
 
 //import
 OrderGoods
-var config : MysqlConfig = {
+var config: MysqlConfig = {
     "name": "default",
     "type": "mysql",
     "host": "localhost",
@@ -36,17 +36,17 @@ Member;
 
 
 describe('start', () => {
-    it("should start success", async() => {
-        try{
+    it("should start success", async () => {
+        try {
             await X.startORM(config);
         }
-        catch(e){
+        catch (e) {
             should.not.exist(config);
         }
     });
 
     var member_id;
-    it("add user", async() => {
+    it("add user", async () => {
         var member = new Member;
         member.member_name = 'bin';
         await X.save(member);
@@ -56,39 +56,69 @@ describe('start', () => {
 
     });
 
-    it("query",async() => {
-        await X.query("insert into ra_member(member_id,member_name)values(null,'bin')")  ;
+    it("query", async () => {
+        await X.query("insert into ra_member(member_id,member_name)values(null,'bin')");
     })
 
-    it("count user",async() => {
-        const num = await X.of(Member).count({ 
-            where : {
-                member_id : ['>=',0]
+    it("count user", async () => {
+        const num = await X.of(Member).count({
+            where: {
+                member_id: ['>=', 0]
             }
         });
         should.exist(num);
-        num.should.above(0); 
+        num.should.above(0);
     });
 
-    var members: any = null;
+    var members: Member[] = [];
     it("search user", async () => {
         members = await X.of(Member).find({
             where: {
                 member_name: {
-                    eq : 'bin',
-                    lt : 0
+                    eq: 'bin',
+                    lt: 0
                 }
             }
         });
         members.length.should.eql(0);
         members = await X.of(Member).find({
-            where : {
-                member_name : 'bin'
+            where: {
+                member_name: 'bin'
             }
         });
         members.length.should.above(0);
     });
 
+    it("test transition will failed", async () => {
+        await X.transition(async x => {
+            // await x.delete(members); 
+            members[0].member_name = "jfkd;asfjka;fjkas;"
+            await x.save(members[0]);
+            throw new Error('fuck');
+        });
+
+        let m = await X.of(Member).findOne({
+            where: {
+                member_name: members[0].member_name
+            }
+        });
+
+        should.not.exist(m);
+    });
+
+    it("test transition will success", async () => {
+        await X.transition(async x => {
+            // await x.delete(members); 
+            members[0].member_name = 'jkdlfja;fjdk;afjk;a'
+            await x.save(members[0]);
+        });
+        let m = await X.of(Member).findOne({
+            where: {
+                member_name:  members[0].member_name
+            }
+        });
+        should.exist(m);
+    })
 
 
     it("delete user", (done) => {
@@ -149,7 +179,7 @@ describe('start', () => {
         }
         catch (e) {
             should.not.exist(e);
-        } 
+        }
 
     });
 

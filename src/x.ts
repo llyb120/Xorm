@@ -44,6 +44,8 @@ export class XManager<U>{
 
 
 
+    public inTransition = false;
+    public _transitionStroage: any = {};
 
     constructor(
         /**
@@ -54,8 +56,8 @@ export class XManager<U>{
          * 例如运营商查找其下的层级，需从proxy入手，通过关联字段直接查出对应的东西，这部分的依赖需要自行管理
          */
         public permission = 'su'
-    ){
-        
+    ) {
+
     }
 
 
@@ -78,15 +80,15 @@ export class XManager<U>{
         if (!models.length) {
             return [];
         }
-        var desc : EntityDescirption;
-        let _desc : any;
-        if(models[0].__proto__){
+        var desc: EntityDescirption;
+        let _desc: any;
+        if (models[0].__proto__) {
             _desc = EntityMap.get(models[0].__proto__.constructor.name);
         }
         //如果找不到，尝试使用this.facotry
         if (!_desc) {
             _desc = EntityMap.get(this.factory.name);
-            if(!_desc){
+            if (!_desc) {
                 throw new Error("desc not found:");
             }
         }
@@ -94,7 +96,7 @@ export class XManager<U>{
         // var ret = [];
         var ret = await Promise.all((models as any[]).map(async model => {
             var changed = ObservingObject.getChanged(model);
-            if(!changed){
+            if (!changed) {
                 changed = Object.keys(model);
             }
             if (!changed.length) {
@@ -103,7 +105,7 @@ export class XManager<U>{
             //禁止更改主键，更改了主键就视为新的
             if (!model[desc.primary]) {
                 // let ret = this.getRepository(constructor).insert(model);
-                let ret = await this.getConnection(desc.database).insert(model as Partial<T>, desc);
+                let ret = await this.getConnection(desc.database).insert(model as Partial<T>, desc, this.inTransition ? this : undefined);
                 ObservingObject.clearChanged(model);
                 return ret;
             }
@@ -114,7 +116,7 @@ export class XManager<U>{
                 changed.forEach(change => {
                     updateData[change] = model[change];
                 })
-                await this.getConnection(desc.database).update(condition, updateData, desc);
+                await this.getConnection(desc.database).update(condition, updateData, desc, this.inTransition ? this : undefined);
                 ObservingObject.clearChanged(model);
                 return model;
             }
@@ -208,16 +210,16 @@ export class XManager<U>{
                 _condition = condition;
                 break;
         }
-        ret = await this.getConnection(desc.database).update(_condition, data, desc);
+        ret = await this.getConnection(desc.database).update(_condition, data, desc, this.inTransition ? this : undefined);
         return data;
     }
 
     /**
      * 计数函数
      */
-    async count(condition : FindOption<U> = {}) : Promise<number>{
+    async count(condition: FindOption<U> = {}): Promise<number> {
         let desc = EntityMap.get(this.factory.name);
-        if(!desc){
+        if (!desc) {
             throw new Error("desc not found");
         }
         return this.getConnection(desc.database).count(condition, desc);
@@ -245,7 +247,7 @@ export class XManager<U>{
                 if (!desc) {
                     throw new Error("desc not found");
                 }
-                return this.getConnection(desc.database).delete(condition, desc);
+                return this.getConnection(desc.database).delete(condition, desc, this.inTransition ? this : undefined);
             }
             //单一主键删除
             condition = [condition];
@@ -267,10 +269,10 @@ export class XManager<U>{
         if (!desc) {
             throw new Error("desc not found");
         }
-        (option as any)[desc.primary] = ['in',ids.filter((item: any) => {
+        (option as any)[desc.primary] = ['in', ids.filter((item: any) => {
             return item;
         })];
-        return this.getConnection(desc.database).delete(option, desc);
+        return this.getConnection(desc.database).delete(option, desc, this.inTransition ? this : undefined);
 
 
     }
@@ -394,16 +396,16 @@ export class XManager<U>{
      * 用于分页查询的方便方法
      * @param option 
      */
-    async fetch(option: FetchOption<U> = {}) : Promise<[U[],number]>{
+    async fetch(option: FetchOption<U> = {}): Promise<[U[], number]> {
         let rows = option.rows || 20;
         let page = option.page || 1;
-        const limit = [(page - 1) * rows,rows];
+        const limit = [(page - 1) * rows, rows];
         delete option.limit;
         const count = await this.count(option);
         option.limit = limit;
         const result = await this.find(option);
         return [
-            result,count
+            result, count
         ];
     }
 
@@ -532,7 +534,24 @@ export class XManager<U>{
     async transition(
         command: (x: XManager<any>) => Promise<any>
     ): Promise<any> {
+        //代理
+        const x = new XManager;
+        x.inTransition = true;
 
+        try {
+            await command(x);
+            for (let type in x._transitionStroage) {
+                x.getConnection(type).commit(x._transitionStroage[type]);
+            }
+            x.inTransition = false;
+            x._transitionStroage = {};
+        }
+        catch (e) {
+            for (let type in x._transitionStroage) {
+                x.getConnection(type).roolback(x._transitionStroage[type]);
+            }
+        }
+        // const manager = this.getConnection()
         return null;
     }
 
@@ -659,7 +678,7 @@ export class XManager<U>{
 
     Entity<T>(
         config: EntityConfig
-    ) : Function {
+    ): Function {
         return function (entity: Function) {
             if (!config.database) {
                 config.database = 'default';
@@ -692,7 +711,7 @@ export class XManager<U>{
             ORMCONFIG.MODELS[config.database] = ORMCONFIG.MODELS[config.database] || [];
             ORMCONFIG.MODELS[config.database].push(entity);
 
-            var code = new Function('entity','ObservingObject',`
+            var code = new Function('entity', 'ObservingObject', `
                 return class extends entity.prototype.constructor {
                     constructor() {
                         super();
@@ -700,27 +719,27 @@ export class XManager<U>{
                     }
                 }
             `);
-            var newClass = code.call(null,entity,ObservingObject);
+            var newClass = code.call(null, entity, ObservingObject);
             // var newClass = class extends entity.prototype.constructor {
             //     constructor() {
             //         super();
             //         return ObservingObject.addObserveObject(this);
             //     }
             // }
-            Object.defineProperty(newClass,'name',{
-                value : entity.name
+            Object.defineProperty(newClass, 'name', {
+                value: entity.name
             });
             info.entity = newClass;
             return newClass;
 
-          
+
         }
     }
 
     /**
      * 创建一个新角色
      */
-    createRole(){
+    createRole() {
 
     }
 
