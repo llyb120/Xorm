@@ -298,13 +298,10 @@ export class MysqlConnectionManager implements IDriverBase {
             let query = function (connection: mysql.IConnection) {
                 connection.query(sql, (err: any, vals: any, fields: any) => {
                     if (!context || !context.inTransition) {
-                        console.log("not in transition mode")
                         connection.release();
                     }
                     else {
-                        console.log("in transition mode")
                     }
-                    console.log("query ",sql)
                     if (err) {
                         reject(err);
                         return;
@@ -318,7 +315,6 @@ export class MysqlConnectionManager implements IDriverBase {
                     connection = await this.getConnection();
                     context._transitionStroage[database] = connection;
                     //开启事务
-                    console.log("begin transition",database,)
                     connection.beginTransaction(err => {
                         if (err) {
                             reject(err);
@@ -360,7 +356,6 @@ export class MysqlConnectionManager implements IDriverBase {
 
     roolback(connection: mysql.IConnection) {
         return new Promise((resolve, reject) => {
-            console.log("ROLLBACK");
             (connection as mysql.IConnection).rollback(() => {
                 connection.release();
                 resolve();
@@ -370,7 +365,6 @@ export class MysqlConnectionManager implements IDriverBase {
 
     commit(connection : mysql.IConnection){
         return new Promise((resolve, reject) => {
-            console.log("COMMIT");
             (connection as mysql.IConnection).commit(() => {
                 connection.release();
                 resolve();

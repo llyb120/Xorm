@@ -28,7 +28,6 @@ export function ManyToOne<T, K>(
     many = true
 ): Function {
     return function (proto: Object, key: string) {
-        console.log(option)
         var fromKey = (typeof option.from == 'function' ? makeFactory(option.from) : option.from) || key;
         var toKey = (typeof option.to == 'function' ? makeFactory(option.to) : option.to)
         if (!toKey) {
