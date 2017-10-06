@@ -537,9 +537,10 @@ export class XManager<U>{
         //代理
         const x = new XManager;
         x.inTransition = true;
+        let result;
 
         try {
-            await command(x);
+            result = await command(x);
             for (let type in x._transitionStroage) {
                 x.getConnection(type).commit(x._transitionStroage[type]);
             }
@@ -551,8 +552,9 @@ export class XManager<U>{
                 x.getConnection(type).roolback(x._transitionStroage[type]);
             }
         }
+        return result;
         // const manager = this.getConnection()
-        return null;
+        // return null;
     }
 
 
