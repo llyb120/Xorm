@@ -32,6 +32,18 @@ export type WhereOptions = {
     between? : [any,any]
 }
 
+/**
+ * 追加统计字段
+ */
+type ThisEntity<T> = {
+    [key in keyof T]?: string;
+}
+export type AddonFields<T> = {
+    sum? : ThisEntity<T>,
+    avg? :  ThisEntity<T>,
+    count? : ThisEntity<T>,
+}
+
 export type SingleWhereOption<T> = {
     [key in keyof T]?: WhereOptionValue | WhereOptionLike | WhereOptionIn | WhereOptionCompare | WhereOptionBetween | WhereOptions;
 }
@@ -57,6 +69,7 @@ export interface FindOption<T> {
     order?: OrderOption<T>;
     limit?: number[] | number;
     addon? : AddOnOption<T>;
+    extFields? : AddonFields<T>; 
 }
 
 

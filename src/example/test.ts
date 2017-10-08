@@ -4,7 +4,7 @@
 // import { IDriverBase } from '../driver/driver';
 import { EntityMap, EntityWatchingMap, Entity } from '../decorator/XEntity';
 import { Member,  } from './member';
-import { Repository, WhereOption, } from '../repository';
+import {  WhereOption, } from '../repository';
 import { X } from '../x';
 import { ObservingObject } from '../gc';
 import { OrderGoods } from './order_goods';

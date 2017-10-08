@@ -1,6 +1,6 @@
 {
     "name": "x-orm",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "main": "./build/index.js",
     "devDependencies": {
         "@types/mocha": "^2.2.43",

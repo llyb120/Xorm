@@ -31,6 +31,9 @@ var config: MysqlConfig = {
     "debug": false
 };
 
+
+
+
 Member;
 
 
@@ -69,6 +72,19 @@ describe('start', () => {
         should.exist(num);
         num.should.above(0);
     });
+
+    it("another count",async() => {
+        const num = await X.of(Member).find({
+            extFields : {
+                sum : {
+                    member_id : "cc"
+                }
+            }
+        });
+        should.exist(num[0]);
+        (num[0] as any).cc.should.above(0);
+        // console.log((num[0] as any))
+   })
 
     var members: Member[] = [];
     it("search user", async () => {

@@ -39,7 +39,7 @@ export class MysqlConnectionManager implements IDriverBase {
         return await this.query(sql, context, desc.database) ? true : false;
     }
 
-    async update<T>(condition: WhereOption<T>, data: T, desc: EntityDescirption,context? : XManager<T>): Promise<any> {
+    async update<T>(condition: WhereOption<T>, data: T, desc: EntityDescirption, context?: XManager<T>): Promise<any> {
         var str = this.buildWhere(condition, desc, false);
         var sql = `
             update \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\`
@@ -61,7 +61,7 @@ export class MysqlConnectionManager implements IDriverBase {
             sql += ' where ' + str;
         }
         this.log(sql)
-        return this.query(sql,context,desc.database);
+        return this.query(sql, context, desc.database);
     }
 
     private buildWhere<T>(whereOption: WhereOption<T>, desc: EntityDescirption, addPrefix = true) {
@@ -186,8 +186,29 @@ export class MysqlConnectionManager implements IDriverBase {
         var where;
         var group = '';
 
+        /**
+         * 追加的字段
+         */
+        let fieldsBuffer = [];
+        if (findOption.extFields) {
+            for (const key in findOption.extFields) {
+                switch (key) {
+                    case 'sum':
+                    case 'count':
+                    case 'avg':
+                        if (!findOption.extFields[key]) {
+                            break;
+                        }
+                        for (const fieldName in (findOption.extFields as any)[key]) {
+                            fieldsBuffer.push(`${key}(t_${desc.tableName}.${fieldName}) as ${(findOption.extFields[key] as any)[fieldName]}`);
+                        }
+                        break;
+                }
+            }
+        }
+
         var sql = `
-            select ${useCount ? 'count(*)' : "*"} from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` as t_${desc.tableName}
+            select ${useCount ? 'count(*)' : "*"} ${fieldsBuffer.length ? "," + fieldsBuffer.join(",") : ""} from \`${this.config.database}\`.\`${this.config.tablesPrefix + desc.tableName}\` as t_${desc.tableName}
         `;
         if (findOption.where) {
             var str = this.buildWhere(findOption.where, desc);
@@ -363,13 +384,13 @@ export class MysqlConnectionManager implements IDriverBase {
         });
     }
 
-    commit(connection : mysql.IConnection){
+    commit(connection: mysql.IConnection) {
         return new Promise((resolve, reject) => {
             (connection as mysql.IConnection).commit(() => {
                 connection.release();
                 resolve();
             });
-        }); 
+        });
     }
 
 
