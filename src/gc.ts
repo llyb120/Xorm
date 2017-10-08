@@ -46,7 +46,8 @@ class GC {
                 else if (!this.boxA.has(proxy)) {
                     this.boxA.set(proxy, watching);
                 }
-                return obj[key] = val;
+                obj[key] = val;
+                return true;
             }
         });
         //首先放入容器A
