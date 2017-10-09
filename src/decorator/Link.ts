@@ -67,7 +67,6 @@ export function OneToOne<T, K>(
     toEntity: { new(): K },
     option: LinkOption<T, K>,
 ): Function {
-    return ManyToOne(fromEntity, toEntity, option, true);
-    
+    return ManyToOne(fromEntity, toEntity, option, false);
 
 }
