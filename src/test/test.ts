@@ -78,11 +78,15 @@ describe('start', () => {
             extFields : {
                 sum : {
                     member_id : "cc"
+                },
+                count : {
+                    member_id : 'cubi'
                 }
             }
         });
         should.exist(num[0]);
         (num[0] as any).cc.should.above(0);
+        (num[0] as any).cubi.should.above(0);
         // console.log((num[0] as any))
    })
 

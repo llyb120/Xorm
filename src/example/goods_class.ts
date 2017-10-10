@@ -12,7 +12,7 @@ export class GoodsClass{
     
     children : GoodsClass[];
     
-    @X.OneToOne(GoodsClass,GoodsClass,{
+    @X.ManyToOne(GoodsClass,GoodsClass,{
         from : item => item.gc_id,
         to : item => item.gc_id,
         reverse : item => item.children

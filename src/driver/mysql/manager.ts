@@ -200,7 +200,7 @@ export class MysqlConnectionManager implements IDriverBase {
                             break;
                         }
                         for (const fieldName in (findOption.extFields as any)[key]) {
-                            fieldsBuffer.push(`${key}(t_${desc.tableName}.${fieldName}) as ${(findOption.extFields[key] as any)[fieldName]}`);
+                            fieldsBuffer.push(`ifnull(${key}(t_${desc.tableName}.${fieldName}),0) as ${(findOption.extFields[key] as any)[fieldName]}`);
                         }
                         break;
                 }
