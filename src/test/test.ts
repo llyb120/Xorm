@@ -7,31 +7,10 @@ import { MysqlConfig } from "../index";
 import { Order } from '../example/order';
 import { GoodsClass } from '../example/goods_class';
 import { ObservingObject } from '../gc';
+import { config } from './db';
 
 //import
 OrderGoods
-var config: MysqlConfig = {
-    "name": "default",
-    "type": "mysql",
-    "host": "localhost",
-    "port": 3306,
-    "username": "root",
-    "password": "123",
-    "database": "yoehi",
-    // "autoSchemaSync": false,`
-    // "entities": [
-    // ],
-    // "subscribers": [
-    // 
-    // ],
-    // "migrations": [
-    // 
-    // ],
-    "tablesPrefix": "ra_",
-    "debug": false
-};
-
-
 
 
 Member;

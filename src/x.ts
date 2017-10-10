@@ -383,11 +383,14 @@ export class XManager<U>{
      * @param entity 
      * @param option 
      */
-    async findOne(option?: FindOption<U> | number | string | any[]): Promise<U | undefined> {
-        var result = await this.find(option, true);
+    async findOne(option?: FindOption<U> | number | string | any[]): Promise<U> {
+        var result :any = await this.find(option, true);
         if (result.length) {
             return result[0];
         }
+        //强制返回undefined
+        return result[-1];
+
         // return new this.factory.prototype.constructor;
         // return null as U;
     }

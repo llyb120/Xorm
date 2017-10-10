@@ -102,6 +102,17 @@ export class MysqlConnectionManager implements IDriverBase {
                 else if (val[0] == 'between') {
                     buffer.push(`and ${fieldName} between '${val[1]}' and '${val[2]}'`);
                 }
+                else if (val[0] == 'notlike') {
+                    buffer.push(` and ${fieldName} not like '${val[1]}'`);
+                }
+                else if (val[0] == 'notin') {
+                    if (!Array.isArray(val[1]) || !val[1].length) {
+                        buffer.push(` and ${fieldName} not in ( -10086 )`);
+                    }
+                    else {
+                        buffer.push(` and ${fieldName} not in ( ${val[1].map((item: string) => `'${item}'`).join(',')} )`);
+                    }
+                }
             }
             //聚合查询
             else if (Object.prototype.isPrototypeOf(val)) {
@@ -162,6 +173,19 @@ export class MysqlConnectionManager implements IDriverBase {
 
                         case 'between':
                             buffer.push(`and ${fieldName} between '${val[key][0]}' and '${val[key][1]}'`);
+                            break;
+
+                        case 'notlike':
+                            conditionBuf.push(`${fieldName} not like '${val[key]}'`)
+                            break;
+
+                        case 'notin':
+                            if (!Array.isArray(val[key]) || !val[key].length) {
+                                buffer.push(` and ${fieldName} not in ( -10086 )`);
+                            }
+                            else {
+                                buffer.push(` and ${fieldName} not in ( ${val[key].map((item: string) => `'${item}'`).join(',')} )`);
+                            }
                             break;
                     }
                 }

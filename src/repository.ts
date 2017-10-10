@@ -11,8 +11,8 @@ export type OrderOption<T> = {
 export type GroupOption<T> = keyof T;
 
 export type WhereOptionValue = number | string | boolean;
-export type WhereOptionLike = ['like', string];
-export type WhereOptionIn = ['in', any[]];
+export type WhereOptionLike = ['like', string] | ['notlike',string];
+export type WhereOptionIn = ['in', any[]] | ['not in',any[]];
 export type WhereOptionCompare = [Operator, any];
 export type WhereOptionBetween = ['between',any,any]
 
@@ -29,7 +29,9 @@ export type WhereOptions = {
     like? : any,
     slike? : any,
     in? : any[],
-    between? : [any,any]
+    between? : [any,any],
+    notlike? : any,
+    notin? : any[]
 }
 
 /**
