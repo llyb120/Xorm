@@ -99,6 +99,10 @@ export class XManager<U>{
             if (!changed) {
                 changed = Object.keys(model);
             }
+            //去除没用的附加字段
+            changed = changed.filter(field => {
+                return !desc.external[field];
+            });
             if (!changed.length) {
                 return model;
             }
@@ -384,7 +388,7 @@ export class XManager<U>{
      * @param option 
      */
     async findOne(option?: FindOption<U> | number | string | any[]): Promise<U> {
-        var result :any = await this.find(option, true);
+        var result: any = await this.find(option, true);
         if (result.length) {
             return result[0];
         }
