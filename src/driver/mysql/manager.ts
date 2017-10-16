@@ -303,6 +303,9 @@ export class MysqlConnectionManager implements IDriverBase {
     public pool: IPool;
 
     constructor(public config: MysqlConfig) {
+        if(!this.config.tablesPrefix){
+            this.config.tablesPrefix = '';
+        }
     }
 
     /**
