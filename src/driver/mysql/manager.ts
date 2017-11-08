@@ -4,7 +4,7 @@ import { XOrmConfig } from '../../config';
 import * as mysql from "mysql";
 import { IPool } from "mysql";
 import { IDriverBase } from '../driver';
-import { EntityDescirption } from "../../decorator/XEntity";
+import { EntityDescirption, EntityMap } from '../../decorator/XEntity';
 import { FindOption, WhereOption } from '../../repository';
 // import { QueryBuilder } from '../../querybuilder';
 
@@ -116,6 +116,16 @@ export class MysqlConnectionManager implements IDriverBase {
             }
             //聚合查询
             else if (Object.prototype.isPrototypeOf(val)) {
+                //如果使用了entity查询，那么当主键可用的情况，直接使用这个entity的主键
+                let desc = EntityMap.get(val.__proto__.constructor.name);
+                if (desc) {
+                    if (val[desc.primary]) {
+                        buffer.push(` and ${fieldName} = '${val[desc.primary]}'`);
+                        continue;
+                    }
+                }
+
+
                 const conditionBuf = [];
                 for (var key in val) {
                     let op;
@@ -243,6 +253,10 @@ export class MysqlConnectionManager implements IDriverBase {
         if (findOption.group) {
             sql += ' group by ' + `t_${desc.tableName}.${findOption.group}`;
         }
+        //默认追加主键
+        else{
+            sql += ` group by t_${desc.tableName}.${desc.primary}`;
+        }
         if (findOption.order) {
             var buf = [];
             for (const name in findOption.order) {
@@ -303,7 +317,7 @@ export class MysqlConnectionManager implements IDriverBase {
     public pool: IPool;
 
     constructor(public config: MysqlConfig) {
-        if(!this.config.tablesPrefix){
+        if (!this.config.tablesPrefix) {
             this.config.tablesPrefix = '';
         }
     }

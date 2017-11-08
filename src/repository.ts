@@ -66,7 +66,7 @@ export type AddOnOption<T> = {
  * }
  */
 export interface FindOption<T> {
-    where?: WhereOption<T>;
+    where?: WhereOption<T> | object;
     group?: GroupOption<T>;
     order?: OrderOption<T>;
     limit?: number[] | number;

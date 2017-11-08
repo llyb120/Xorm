@@ -88,6 +88,16 @@ describe('start', () => {
         members.length.should.above(0);
     });
 
+    it("find user by primary key",async() => {
+        let ret = await X.of(Member).findOne({
+            where : {
+                member_id : members[0]
+            }
+        });
+        should.exist(ret);
+        console.log(ret.member_name);
+    });
+
     it("test transition will failed", async () => {
         await X.transition(async x => {
             // await x.delete(members); 
