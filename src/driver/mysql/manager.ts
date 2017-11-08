@@ -88,6 +88,19 @@ export class MysqlConnectionManager implements IDriverBase {
             //添加前缀，防止占用关键字
             var fieldName = (addPrefix ? 't_' + desc.tableName + '.' : "") + name; ``
             if (Array.isArray(val)) {
+                if(!val.length){
+                    continue;
+                }
+                //如果数组中使用了entity[]，那么默认使用主键
+                if(Object.prototype.isPrototypeOf(val[0])){
+                    let desc = EntityMap.get(val[0].__proto__.constructor.name) as EntityDescirption;
+                    if(desc){
+                        let ids = val.map(item => `'${item[desc.primary]}'`);
+                        buffer.push(` and ${fieldName} in (${ids})`);
+                        continue;
+                    }
+                   
+                }
                 if (val[0] == 'like') {
                     buffer.push(` and ${fieldName} like '${val[1]}'`);
                 }
@@ -272,6 +285,7 @@ export class MysqlConnectionManager implements IDriverBase {
                 sql += ' limit ' + findOption.limit;
             }
         }
+        // console.log(sql);
         this.log(sql)
         return sql;
     }
